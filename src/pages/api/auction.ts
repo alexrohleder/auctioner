@@ -1,10 +1,6 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import connect from "next-connect";
+import api from "../../lib/api";
+import supabase from "../../lib/supabase";
 
-const handler = connect<NextApiRequest, NextApiResponse>();
-
-export default handler.get((req, res) => {
-  res.json({
-    hello: "world",
-  });
+export default api.get(async (req, res) => {
+  res.json(await supabase.from("auctions"));
 });
