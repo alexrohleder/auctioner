@@ -135,7 +135,7 @@ export default function Home() {
             </div>
             <div className="flex items-center justify-center">
               <button className="bg-gray-800 text-white rounded py-2 px-4">
-                New auction
+                New Auction
               </button>
             </div>
           </div>
@@ -146,20 +146,21 @@ export default function Home() {
           <div className="lg:w-[555px]">
             {auctions &&
               auctions.map((auction) => (
-                <div
-                  className="border rounded bg-white mb-4 break-words shadow-sm"
+                <a
+                  href=""
+                  className="border block rounded bg-white mb-4 break-words shadow-sm hover:border-blue-700 transition-colors cursor-pointer"
                   key={auction.id}
                 >
                   <div className="flex justify-between items-center p-4">
                     <div className="text-xl font-semibold">{auction.title}</div>
                     <div className="flex gap-4 items-center">
-                      <div
-                        className="w-2 h-2 bg-green-500 rounded-full"
-                        title="This auction is public and open"
-                      />
-                      <button className="border py-1 px-4 text-sm rounded font-semibold text-white bg-gray-800">
-                        Settle
-                      </button>
+                      <div className="text-green-500 flex gap-2 text-xs items-center">
+                        Published
+                        <div
+                          className="w-1 h-1 bg-green-500 rounded-full"
+                          title="This auction is public and open"
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 px-4">
@@ -172,11 +173,58 @@ export default function Home() {
                     <div className="text-gray-500 text-sm">Total bidders</div>
                     <div>4</div>
                   </div>
-                  <div className="px-4 py-2 text-right text-gray-500 text-sm border-t mt-4">
-                    Created 7 days ago
+                  <div className="px-4 py-2 flex justify-between text-sm border-t mt-4">
+                    <div className="flex gap-2">
+                      <a className="text-blue-700 hover:underline" href="">
+                        View Statistics
+                      </a>
+                      ·
+                      <a className="text-blue-700 hover:underline" href="">
+                        Edit
+                      </a>
+                      ·
+                      <a className="text-blue-700 hover:underline" href="">
+                        Settle
+                      </a>
+                    </div>
+                    <div className="text-gray-500">Created 7 days ago</div>
+                  </div>
+                </a>
+              ))}
+            <div className="border rounded bg-gray-100 mb-4 break-words shadow-sm hover:border-blue-700 transition-colors cursor-pointer">
+              <div className="flex justify-between items-center p-4">
+                <div className="text-xl font-semibold">
+                  Something with very long name...
+                </div>
+                <div className="flex gap-4 items-center">
+                  <div className="text-red-500 flex gap-2 text-xs items-center">
+                    <div
+                      className="w-1 h-1 bg-red-500 rounded-full"
+                      title="This auction is public and open"
+                    />
+                    Unpublished
                   </div>
                 </div>
-              ))}
+              </div>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 px-4">
+                <div className="text-gray-500 text-sm">Highest bid</div>
+                <div>kr1.250,00</div>
+                <div className="text-gray-500 text-sm">Last bid</div>
+                <div>2 minutes ago</div>
+                <div className="text-gray-500 text-sm">Total bids</div>
+                <div>13</div>
+                <div className="text-gray-500 text-sm">Total bidders</div>
+                <div>4</div>
+              </div>
+              <div className="px-4 py-2 flex justify-between text-sm border-t mt-4">
+                <div className="flex gap-2">
+                  <a className="text-blue-700 hover:underline" href="">
+                    View Statistics
+                  </a>
+                </div>
+                <div className="text-gray-500">Created 7 days ago</div>
+              </div>
+            </div>
           </div>
           <div className="flex-1">
             <div className="font-semibold">Recent Activity</div>
