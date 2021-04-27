@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <div>
       <div className="border-b">
-        <div className="container mx-auto max-w-screen-lg">
+        <div className="container mx-auto max-w-screen-lg px-4">
           <div className="flex justify-between py-4">
             <div className="h-12 w-12 bg-gray-300 rounded" />
             <div className="flex gap-4 items-center">
@@ -36,7 +36,7 @@ export default function Home() {
         </div>
       </div>
       <div className="border-b px-4 pt-8 pb-16">
-        <div className="container mx-auto max-w-screen-lg">
+        <div className="container mx-auto max-w-screen-lg px-4">
           <div className="flex flex-col lg:flex-row gap-8">
             <div className="grid lg:grid-cols-3 gap-4 flex-1">
               <div className="border rounded p-4">
@@ -141,9 +141,9 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="bg-gray-100 h-screen">
-        <div className="container mx-auto max-w-screen-lg transform -translate-y-8 flex gap-8">
-          <div className="lg:w-2/4">
+      <div className="bg-gray-100 min-h-screen">
+        <div className="container mx-auto max-w-screen-lg px-4 transform -translate-y-8 flex flex-col lg:flex-row gap-4">
+          <div className="lg:w-[555px]">
             {auctions &&
               auctions.map((auction) => (
                 <div
@@ -178,7 +178,7 @@ export default function Home() {
                 </div>
               ))}
           </div>
-          <div className="lg:w-2/4">
+          <div className="flex-1">
             <div className="font-semibold">Recent Activity</div>
             <div className="py-4">
               {[...Array(12)].map((_, key) => (
