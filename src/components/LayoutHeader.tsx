@@ -1,7 +1,7 @@
 function LayoutHeader() {
   return (
     <div className="border-b">
-      <header className="container mx-auto max-w-screen-lg px-4">
+      <header className="custom-container">
         <div className="flex justify-between py-4">
           <div className="h-12 w-12 bg-gray-300 rounded" />
           <div className="flex gap-4 items-center">

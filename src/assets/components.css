@@ -12,3 +12,7 @@
 .placeholder {
   @apply rounded bg-gray-200 animate-pulse h-full;
 }
+
+.custom-container {
+  @apply container mx-auto max-w-screen-lg px-4;
+}
