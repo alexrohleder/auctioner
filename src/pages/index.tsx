@@ -33,9 +33,7 @@ export default function Home() {
               />
             </div>
             <div className="flex items-center justify-center">
-              <button className="bg-gray-800 text-white rounded py-2 px-4">
-                New Auction
-              </button>
+              <button className="btn btn--primary">New Auction</button>
             </div>
           </div>
         </div>

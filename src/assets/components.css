@@ -1,14 +1,12 @@
 .btn {
-  @apply whitespace-nowrap py-2 px-4 text-gray-600 font-medium
-      transition-colors duration-100 ease-in-out;
+  @apply bg-white py-2 px-3 border border-gray-300
+    rounded shadow-sm text-sm leading-4 font-medium
+    text-black hover:bg-gray-50 focus:outline-none
+    focus:ring-2 focus:ring-offset-2 focus:ring-gray-500;
+}
 
-  &:hover {
-    @apply text-black;
-  }
-
-  &:disabled {
-    @apply opacity-50 pointer-events-none;
-  }
+.btn--primary {
+  @apply bg-gray-800 border-gray-800 text-white hover:bg-gray-900;
 }
 
 .placeholder {
