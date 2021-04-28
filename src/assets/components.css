@@ -1,0 +1,16 @@
+.btn {
+  @apply whitespace-nowrap py-2 px-4 text-gray-600 font-medium
+      transition-colors duration-100 ease-in-out;
+
+  &:hover {
+    @apply text-black;
+  }
+
+  &:disabled {
+    @apply opacity-50 pointer-events-none;
+  }
+}
+
+.placeholder {
+  @apply rounded bg-gray-200 animate-pulse h-full;
+}
