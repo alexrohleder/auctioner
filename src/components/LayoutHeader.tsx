@@ -11,7 +11,7 @@ function LayoutHeader() {
             <div className="h-10 w-10 bg-gray-300 rounded" />
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 overflow-x-auto">
           <div className="border-b-2 px-4 border-gray-800 h-12 flex items-center">
             Dashboard
           </div>
