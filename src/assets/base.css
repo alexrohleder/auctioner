@@ -1,3 +1,6 @@
-*::selection {
-  @apply bg-gray-800 text-white;
+@media (prefers-reduced-motion: no-preference) {
+  :focus {
+    transition: outline-offset 0.25s ease;
+    outline-offset: 4px;
+  }
 }
