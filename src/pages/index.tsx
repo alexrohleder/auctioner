@@ -1,3 +1,4 @@
+import Link from "next/link";
 import DashboardStatisticCard from "../components/DashboardStatisticCard";
 import DashboardAuctionCardPlaceholder from "../components/DashboardAuctionCardPlaceholder";
 import Layout from "../components/Layout";
@@ -31,7 +32,9 @@ export default function Home() {
               description="Percentage of visits that resulted in a bid"
             />
             <div className="flex items-center justify-center">
-              <button className="btn btn--primary">New Auction</button>
+              <Link href="/auctions/create">
+                <a className="btn btn--primary">New Auction</a>
+              </Link>
             </div>
           </div>
         </div>
