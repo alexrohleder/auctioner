@@ -1,5 +1,6 @@
 create type t_currency_codes as enum('NOK'); /* https://en.wikipedia.org/wiki/ISO_4217 */
 create domain d_external_ref as varchar(192); /* references used by storefront */
+
 create table auctions (
   id uuid default uuid_generate_v4() primary key,
   seller_id uuid references auth.users not null,

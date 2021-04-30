@@ -1,9 +1,13 @@
+import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import Button from "../../components/Button";
 import Layout from "../../components/Layout";
 import supabase from "../../lib/supabase";
 
 function CreateAuction() {
+  const router = useRouter();
+  const [isSaving, setIsSaving] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -18,8 +22,12 @@ function CreateAuction() {
     const bid_increment = parseInt(fields.bid_increment.value, 10);
     const is_published = fields.is_published.checked;
 
+    // todo: further validate fields
+
+    setIsSaving(true);
+
     const { data, error } = await supabase.from("auctions").insert({
-      seller_id: "9e7f26e6-e5f9-400a-a021-63ac3493f255",
+      seller_id: "9e7f26e6-e5f9-400a-a021-63ac3493f255", // todo: use authenticated user
       title,
       description,
       starting_price,
@@ -29,9 +37,17 @@ function CreateAuction() {
       images: uploadedFiles,
     });
 
-    // const newAuction = data[0];
+    setIsSaving(false);
+
+    if (error) {
+      // todo: show toast with error message
+    } else if (data?.length) {
+      router.push(`/auctions/${data[0].id}`);
+      // todo: show toast with succesful message
+    }
   }
 
+  // todo: treat errors
   async function onImageUpload(event: ChangeEvent<HTMLInputElement>) {
     const uploads = await Promise.all(
       Array.from(event.target.files).map((file) =>
@@ -106,9 +122,9 @@ function CreateAuction() {
               multiple
               required
             />
-            <button type="submit" className="btn btn--primary">
+            <Button type="submit" isPrimary isLoading={isSaving}>
               Submit
-            </button>
+            </Button>
           </form>
         </div>
       </div>
