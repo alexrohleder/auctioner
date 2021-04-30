@@ -8,7 +8,7 @@ interface Props extends React.ComponentPropsWithoutRef<"button"> {
 
 const Button = forwardRef((props: Props, ref) => {
   const {
-    as: Component = "Button",
+    as: Component = "button",
     className = "",
     isLoading = false,
     isPrimary = false,
@@ -37,7 +37,7 @@ const Button = forwardRef((props: Props, ref) => {
             cy="12"
             r="10"
             stroke="currentColor"
-            stroke-width="4"
+            strokeWidth="4"
           ></circle>
           <path
             className="opacity-75"

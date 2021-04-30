@@ -32,7 +32,7 @@ function CreateAuction() {
       description,
       starting_price,
       bid_increment,
-      currency_code: "nok",
+      currency_code: "NOK",
       is_published,
       images: uploadedFiles,
     });
