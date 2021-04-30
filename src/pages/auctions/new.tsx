@@ -1,6 +1,49 @@
+import { ChangeEvent, FormEvent, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import Layout from "../../components/Layout";
+import supabase from "../../lib/supabase";
 
 function CreateAuction() {
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const elements = event.currentTarget.elements as any;
+    const fields: Record<string, HTMLInputElement> = elements;
+
+    const title = fields.title.value;
+    const description = fields.description.value;
+    const starting_price = parseInt(fields.starting_price.value, 10);
+    const bid_increment = parseInt(fields.bid_increment.value, 10);
+    const is_published = fields.is_published.checked;
+
+    const { data, error } = await supabase.from("auctions").insert({
+      seller_id: "9e7f26e6-e5f9-400a-a021-63ac3493f255",
+      title,
+      description,
+      starting_price,
+      bid_increment,
+      currency_code: "nok",
+      is_published,
+      images: uploadedFiles,
+    });
+
+    // const newAuction = data[0];
+  }
+
+  async function onImageUpload(event: ChangeEvent<HTMLInputElement>) {
+    const uploads = await Promise.all(
+      Array.from(event.target.files).map((file) =>
+        supabase.storage
+          .from("auction-images")
+          .upload(`${uuidv4()}.${file.type.substr("image/".length)}`, file)
+      )
+    );
+
+    setUploadedFiles(uploads.map((upload) => upload.data.Key));
+  }
+
   return (
     <Layout title="New Auction">
       <div className="px-4 py-8 border-b">
@@ -9,50 +52,64 @@ function CreateAuction() {
         </div>
       </div>
       <div className="min-h-screen bg-gray-100">
-        <div className="custom-container lg:grid-cols-5 grid gap-4 py-8">
-          <div className="lg:col-span-3">
-            <div className="p-4 bg-white border rounded shadow-sm">
-              <div className="mb-8 font-semibold">General Information</div>
-              <div className="flex flex-col gap-4">
-                <div>
-                  <label className="label" htmlFor="title">
-                    Title
-                  </label>
-                  <input
-                    id="title"
-                    type="text"
-                    className="focus:ring-blue-500 focus:border-blue-500 sm:text-sm block w-full mt-1 border-gray-300 rounded shadow-sm"
-                  />
-                </div>
-                <div>
-                  <label className="label" htmlFor="description">
-                    Description
-                  </label>
-                  <textarea
-                    id="description"
-                    rows={3}
-                    className="focus:ring-blue-500 focus:border-blue-500 sm:text-sm block w-full mt-1 border-gray-300 rounded-md shadow-sm"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="lg:col-span-2 flex flex-col gap-4">
-            <div className="p-4 bg-white border rounded shadow-sm">
-              <div className="mb-8 font-semibold">Organize Item</div>
-            </div>
-            <div className="p-4 bg-white border rounded shadow-sm">
-              <div className="mb-8 font-semibold">Visibility</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="bottom-4 fixed w-full">
         <div className="custom-container">
-          <div className="flex justify-end gap-2 p-2 bg-white border rounded shadow-lg">
-            <button className="btn">Cancel</button>
-            <button className="btn btn--primary">Save</button>
-          </div>
+          <form onSubmit={onSubmit}>
+            <fieldset>
+              <legend>General Information</legend>
+              <label htmlFor="title">Title</label>
+              <input
+                type="text"
+                id="title"
+                name="title"
+                maxLength={120}
+                minLength={3}
+                required
+              />
+              <label htmlFor="description">Description</label>
+              <textarea rows={3} id="description" name="description" />
+            </fieldset>
+            <fieldset>
+              <legend>Settlement</legend>
+              <label htmlFor="starting_price">Starting Price</label>
+              <input
+                type="number"
+                id="starting_price"
+                name="starting_price"
+                defaultValue="0"
+                min={0}
+              />
+              <label htmlFor="bid_increment">Bid Increment</label>
+              <input
+                type="number"
+                id="bid_increment"
+                name="bid_increment"
+                defaultValue="0"
+                min={0}
+              />
+            </fieldset>
+            <fieldset>
+              <legend>Visibility</legend>
+              <label htmlFor="is_published">Publish</label>
+              <input
+                type="checkbox"
+                id="is_published"
+                name="is_published"
+                defaultChecked
+              />
+            </fieldset>
+            <input
+              type="file"
+              id="images"
+              name="images"
+              accept="image/*"
+              onChange={onImageUpload}
+              multiple
+              required
+            />
+            <button type="submit" className="btn btn--primary">
+              Submit
+            </button>
+          </form>
         </div>
       </div>
     </Layout>
