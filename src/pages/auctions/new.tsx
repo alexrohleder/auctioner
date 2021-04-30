@@ -81,6 +81,7 @@ function CreateAuction() {
                   maxLength={120}
                   minLength={3}
                   required
+                  autoFocus
                 />
               </label>
               <label className="block mt-2">

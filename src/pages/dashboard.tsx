@@ -1,8 +1,7 @@
 import Link from "next/link";
 import DashboardStatisticCard from "../components/DashboardStatisticCard";
-import DashboardAuctionCardPlaceholder from "../components/DashboardAuctionCardPlaceholder";
+import AuctionCardPlaceholder from "../components/AuctionCardPlaceholder";
 import Layout from "../components/Layout";
-import Button from "../components/Button";
 
 export default function Home() {
   let statistics, auctions, activities;
@@ -45,11 +44,11 @@ export default function Home() {
           <div className="lg:col-span-2 flex flex-col gap-8">
             {!auctions && (
               <>
-                <DashboardAuctionCardPlaceholder />
-                <DashboardAuctionCardPlaceholder />
-                <DashboardAuctionCardPlaceholder />
-                <DashboardAuctionCardPlaceholder />
-                <DashboardAuctionCardPlaceholder />
+                <AuctionCardPlaceholder />
+                <AuctionCardPlaceholder />
+                <AuctionCardPlaceholder />
+                <AuctionCardPlaceholder />
+                <AuctionCardPlaceholder />
               </>
             )}
           </div>

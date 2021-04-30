@@ -8,7 +8,7 @@ type PostgrestError = {
   code: string;
 };
 
-function useQuery<T>(
+function useQuery<T = any>(
   table: string,
   withInitialLoad = true
 ): [T | null, PostgrestError | null, boolean] {

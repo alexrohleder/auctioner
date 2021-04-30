@@ -1,6 +1,7 @@
 import { useSession } from "next-auth/client";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import Loading from "../components/Loading";
 
 export default function Home() {
   const [session, loading] = useSession();
@@ -15,7 +16,7 @@ export default function Home() {
   if (loading || session) {
     return (
       <div className="flex items-center justify-center w-full min-h-screen">
-        Loading
+        <Loading /> Loading...
       </div>
     );
   }
