@@ -1,27 +1,18 @@
 .btn {
-  @apply bg-white py-2 px-3 border border-gray-300
-    rounded shadow-sm text-sm leading-4 font-medium
-    text-black hover:bg-gray-50 focus:outline-none
-    focus:ring-2 focus:ring-offset-2 focus:ring-gray-500;
+  @apply hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 px-3 py-2 text-sm font-medium leading-4 text-black bg-white border border-gray-300 rounded shadow-sm;
 }
-
 .btn--primary {
-  @apply bg-gray-800 border-gray-800 text-white
-    hover:bg-gray-900;
+  @apply hover:bg-gray-900 text-white bg-gray-800 border-gray-800;
 }
-
 .label {
   @apply block text-sm font-medium text-gray-700;
 }
-
 .input {
-  @apply mt-1 focus:ring-gray-500 focus:border-gray-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md;
+  @apply focus:ring-gray-500 focus:border-gray-500 sm:text-sm block w-full mt-1 border-gray-300 rounded-md shadow-sm;
 }
-
 .placeholder {
-  @apply rounded bg-gray-200 animate-pulse h-full;
+  @apply animate-pulse h-full bg-gray-200 rounded;
 }
-
 .custom-container {
-  @apply container mx-auto max-w-screen-lg px-4;
+  @apply container max-w-screen-lg px-4 mx-auto;
 }

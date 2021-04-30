@@ -1,13 +1,13 @@
 function DashboardAuctionCardPlaceholder() {
   return (
-    <div className="border rounded bg-white shadow-sm">
+    <div className="bg-white border rounded shadow-sm">
       <div className="p-4">
-        <div className="placeholder h-6 w-48" />
+        <div className="placeholder w-48 h-6" />
         <div className="h-28" />
       </div>
-      <div className="px-4 py-2 border-t flex justify-between">
-        <div className="placeholder h-4 w-16" />
-        <div className="placeholder h-4 w-24" />
+      <div className="flex justify-between px-4 py-2 border-t">
+        <div className="placeholder w-16 h-4" />
+        <div className="placeholder w-24 h-4" />
       </div>
     </div>
   );

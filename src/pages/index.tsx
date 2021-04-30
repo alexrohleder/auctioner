@@ -8,9 +8,9 @@ export default function Home() {
 
   return (
     <Layout title="Dashboard">
-      <div className="border-b px-4 pt-8 pb-12 lg:pb-16">
+      <div className="lg:pb-16 px-4 pt-8 pb-12 border-b">
         <div className="custom-container">
-          <div className="grid lg:grid-cols-4 gap-4 flex-1">
+          <div className="lg:grid-cols-4 grid flex-1 gap-4">
             <DashboardStatisticCard
               title="Total of bids"
               currentValue={statistics?.total_bids}
@@ -39,9 +39,9 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="bg-gray-100 min-h-screen">
-        <div className="custom-container transform -translate-y-8 grid lg:grid-cols-4 gap-4">
-          <div className="flex flex-col gap-8 lg:col-span-2">
+      <div className="min-h-screen bg-gray-100">
+        <div className="custom-container lg:grid-cols-4 grid gap-4 transform -translate-y-8">
+          <div className="lg:col-span-2 flex flex-col gap-8">
             {!auctions && (
               <>
                 <DashboardAuctionCardPlaceholder />
@@ -52,7 +52,7 @@ export default function Home() {
               </>
             )}
           </div>
-          <div className="mt-4 lg:mt-0 lg:grid-col-span-2">
+          <div className="lg:mt-0 lg:grid-col-span-2 mt-4">
             <div className="font-semibold">Recent Activity</div>
             <div className="flex flex-col gap-4 py-4" />
           </div>

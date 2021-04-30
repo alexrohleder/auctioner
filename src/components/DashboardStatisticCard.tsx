@@ -12,7 +12,7 @@ type Props = {
 const IncreaseIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="h-4 w-4"
+    className="w-4 h-4"
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -29,7 +29,7 @@ const IncreaseIcon = () => (
 const DecreaseIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="h-4 w-4"
+    className="w-4 h-4"
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -46,7 +46,7 @@ const DecreaseIcon = () => (
 const InfoIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="h-6 w-6"
+    className="w-6 h-6"
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -85,7 +85,7 @@ function DashboardStatisticCard(props: Props) {
   }
 
   return (
-    <div className="border rounded p-4">
+    <div className="p-4 border rounded">
       <div className="flex justify-between">
         <div className="font-semibold">{props.title}</div>
         {props.description && (
@@ -98,7 +98,7 @@ function DashboardStatisticCard(props: Props) {
         {isLoading && <div className="placeholder w-24 h-4" />}
         {!isLoading && <div className="text-lg">{formattedCurrentValue}</div>}
       </div>
-      <div className="text-xs mt-1 flex justify-between h-4">
+      <div className="flex justify-between h-4 mt-1 text-xs">
         <div className={`flex ${changeColor}`}>
           {isLoading ? (
             <div className="placeholder w-16" />
