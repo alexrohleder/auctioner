@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import Button from "../../components/Button";
 import Layout from "../../components/Layout";
+import Loading from "../../components/Loading";
 import supabase from "../../lib/supabase";
 
 function CreateAuction() {
@@ -20,7 +20,7 @@ function CreateAuction() {
     const description = fields.description.value;
     const starting_price = parseInt(fields.starting_price.value, 10);
     const bid_increment = parseInt(fields.bid_increment.value, 10);
-    const is_published = fields.is_published.checked;
+    const is_published = fields.is_published.value === "1";
 
     // todo: further validate fields
 
@@ -68,63 +68,95 @@ function CreateAuction() {
         </div>
       </div>
       <div className="min-h-screen bg-gray-100">
-        <div className="custom-container">
+        <div className="custom-container py-8">
           <form onSubmit={onSubmit}>
             <fieldset>
-              <legend>General Information</legend>
-              <label htmlFor="title">Title</label>
+              <legend className="font-semibold">General Information</legend>
+              <label className="block mt-2">
+                <span className="text-gray-700">Title</span>
+                <input
+                  type="text"
+                  name="title"
+                  className="block w-full mt-1 rounded"
+                  maxLength={120}
+                  minLength={3}
+                  required
+                />
+              </label>
+              <label className="block mt-2">
+                <span className="text-gray-700">Description</span>
+                <textarea
+                  className="block w-full mt-1 rounded"
+                  rows={3}
+                  name="description"
+                />
+              </label>
+            </fieldset>
+
+            <fieldset className="flex w-full gap-4 mt-8">
+              <legend className="font-semibold">Settlement</legend>
+              <label className="flex-1 mt-2">
+                <span className="text-gray-700">Starting Price</span>
+                <input
+                  type="number"
+                  name="starting_price"
+                  className="block w-full mt-1 rounded"
+                  defaultValue="0"
+                  min={0}
+                />
+              </label>
+              <label className="flex-1 mt-2">
+                <span className="text-gray-700">Bid Increment</span>
+                <input
+                  type="number"
+                  name="bid_increment"
+                  className="block w-full mt-1 rounded"
+                  defaultValue="0"
+                  min={0}
+                />
+              </label>
+            </fieldset>
+
+            <fieldset className="mt-8">
+              <legend className="font-semibold">Visibility</legend>
+              <label className="block mt-2">
+                <input
+                  type="radio"
+                  name="is_published"
+                  value="1"
+                  defaultChecked
+                />
+                <span className="ml-2 text-gray-700">Published</span>
+              </label>
+              <label className="block">
+                <input type="radio" name="is_published" value="0" />
+                <span className="ml-2 text-gray-700">Not published</span>
+              </label>
+            </fieldset>
+
+            <div className="mt-8">
               <input
-                type="text"
-                id="title"
-                name="title"
-                maxLength={120}
-                minLength={3}
+                type="file"
+                id="images"
+                name="images"
+                accept="image/*"
+                className=""
+                onChange={onImageUpload}
+                multiple
                 required
               />
-              <label htmlFor="description">Description</label>
-              <textarea rows={3} id="description" name="description" />
-            </fieldset>
-            <fieldset>
-              <legend>Settlement</legend>
-              <label htmlFor="starting_price">Starting Price</label>
-              <input
-                type="number"
-                id="starting_price"
-                name="starting_price"
-                defaultValue="0"
-                min={0}
-              />
-              <label htmlFor="bid_increment">Bid Increment</label>
-              <input
-                type="number"
-                id="bid_increment"
-                name="bid_increment"
-                defaultValue="0"
-                min={0}
-              />
-            </fieldset>
-            <fieldset>
-              <legend>Visibility</legend>
-              <label htmlFor="is_published">Publish</label>
-              <input
-                type="checkbox"
-                id="is_published"
-                name="is_published"
-                defaultChecked
-              />
-            </fieldset>
-            <input
-              type="file"
-              id="images"
-              name="images"
-              accept="image/*"
-              onChange={onImageUpload}
-              multiple
-              required
-            />
-            <Button type="submit" isPrimary isLoading={isSaving}>
-              Submit
-            </Button>
+            </div>
+
+            <div className="flex items-center justify-end gap-4 mt-8">
+              {isSaving && <Loading />}
+              <button
+                type="submit"
+                className="btn btn--primary"
+                disabled={isSaving}
+              >
+                Submit
+              </button>
+            </div>
           </form>
         </div>
       </div>

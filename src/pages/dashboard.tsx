@@ -33,10 +33,8 @@ export default function Home() {
               description="Percentage of visits that resulted in a bid"
             />
             <div className="flex items-center justify-center">
-              <Link href="/auctions/new" passHref>
-                <Button as="a" isPrimary>
-                  New Auction
-                </Button>
+              <Link href="/auctions/new">
+                <a className="btn btn--primary">New Auction</a>
               </Link>
             </div>
           </div>
