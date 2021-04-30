@@ -15,12 +15,16 @@ function LayoutHeader() {
             <div className="hover:text-black text-gray-500 cursor-pointer">
               Feedback
             </div>
-            <div className="hover:text-black text-gray-500 cursor-pointer">
-              Support
-            </div>
-            <div className="hover:text-black text-gray-500 cursor-pointer">
-              Docs
-            </div>
+            <Link href="/support">
+              <a className="hover:text-black text-gray-500 cursor-pointer">
+                Support
+              </a>
+            </Link>
+            <Link href="/docs">
+              <a className="hover:text-black text-gray-500 cursor-pointer">
+                Docs
+              </a>
+            </Link>
             <div className="w-10 h-10 bg-gray-300 rounded" />
           </div>
         </div>
