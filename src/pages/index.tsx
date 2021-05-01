@@ -1,25 +1,26 @@
-import { useSession } from "next-auth/client";
-import { useEffect } from "react";
-import { useRouter } from "next/router";
-import Loading from "../components/Loading";
+import Link from "next/link";
 
-export default function Home() {
-  const [session, loading] = useSession();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!loading && session) {
-      router.replace("/dashboard");
-    }
-  }, [session, loading, router]);
-
-  if (loading || session) {
-    return (
-      <div className="flex items-center justify-center w-full min-h-screen">
-        <Loading /> Loading...
-      </div>
-    );
-  }
-
-  return <div>login form</div>;
+function Home() {
+  return (
+    <div className="custom-container py-8">
+      <div className="mb-5 font-semibold">Homepage</div>
+      <p className="mt-1">
+        <Link href="/dashboard">
+          <a className="hover:underline text-blue-500">Dashboard</a>
+        </Link>
+      </p>
+      <p className="mt-1">
+        <Link href="/dashboard">
+          <a className="hover:underline text-blue-500">Login</a>
+        </Link>
+      </p>
+      <p className="mt-1">
+        <Link href="/dashboard">
+          <a className="hover:underline text-blue-500">Sign up</a>
+        </Link>
+      </p>
+    </div>
+  );
 }
+
+export default Home;
