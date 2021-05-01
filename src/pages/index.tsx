@@ -9,16 +9,6 @@ function Home() {
           <a className="hover:underline text-blue-500">Dashboard</a>
         </Link>
       </p>
-      <p className="mt-1">
-        <Link href="/dashboard">
-          <a className="hover:underline text-blue-500">Login</a>
-        </Link>
-      </p>
-      <p className="mt-1">
-        <Link href="/dashboard">
-          <a className="hover:underline text-blue-500">Sign up</a>
-        </Link>
-      </p>
     </div>
   );
 }
