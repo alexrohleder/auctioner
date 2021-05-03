@@ -131,7 +131,7 @@ function CreateAuction() {
               </label>
             </fieldset>
 
-            <div className="w-full mt-8">
+            <div className="mt-8">
               <input
                 type="file"
                 id="images"
