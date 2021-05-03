@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { FormEvent, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+
 import Layout from "../../components/Layout";
 import Loading from "../../components/Loading";
 import supabase from "../../lib/supabase";
@@ -8,7 +9,7 @@ import supabase from "../../lib/supabase";
 function CreateAuction() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [filesToUpload, setFilesToUpload] = useState([]);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -26,16 +27,24 @@ function CreateAuction() {
 
     setIsSaving(true);
 
-    const { data, error } = await supabase.from("auctions").insert({
-      seller_id: "9e7f26e6-e5f9-400a-a021-63ac3493f255", // todo: use authenticated user
-      title,
-      description,
-      starting_price,
-      bid_increment,
-      currency_code: "NOK",
-      is_published,
-      images: uploadedFiles,
-    });
+    const { data, error } = await Promise.all(
+      Array.from(filesToUpload).map((file) =>
+        supabase.storage
+          .from("auction-images")
+          .upload(`${uuidv4()}.${file.type.substr("image/".length)}`, file)
+      )
+    ).then((uploads) =>
+      supabase.from("auctions").insert({
+        seller_id: "7ac487e3-1061-44a2-baa8-eab9c14229d5", // todo: use authenticated user
+        title,
+        description,
+        starting_price,
+        bid_increment,
+        currency_code: "NOK",
+        is_published,
+        images: uploads.map((upload) => upload.data.Key),
+      })
+    );
 
     setIsSaving(false);
 
@@ -45,19 +54,6 @@ function CreateAuction() {
       router.push(`/auctions/${data[0].id}`);
       // todo: show toast with succesful message
     }
-  }
-
-  // todo: treat errors
-  async function onImageUpload(event: ChangeEvent<HTMLInputElement>) {
-    const uploads = await Promise.all(
-      Array.from(event.target.files).map((file) =>
-        supabase.storage
-          .from("auction-images")
-          .upload(`${uuidv4()}.${file.type.substr("image/".length)}`, file)
-      )
-    );
-
-    setUploadedFiles(uploads.map((upload) => upload.data.Key));
   }
 
   return (
@@ -135,14 +131,19 @@ function CreateAuction() {
               </label>
             </fieldset>
 
-            <div className="mt-8">
+            <div className="w-full mt-8">
               <input
                 type="file"
                 id="images"
                 name="images"
                 accept="image/*"
                 className=""
-                onChange={onImageUpload}
+                onChange={(e) =>
+                  setFilesToUpload((files) => [
+                    ...files,
+                    ...Array.from(e.target.files),
+                  ])
+                }
                 multiple
                 required
               />
