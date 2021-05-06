@@ -1,14 +1,16 @@
 import { useRouter } from "next/router";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Layout from "../../components/Layout";
 import Loading from "../../components/Loading";
+import AuthContext from "../../contexts/AuthContext";
 import supabase from "../../lib/supabase";
 
 function CreateAuction() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const { user } = useContext(AuthContext);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -27,7 +29,7 @@ function CreateAuction() {
     setIsSaving(true);
 
     const { data, error } = await supabase.from("auctions").insert({
-      seller_id: "9e7f26e6-e5f9-400a-a021-63ac3493f255", // todo: use authenticated user
+      seller_id: user.id,
       title,
       description,
       starting_price,

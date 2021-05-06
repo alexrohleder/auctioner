@@ -2,9 +2,12 @@ import Link from "next/link";
 import DashboardStatisticCard from "../components/DashboardStatisticCard";
 import AuctionCardPlaceholder from "../components/AuctionCardPlaceholder";
 import Layout from "../components/Layout";
+import AuctionCard from "../components/AuctionCard";
+import useQuery from "../hooks/useQuery";
 
 export default function Home() {
-  let statistics, auctions, activities;
+  let statistics, activities;
+  const [auctions] = useQuery("auctions");
 
   return (
     <Layout title="Dashboard">
@@ -42,7 +45,11 @@ export default function Home() {
       <div className="min-h-screen bg-gray-100">
         <div className="custom-container lg:grid-cols-4 grid gap-4 transform -translate-y-8">
           <div className="lg:col-span-2 flex flex-col gap-8">
-            {!auctions && (
+            {auctions ? (
+              auctions.map((auction) => (
+                <AuctionCard key={auction.id} {...auction} />
+              ))
+            ) : (
               <>
                 <AuctionCardPlaceholder />
                 <AuctionCardPlaceholder />
