@@ -3,13 +3,13 @@ import supabase from "../lib/supabase";
 
 function AuthOverlay() {
   const [isAuthenticating, setAuthenticating] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [message, setMessage] = useState("");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   async function sign(op: "signUp" | "signIn") {
-    setError(null);
+    setMessage("");
     setAuthenticating(true);
 
     const { error } = await supabase.auth[op]({
@@ -17,17 +17,28 @@ function AuthOverlay() {
       password,
     });
 
-    if (error) {
-      setError(error);
-    }
-
     setAuthenticating(false);
+
+    return { error };
   }
 
   async function onSignIn(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    sign("signIn");
+    const { error } = await sign("signIn");
+
+    if (error) {
+      setMessage(error.message);
+    }
+  }
+
+  async function onSignUp() {
+    const { error } = await sign("signUp");
+
+    const confirmationMessage =
+      "We have sent a confirmation link to your email";
+
+    setMessage(error ? error.message : confirmationMessage);
   }
 
   return (
@@ -60,11 +71,7 @@ function AuthOverlay() {
               />
             </label>
             <div className="flex justify-end gap-2 mt-6">
-              <button
-                className="btn"
-                type="button"
-                onClick={() => sign("signUp")}
-              >
+              <button className="btn" type="button" onClick={onSignUp}>
                 Sign Up
               </button>
               <button className="btn btn--primary" type="submit">
@@ -72,7 +79,7 @@ function AuthOverlay() {
               </button>
             </div>
           </fieldset>
-          {error && <div>something went wrong</div>}
+          {message && <div>{message}</div>}
         </form>
       </div>
     </div>
