@@ -1,3 +1,4 @@
+import joi from "joi";
 import isBot from "isbot";
 import api, { abort } from "../../lib/api";
 import { uuid } from "../../lib/crypto";
@@ -8,13 +9,27 @@ import {
 } from "../../lib/queries";
 import { getClientInfo } from "../../lib/request";
 
+const schema = joi.object({
+  auctionId: joi.string().uuid().required(),
+  hostname: joi.string(),
+  screen: joi.string(),
+  language: joi.string(),
+  referrer: joi.string(),
+});
+
 export default api().post(async (req, res) => {
   if (isBot(req.headers["user-agent"])) {
     return abort(204);
   }
 
-  const { type, hostname, screen, language } = req.body.payload;
-  const client = await getClientInfo(req, req.body.payload);
+  const { value, error } = schema.validate(req.body.payload);
+
+  if (error) {
+    return abort(400, error.details);
+  }
+
+  const { hostname, screen, language } = value;
+  const client = await getClientInfo(req, value);
   const { userAgent, browser, os, ip, country, device } = client;
   const sessionId = uuid(hostname, ip, userAgent, os);
   const session = await getViewSessionById(sessionId);
@@ -32,14 +47,10 @@ export default api().post(async (req, res) => {
     });
   }
 
-  if (type !== "auction_view") {
-    return abort(400);
-  }
-
   await createView({
     viewSessionId: sessionId,
-    auctionId: req.body.payload.auctionId,
-    referrer: req.body.payload.referrer,
+    auctionId: value.auctionId,
+    referrer: value.referrer,
   });
 
   res.json({

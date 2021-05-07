@@ -1,13 +1,17 @@
+import joi from "joi";
 import api, { abort } from "../../../lib/api";
 import { createAuction, getAuctionsBySellerId } from "../../../lib/queries";
 
 export default api()
   .get(async (req, res) => {
-    if (typeof req.query.sellerId !== "string" || !req.query.sellerId) {
-      return abort(400);
+    const schema = joi.object({ sellerId: joi.string().uuid().required() });
+    const { value, error } = schema.validate(req.query);
+
+    if (error) {
+      return abort(400, error.details);
     }
 
-    res.json(await getAuctionsBySellerId(req.query.sellerId));
+    res.json(await getAuctionsBySellerId(value.sellerId));
   })
   .post(async (req, res) => {
     res.json(

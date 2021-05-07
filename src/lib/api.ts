@@ -1,3 +1,4 @@
+import joi from "joi";
 import { NextApiRequest, NextApiResponse } from "next";
 import connect from "next-connect";
 import { getReasonPhrase } from "http-status-codes";
@@ -14,7 +15,7 @@ const api = () => {
       res.status(code).json({
         code,
         reason: getReasonPhrase(code),
-        err: process.env.NODE_ENV === "production" ? null : err.toString(),
+        details: err.details,
       });
     },
   });
@@ -30,8 +31,8 @@ const api = () => {
   return handler;
 };
 
-export const abort = (httpCode: number = 500) => {
-  throw { httpCode };
+export const abort = (httpCode: number = 500, details?: any) => {
+  throw { httpCode, details };
 };
 
 export default api;

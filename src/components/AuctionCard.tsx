@@ -42,9 +42,15 @@ function AuctionCard(props: Props) {
           </div>
         </div>
       </div>
-      <div className="flex justify-around h-12 border-t">
-        <div className="h-4" />
-        <div className="h-4" />
+      <div className="flex items-center justify-between h-12 px-4 border-t">
+        <div />
+        <div>
+          <Link href={`/auction/${props.id}`}>
+            <a className="text-semibold hover:underline text-blue-700">
+              See stats
+            </a>
+          </Link>
+        </div>
       </div>
     </div>
   );

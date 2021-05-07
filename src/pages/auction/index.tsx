@@ -1,14 +1,14 @@
 import Link from "next/link";
-import useSWR from "swr";
 import { useContext } from "react";
 import AuctionCard from "../../components/AuctionCard";
 import Layout from "../../components/Layout";
 import AuthContext from "../../contexts/AuthContext";
 import Loading from "../../components/Loading";
+import { url, useFetch } from "../../lib/fetch";
 
 function Auctions() {
   const { user } = useContext(AuthContext);
-  const auctions = useSWR(user ? `/api/auction?sellerId=${user.id}` : null);
+  const auctions = useFetch(() => url("/api/auction", { sellerId: user.id }));
 
   if (auctions.error) {
     return (

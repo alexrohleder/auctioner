@@ -1,12 +1,25 @@
-import api from "../../../lib/api";
+import joi from "joi";
+import api, { abort } from "../../../lib/api";
 import { getAuctionStats } from "../../../lib/queries";
 
+const schema = joi.object({
+  auctionId: joi.string().uuid().required(),
+  startAt: joi.date().required(),
+  endAt: joi.date().required(),
+});
+
 export default api().get(async (req, res) => {
+  const { value, error } = schema.validate(req.query);
+
+  if (error) {
+    return abort(400, error.details);
+  }
+
   res.json(
     await getAuctionStats(
-      "e283c92f-152b-4624-a2b4-d4e4e72f259a",
-      new Date(20, 12, 2000),
-      new Date()
+      value.auctionId,
+      new Date(value.startAt),
+      new Date(value.endAt)
     )
   );
 });

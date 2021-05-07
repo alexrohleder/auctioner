@@ -1,17 +1,17 @@
 import Link from "next/link";
-import useSWR from "swr";
 import DashboardStatisticCard from "../components/DashboardStatisticCard";
 import Layout from "../components/Layout";
 import AuctionCard from "../components/AuctionCard";
 import { useContext } from "react";
 import AuthContext from "../contexts/AuthContext";
 import Loading from "../components/Loading";
+import { url, useFetch } from "../lib/fetch";
 
 export default function Home() {
   let statistics, activities;
 
   const { user } = useContext(AuthContext);
-  const auctions = useSWR(user ? `/api/auction?sellerId=${user.id}` : null);
+  const auctions = useFetch(() => url("/api/auction", { sellerId: user.id }));
 
   return (
     <Layout title="Dashboard">
