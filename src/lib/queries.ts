@@ -91,3 +91,26 @@ export const getAuctionStats = async (
 
   return result;
 };
+
+export const getViewCohorts = async (
+  auctionId: string,
+  startAt: Date,
+  endAt: Date,
+  distinct = false
+) => {
+  return prisma.$queryRaw(
+    `
+    select
+      to_char(date_trunc('hour', created_at), 'HH24:00') as x,
+      count(${distinct ? "distinct view_session_id" : "*"}) as y
+    from views
+    where auction_id = $1
+    and created_at between $2 and $3
+    group by 1
+    order by 1
+  `,
+    auctionId,
+    startAt,
+    endAt
+  );
+};

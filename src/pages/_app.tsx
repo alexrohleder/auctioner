@@ -4,6 +4,7 @@ import "../assets/main.css";
 import { useEffect } from "react";
 
 function App({ Component, pageProps }: AppProps) {
+  /*
   useEffect(() => {
     const post = (url, data, callback) => {
       const req = new XMLHttpRequest();
@@ -38,6 +39,7 @@ function App({ Component, pageProps }: AppProps) {
       console.log
     );
   }, []);
+  */
 
   return (
     <AuthContextProvider>

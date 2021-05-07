@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import { Chart } from "react-charts";
 import Layout from "../../components/Layout";
 import { url, useFetch } from "../../lib/fetch";
 import { formatShortTime } from "../../lib/format";
@@ -20,6 +21,18 @@ function Auction() {
         })
       : null
   );
+
+  const { data: cohorts } = useFetch(
+    router.query.id
+      ? url("/api/auction/cohorts", {
+          auctionId: router.query.id,
+          startAt,
+          endAt,
+        })
+      : null
+  );
+
+  console.log(cohorts);
 
   const bounceRate = uniques ? (Math.min(uniques, bounces) / uniques) * 100 : 0;
   const avgVisitTime = time && views ? time / (views - bounces) : 0;
@@ -67,6 +80,38 @@ function Auction() {
               ago
             </div>
           </div>
+        </div>
+        <div className="h-96 w-full mt-12">
+          <Chart
+            data={[
+              {
+                label: "views",
+                data: cohorts?.views || [],
+              },
+              {
+                label: "unique visitors",
+                data: cohorts?.uniqueVisitors || [],
+              },
+              {
+                label: "bidders",
+                data: cohorts?.bidders || [],
+              },
+              {
+                label: "bids",
+                data: cohorts?.bids || [],
+              },
+              {
+                label: "auction value",
+                data: cohorts?.highestValue || [],
+              },
+            ]}
+            series={{ type: "bar" }}
+            axes={[
+              { primary: true, type: "ordinal", position: "bottom" },
+              { position: "left", type: "linear", stacked: true },
+            ]}
+            tooltip
+          />
         </div>
       </div>
     </Layout>
