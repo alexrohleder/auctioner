@@ -45,11 +45,7 @@ export default function Home() {
       <div className="min-h-screen bg-gray-100">
         <div className="custom-container lg:grid-cols-4 grid gap-4 transform -translate-y-8">
           <div className="lg:col-span-2 flex flex-col gap-8">
-            {auctions ? (
-              auctions.map((auction) => (
-                <AuctionCard key={auction.id} {...auction} />
-              ))
-            ) : (
+            {auctions === null && (
               <>
                 <AuctionCardPlaceholder />
                 <AuctionCardPlaceholder />
@@ -58,6 +54,18 @@ export default function Home() {
                 <AuctionCardPlaceholder />
               </>
             )}
+            {auctions?.length === 0 && (
+              <div className="pt-16 text-center">
+                <div className="mb-2">No auctions yet</div>
+                <Link href="/auctions/new">
+                  <a className="btn">Create First Auction</a>
+                </Link>
+              </div>
+            )}
+            {auctions?.length > 0 &&
+              auctions.map((auction) => (
+                <AuctionCard key={auction.id} {...auction} />
+              ))}
           </div>
           <div className="lg:mt-0 lg:grid-col-span-2 mt-4">
             <div className="font-semibold">Recent Activity</div>
