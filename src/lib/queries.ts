@@ -61,13 +61,17 @@ export const getAuctionStats = async (
   startAt: Date,
   endAt: Date
 ) => {
-  return prisma.$queryRaw(
+  const [result] = await prisma.$queryRaw(
     `
     select
       sum(t.c) as views,
       count(distinct t.view_session_id) as uniques,
       sum(case when t.c = 1 then 1 else 0 end) as bounces,
-      sum(t.time) as totalTime
+      sum(t.time) as time,
+      64 as bids,
+      4200 as highest_bid,
+      3 as bidders,
+      SUM(t.time) as last_bid
     from (
       select
         view_session_id,
@@ -84,4 +88,6 @@ export const getAuctionStats = async (
     startAt,
     endAt
   );
+
+  return result;
 };

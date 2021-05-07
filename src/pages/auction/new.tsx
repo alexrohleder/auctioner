@@ -45,7 +45,7 @@ function CreateAuction() {
     if (error) {
       // todo: show toast with error message
     } else if (data?.length) {
-      router.push(`/auctions/${data[0].id}`);
+      router.push(`/auction/${data[0].id}`);
       // todo: show toast with succesful message
     }
   }

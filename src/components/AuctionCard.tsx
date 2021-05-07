@@ -1,6 +1,7 @@
-import AuctionCardSkeleton from "./AuctionCardSkeleton";
+import Link from "next/link";
 
 type Props = {
+  id: string;
   title: string;
   description: string;
   images: string[];
@@ -18,28 +19,34 @@ function Statistic(props: { title: string; value: string }) {
 
 function AuctionCard(props: Props) {
   return (
-    <AuctionCardSkeleton
-      media={props.withImages ? <div className="placeholder" /> : undefined}
-      title={
-        <div className="overflow-ellipsis overflow-hidden text-xl font-semibold">
-          {props.title}
+    <div className="bg-white border rounded shadow-sm">
+      {props.withImages && (
+        <div className="h-64 border-b">
+          <div className="placeholder" />
         </div>
-      }
-      statistics={
-        <div className="grid items-center h-full grid-cols-4 gap-2">
-          <Statistic title="Highest bid" value="kr1.200,00" />
-          <Statistic title="Last bid" value="2 min. ago" />
-          <Statistic title="Total bids" value="13" />
-          <Statistic title="Total bidders" value="4" />
+      )}
+      <div className="p-4">
+        <div className="flex items-center h-8 mb-4">
+          <div className="overflow-ellipsis overflow-hidden text-xl font-semibold">
+            <Link href={`/auction/${props.id}`}>
+              <a>{props.title}</a>
+            </Link>
+          </div>
         </div>
-      }
-      footer={
-        <>
-          <div className="h-4" />
-          <div className="h-4" />
-        </>
-      }
-    />
+        <div className="h-12">
+          <div className="grid items-center h-full grid-cols-4 gap-2">
+            <Statistic title="Highest bid" value="kr1.200,00" />
+            <Statistic title="Last bid" value="2 min. ago" />
+            <Statistic title="Total bids" value="13" />
+            <Statistic title="Total bidders" value="4" />
+          </div>
+        </div>
+      </div>
+      <div className="flex justify-around h-12 border-t">
+        <div className="h-4" />
+        <div className="h-4" />
+      </div>
+    </div>
   );
 }
 
