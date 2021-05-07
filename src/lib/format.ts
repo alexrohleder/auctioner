@@ -30,3 +30,7 @@ export function formatShortTime(val: number, formats = ["m", "s"], space = "") {
 
   return t;
 }
+
+export function formatMoney(amount: number, currencyCode: string) {
+  return (amount / 100).toFixed(2) + " " + currencyCode;
+}

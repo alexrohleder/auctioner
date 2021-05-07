@@ -1,11 +1,21 @@
 import prisma from "./db";
 
 export const getAuctionsBySellerId = async (sellerId: string) => {
-  return prisma.auction.findMany({
-    where: {
-      sellerId,
-    },
-  });
+  return prisma.$queryRaw(
+    `
+    select
+      a.*,
+      count(b.*) total_bids,
+      count(distinct b.bidder_id) total_bidders,
+      max(b.value) last_bid_amount,
+      max(b.created_at) last_bid_created_at
+    from auctions a
+    left join bids b on a.id = b.auction_id
+    where a.seller_id = $1
+    group by a.id
+  `,
+    sellerId
+  );
 };
 
 export const createAuction = async (data: {

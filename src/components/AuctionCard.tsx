@@ -1,14 +1,25 @@
 import Link from "next/link";
+import { ReactNode } from "react";
+import TimeAgo from "react-timeago";
+import { formatMoney } from "../lib/format";
 
 type Props = {
   id: string;
   title: string;
   description: string;
+  currencyCode: string;
   images: string[];
+  totalBids: number;
+  totalBidders: number;
+  lastBidAmount: number | null;
+  lastBidCreatedAt: string | null;
   withImages?: boolean;
 };
 
-function Statistic(props: { title: string; value: string }) {
+function Statistic(props: {
+  title: string;
+  value: string | number | ReactNode;
+}) {
   return (
     <div className="flex flex-col gap-1">
       <div className="text-sm text-gray-500">{props.title}</div>
@@ -18,6 +29,13 @@ function Statistic(props: { title: string; value: string }) {
 }
 
 function AuctionCard(props: Props) {
+  const timeAgoFormatter = (value: number, unit: string, suffix: string) => {
+    const newUnit = { minute: "min.", second: "sec." };
+    const swappedUnit = newUnit[unit] || unit;
+
+    return `${value} ${swappedUnit} ${suffix}`;
+  };
+
   return (
     <div className="bg-white border rounded shadow-sm">
       {props.withImages && (
@@ -35,10 +53,29 @@ function AuctionCard(props: Props) {
         </div>
         <div className="h-12">
           <div className="grid items-center h-full grid-cols-4 gap-2">
-            <Statistic title="Highest bid" value="kr1.200,00" />
-            <Statistic title="Last bid" value="2 min. ago" />
-            <Statistic title="Total bids" value="13" />
-            <Statistic title="Total bidders" value="4" />
+            <Statistic
+              title="Highest bid"
+              value={
+                props.lastBidAmount
+                  ? formatMoney(props.lastBidAmount, props.currencyCode)
+                  : "N/A"
+              }
+            />
+            <Statistic
+              title="Last bid"
+              value={
+                props.lastBidCreatedAt ? (
+                  <TimeAgo
+                    date={props.lastBidCreatedAt}
+                    formatter={timeAgoFormatter}
+                  />
+                ) : (
+                  "N/A"
+                )
+              }
+            />
+            <Statistic title="Total bids" value={props.totalBids} />
+            <Statistic title="Total bidders" value={props.totalBidders} />
           </div>
         </div>
       </div>

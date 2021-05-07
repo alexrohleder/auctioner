@@ -59,7 +59,18 @@ export default function Home() {
             )}
             {auctions.data?.length > 0 &&
               auctions.data.map((auction) => (
-                <AuctionCard key={auction.id} {...auction} />
+                <AuctionCard
+                  key={auction.id}
+                  id={auction.id}
+                  title={auction.title}
+                  description={auction.description}
+                  currencyCode={auction.currency_code}
+                  images={auction.images}
+                  totalBids={auction.total_bids}
+                  totalBidders={auction.total_bidders}
+                  lastBidAmount={auction.last_bid_amount}
+                  lastBidCreatedAt={auction.last_bid_created_at}
+                />
               ))}
             {auctions.isValidating && (
               <div className="flex justify-center pt-16">

@@ -1,4 +1,3 @@
-import joi from "joi";
 import { NextApiRequest, NextApiResponse } from "next";
 import connect from "next-connect";
 import { getReasonPhrase } from "http-status-codes";

@@ -44,7 +44,19 @@ function Auctions() {
           {auctions.data?.length && (
             <>
               {auctions.data?.map((auction) => (
-                <AuctionCard key={auction.id} {...auction} withImages />
+                <AuctionCard
+                  key={auction.id}
+                  id={auction.id}
+                  title={auction.title}
+                  description={auction.description}
+                  currencyCode={auction.currency_code}
+                  images={auction.images}
+                  totalBids={auction.total_bids}
+                  totalBidders={auction.total_bidders}
+                  lastBidAmount={auction.last_bid_amount}
+                  lastBidCreatedAt={auction.last_bid_created_at}
+                  withImages
+                />
               ))}
               <Link href="/auction/new">
                 <a className="hover:bg-gray-50 flex flex-col items-center justify-center gap-1 font-semibold transition-colors bg-white border rounded">
