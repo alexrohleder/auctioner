@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Account {
+  id                 String    @id @default(uuid())
+  compoundId         String    @unique @map(name: "compound_id")
+  userId             Int       @map(name: "user_id")
+  providerType       String    @map(name: "provider_type")
+  providerId         String    @map(name: "provider_id")
+  providerAccountId  String    @map(name: "provider_account_id")
+  refreshToken       String?   @map(name: "refresh_token")
+  accessToken        String?   @map(name: "access_token")
+  accessTokenExpires DateTime? @map(name: "access_token_expires")
+  createdAt          DateTime  @default(now()) @map(name: "created_at")
+  updatedAt          DateTime  @default(now()) @map(name: "updated_at")
+
+
+  @@index([providerAccountId], name: "providerAccountId")
+  @@index([providerId], name: "providerId")
+  @@index([userId], name: "userId")
+  @@map(name: "accounts")
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  userId       Int      @map(name: "user_id")
+  expires      DateTime
+  sessionToken String   @unique @map(name: "session_token")
+  accessToken  String   @unique @map(name: "access_token")
+  createdAt    DateTime @default(now()) @map(name: "created_at")
+  updatedAt    DateTime @default(now()) @map(name: "updated_at")
+
+  @@map(name: "sessions")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map(name: "email_verified")
+  image         String?
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @default(now()) @map(name: "updated_at")
+
+  @@map(name: "users")
+}
+
+model VerificationRequest {
+  id         String   @id @default(uuid())
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now()) @map(name: "created_at")
+  updatedAt  DateTime @default(now()) @map(name: "updated_at")
+
+  @@map(name: "verification_requests")
+}
+
+model Auction {
+  id            String   @id @default(uuid())
+  sellerId      String   @map(name: "seller_id")
+  bidIncrement  Int      @map(name: "bid_increment")
+  startingPrice Int      @map(name: "starting_price")
+  currencyCode  String   @map(name: "currency_code")
+  title         String
+  description   String?
+  isPublished   Boolean  @map(name: "is_published")
+  isSettled     Boolean  @map(name: "is_settled")
+  createdAt     DateTime @default(now()) @map(name: "created_at")
+  updatedAt     DateTime @default(now()) @map(name: "updated_at")
+  bids          Bid[]
+  views         View[]
+
+  @@map(name: "auctions")
+}
+
+model Bid {
+  id        String   @id @default(uuid())
+  bidderId  String   @map(name: "bidder_id")
+  auctionId String   @map(name: "auction_id")
+  value     Int
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  auction   Auction  @relation(fields: [auctionId], references: [id])
+
+  @@map(name: "bids")
+}
+
+model View {
+  id            String      @id @default(uuid())
+  auctionId     String      @map(name: "auction_id")
+  viewSessionId String      @map(name: "view_session_id")
+  referrer      String?
+  createdAt     DateTime    @default(now()) @map(name: "created_at")
+  auction       Auction     @relation(fields: [auctionId], references: [id])
+  viewSession   ViewSession @relation(fields: [viewSessionId], references: [id])
+
+  @@map("views")
+}
+
+model ViewSession {
+  id        String   @id @default(uuid())
+  hostname  String?
+  browser   String?
+  os        String?
+  device    String?
+  screen    String?
+  language  String?
+  country   String?
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  view      View[]
+
+  @@map("view_sessions")
+}

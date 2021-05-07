@@ -1,13 +1,17 @@
 import Link from "next/link";
+import useSWR from "swr";
 import DashboardStatisticCard from "../components/DashboardStatisticCard";
 import AuctionCardPlaceholder from "../components/AuctionCardPlaceholder";
 import Layout from "../components/Layout";
 import AuctionCard from "../components/AuctionCard";
-import useQuery from "../hooks/useQuery";
+import { useContext } from "react";
+import AuthContext from "../contexts/AuthContext";
 
 export default function Home() {
   let statistics, activities;
-  const [auctions] = useQuery("auctions");
+
+  const { user } = useContext(AuthContext);
+  const auctions = useSWR(user ? `/api/auction?sellerId=${user.id}` : null);
 
   return (
     <Layout title="Dashboard">
@@ -45,7 +49,7 @@ export default function Home() {
       <div className="min-h-screen bg-gray-100">
         <div className="custom-container lg:grid-cols-4 grid gap-4 transform -translate-y-8">
           <div className="lg:col-span-2 flex flex-col gap-8">
-            {auctions === null && (
+            {auctions.isValidating && (
               <>
                 <AuctionCardPlaceholder />
                 <AuctionCardPlaceholder />
@@ -54,7 +58,7 @@ export default function Home() {
                 <AuctionCardPlaceholder />
               </>
             )}
-            {auctions?.length === 0 && (
+            {auctions.data?.length === 0 && (
               <div className="pt-16 text-center">
                 <div className="mb-2">No auctions yet</div>
                 <Link href="/auctions/new">
@@ -62,8 +66,8 @@ export default function Home() {
                 </Link>
               </div>
             )}
-            {auctions?.length > 0 &&
-              auctions.map((auction) => (
+            {auctions.data?.length > 0 &&
+              auctions.data.map((auction) => (
                 <AuctionCard key={auction.id} {...auction} />
               ))}
           </div>

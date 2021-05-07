@@ -29,8 +29,8 @@ function App({ Component, pageProps }: AppProps) {
       "/api/collect",
       {
         payload: {
-          type: "page_view",
-          url: "https://inkspace.com",
+          type: "auction_view",
+          auctionId: "e283c92f-152b-4624-a2b4-d4e4e72f259a",
           referrer: "",
           hostname,
           screen: `${width}x${height}`,

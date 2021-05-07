@@ -1,11 +1,17 @@
 import Link from "next/link";
+import useSWR from "swr";
+import { useContext } from "react";
 import AuctionCard from "../../components/AuctionCard";
 import AuctionCardPlaceholder from "../../components/AuctionCardPlaceholder";
 import Layout from "../../components/Layout";
-import useQuery from "../../hooks/useQuery";
+import AuthContext from "../../contexts/AuthContext";
 
 function Auctions() {
-  const [auctions, error, isLoading] = useQuery("auctions");
+  const { user } = useContext(AuthContext);
+
+  const { data, error, isValidating } = useSWR(
+    user ? `/api/auction?sellerId=${user.id}` : null
+  );
 
   if (error) {
     return (
@@ -27,7 +33,7 @@ function Auctions() {
           autoFocus
         />
         <div className="lg:grid-cols-2 grid gap-4">
-          {isLoading ? (
+          {isValidating ? (
             <>
               <AuctionCardPlaceholder withImages />
               <AuctionCardPlaceholder withImages />
@@ -36,7 +42,7 @@ function Auctions() {
             </>
           ) : (
             <>
-              {auctions?.length === 0 ? (
+              {data?.length === 0 ? (
                 <div className="lg:col-span-2 text-center">
                   You don't have any auction yet.
                   <div className="mt-2">
@@ -47,7 +53,7 @@ function Auctions() {
                 </div>
               ) : (
                 <>
-                  {auctions?.map((auction) => (
+                  {data?.map((auction) => (
                     <AuctionCard key={auction.id} {...auction} withImages />
                   ))}
                   <Link href="/auctions/new">

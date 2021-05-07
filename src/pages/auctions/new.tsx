@@ -5,6 +5,7 @@ import Layout from "../../components/Layout";
 import Loading from "../../components/Loading";
 import AuthContext from "../../contexts/AuthContext";
 import supabase from "../../lib/supabase";
+import { post } from "../../lib/web";
 
 function CreateAuction() {
   const router = useRouter();
@@ -20,23 +21,23 @@ function CreateAuction() {
 
     const title = fields.title.value;
     const description = fields.description.value;
-    const starting_price = parseInt(fields.starting_price.value, 10);
-    const bid_increment = parseInt(fields.bid_increment.value, 10);
-    const is_published = fields.is_published.value === "1";
+    const startingPrice = parseInt(fields.starting_price.value, 10);
+    const bidIncrement = parseInt(fields.bid_increment.value, 10);
+    const isPublished = fields.is_published.value === "1";
 
     // todo: further validate fields
 
     setIsSaving(true);
 
-    const { data, error } = await supabase.from("auctions").insert({
-      seller_id: user.id,
+    const { data, error } = await post("/api/auction", {
+      sellerId: user.id,
+      bidIncrement,
+      startingPrice,
+      currencyCode: "NOK",
       title,
       description,
-      starting_price,
-      bid_increment,
-      currency_code: "NOK",
-      is_published,
-      images: uploadedFiles,
+      isPublished,
+      //images: uploadedFiles,
     });
 
     setIsSaving(false);
@@ -146,7 +147,6 @@ function CreateAuction() {
                 className=""
                 onChange={onImageUpload}
                 multiple
-                required
               />
             </div>
 
