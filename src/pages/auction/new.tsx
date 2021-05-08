@@ -1,17 +1,13 @@
 import { useRouter } from "next/router";
-import { ChangeEvent, FormEvent, useContext, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { ChangeEvent, FormEvent, useState } from "react";
 import Layout from "../../components/Layout";
 import Loading from "../../components/Loading";
-import AuthContext from "../../contexts/AuthContext";
-import supabase from "../../lib/supabase";
 import { post } from "../../lib/web";
 
 function CreateAuction() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState([]);
-  const { user } = useContext(AuthContext);
+  const user = { id: "ba22dcb8-59f6-4466-ae55-82f88607af70" };
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -51,17 +47,7 @@ function CreateAuction() {
   }
 
   // todo: treat errors
-  async function onImageUpload(event: ChangeEvent<HTMLInputElement>) {
-    const uploads = await Promise.all(
-      Array.from(event.target.files).map((file) =>
-        supabase.storage
-          .from("auction-images")
-          .upload(`${uuidv4()}.${file.type.substr("image/".length)}`, file)
-      )
-    );
-
-    setUploadedFiles(uploads.map((upload) => upload.data.Key));
-  }
+  async function onImageUpload(event: ChangeEvent<HTMLInputElement>) {}
 
   return (
     <Layout title="New Auction">

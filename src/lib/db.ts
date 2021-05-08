@@ -9,4 +9,9 @@ if (process.env.NODE_ENV === "production") {
   prisma = global.prisma = global.prisma || new PrismaClient();
 }
 
-export default prisma;
+// @ts-ignore
+prisma.sql = prisma.$queryRaw;
+// @ts-ignore  for syntax highlighting, see: frigus02.vscode-sql-tagged-template-literals
+export const sql = prisma.sql;
+
+export default prisma as PrismaClient & { sql: any };

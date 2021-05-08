@@ -2,16 +2,14 @@ import Link from "next/link";
 import DashboardStatisticCard from "../components/DashboardStatisticCard";
 import Layout from "../components/Layout";
 import AuctionCard from "../components/AuctionCard";
-import { useContext } from "react";
-import AuthContext from "../contexts/AuthContext";
 import Loading from "../components/Loading";
-import { url, useFetch } from "../lib/fetch";
-import { formatMoney } from "../lib/format";
+import { url, useFetch } from "../lib/web";
+import { money } from "../lib/format";
 
 export default function Home() {
   let activities;
 
-  const { user } = useContext(AuthContext);
+  const user = { id: "ba22dcb8-59f6-4466-ae55-82f88607af70" };
   const auctions = useFetch(() => url("/api/auction", { sellerId: user.id }));
   const statistics = useFetch(() => `/api/seller/${user.id}/statistics`);
 
@@ -33,7 +31,7 @@ export default function Home() {
               title="Revenue"
               currentValue={statistics.data?.revenue}
               previousValue={statistics.data?.revenue_from}
-              format={(value) => (value ? formatMoney(value, "NOK") : "N/A")}
+              format={(value) => (value ? money(value, "NOK") : "N/A")}
             />
             <DashboardStatisticCard
               title="Convertion rate"

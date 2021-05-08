@@ -1,8 +1,7 @@
-import TimeAgo from "react-timeago";
 import { useRouter } from "next/router";
 import Layout from "../../components/Layout";
-import { url, useFetch } from "../../lib/fetch";
-import { formatMoney, formatShortTime } from "../../lib/format";
+import { url, useFetch } from "../../lib/web";
+import { money } from "../../lib/format";
 
 const startAt = new Date(2000, 12, 12);
 const endAt = new Date();
@@ -54,7 +53,7 @@ function Auction() {
           <div className="p-4 border rounded">
             <div className="text-sm text-gray-700">Average visit time</div>
             <div className="h-8 mb-1 text-2xl font-semibold">
-              {formatShortTime(avgVisitTime, ["m", "s"], " ")}
+              {avgVisitTime}
             </div>
           </div>
           <div className="p-4 border rounded">
@@ -70,19 +69,13 @@ function Auction() {
           <div className="p-4 border rounded">
             <div className="text-sm text-gray-700">Highest Bid</div>
             <div className="h-8 mb-1 text-2xl font-semibold">
-              {last_bid_amount
-                ? formatMoney(last_bid_amount, currency_code)
-                : "N/A"}
+              {last_bid_amount ? money(last_bid_amount, currency_code) : "N/A"}
             </div>
           </div>
           <div className="p-4 border rounded">
             <div className="text-sm text-gray-700">Last Bid</div>
             <div className="h-8 mb-1 text-2xl font-semibold">
-              {last_bid_created_at ? (
-                <TimeAgo date={last_bid_created_at} />
-              ) : (
-                "N/A"
-              )}
+              {last_bid_created_at}
             </div>
           </div>
         </div>

@@ -1,12 +1,7 @@
 import Link from "next/link";
-import supabase from "../lib/supabase";
 import LayoutHeaderNavigationLink from "./LayoutHeaderNavigationLink";
 
 function LayoutHeader() {
-  async function onSignOut() {
-    const { error } = await supabase.auth.signOut();
-  }
-
   return (
     <div className="border-b">
       <header className="custom-container">
@@ -30,10 +25,7 @@ function LayoutHeader() {
                 Docs
               </a>
             </Link>
-            <div
-              className="w-10 h-10 bg-gray-300 rounded"
-              onClick={onSignOut}
-            />
+            <div className="w-10 h-10 bg-gray-300 rounded" />
           </div>
         </div>
         <div className="flex gap-2 overflow-x-auto">

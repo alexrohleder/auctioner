@@ -1,20 +1,23 @@
+import { getReasonPhrase } from "http-status-codes";
 import { NextApiRequest, NextApiResponse } from "next";
 import connect from "next-connect";
-import { getReasonPhrase } from "http-status-codes";
+import { HttpError } from "./errors";
 
 const api = () => {
   const handler = connect<NextApiRequest, NextApiResponse>({
     onError(err, req, res) {
-      if (typeof err.httpCode === "undefined" || err.httpCode >= 500) {
-        console.error(err);
+      if (err instanceof HttpError) {
+        return res.status(err.statusCode).json({
+          status: err.statusCode,
+          message: err.message,
+          details: err.details,
+        });
       }
 
-      const code = err.httpCode || 500;
-
-      res.status(code).json({
-        code,
-        reason: getReasonPhrase(code),
-        details: err.details,
+      res.status(500).json({
+        status: 500,
+        message: getReasonPhrase(500),
+        err: err.toString(),
       });
     },
   });
@@ -28,10 +31,6 @@ const api = () => {
   });
 
   return handler;
-};
-
-export const abort = (httpCode: number = 500, details?: any) => {
-  throw { httpCode, details };
 };
 
 export default api;

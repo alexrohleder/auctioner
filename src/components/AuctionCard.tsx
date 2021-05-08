@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ReactNode } from "react";
-import TimeAgo from "react-timeago";
-import { formatMoney } from "../lib/format";
+import { money } from "../lib/format";
 
 type Props = {
   id: string;
@@ -29,13 +28,6 @@ function Statistic(props: {
 }
 
 function AuctionCard(props: Props) {
-  const timeAgoFormatter = (value: number, unit: string, suffix: string) => {
-    const newUnit = { minute: "min.", second: "sec." };
-    const swappedUnit = newUnit[unit] || unit;
-
-    return `${value} ${swappedUnit} ${suffix}`;
-  };
-
   return (
     <div className="bg-white border rounded shadow-sm">
       {props.withImages && (
@@ -57,23 +49,11 @@ function AuctionCard(props: Props) {
               title="Highest bid"
               value={
                 props.lastBidAmount
-                  ? formatMoney(props.lastBidAmount, props.currencyCode)
+                  ? money(props.lastBidAmount, props.currencyCode)
                   : "N/A"
               }
             />
-            <Statistic
-              title="Last bid"
-              value={
-                props.lastBidCreatedAt ? (
-                  <TimeAgo
-                    date={props.lastBidCreatedAt}
-                    formatter={timeAgoFormatter}
-                  />
-                ) : (
-                  "N/A"
-                )
-              }
-            />
+            <Statistic title="Last bid" value={props.lastBidCreatedAt} />
             <Statistic title="Total bids" value={props.totalBids} />
             <Statistic title="Total bidders" value={props.totalBidders} />
           </div>

@@ -1,13 +1,11 @@
 import Link from "next/link";
-import { useContext } from "react";
 import AuctionCard from "../../components/AuctionCard";
 import Layout from "../../components/Layout";
-import AuthContext from "../../contexts/AuthContext";
 import Loading from "../../components/Loading";
-import { url, useFetch } from "../../lib/fetch";
+import { url, useFetch } from "../../lib/web";
 
 function Auctions() {
-  const { user } = useContext(AuthContext);
+  const user = { id: "ba22dcb8-59f6-4466-ae55-82f88607af70" };
   const auctions = useFetch(() => url("/api/auction", { sellerId: user.id }));
 
   if (auctions.error) {
