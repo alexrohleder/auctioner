@@ -118,7 +118,7 @@ function DashboardStatisticCard(props: Props) {
 }
 
 DashboardStatisticCard.defaultProps = {
-  format: (value: number) => value.toString(),
+  format: (value: number | undefined) => (value ? value.toString() : ""),
 };
 
 export default DashboardStatisticCard;

@@ -1,8 +1,7 @@
 import prisma from "./db";
 
-export const getAuctionsBySellerId = async (sellerId: string) => {
-  return prisma.$queryRaw(
-    `
+const buildAuctionQuery = (where: string) =>
+  `
     select
       a.*,
       count(b.*) total_bids,
@@ -11,11 +10,22 @@ export const getAuctionsBySellerId = async (sellerId: string) => {
       max(b.created_at) last_bid_created_at
     from auctions a
     left join bids b on a.id = b.auction_id
-    where a.seller_id = $1
+    where ${where}
     group by a.id
-  `,
-    sellerId
+    order by a.created_at, last_bid_created_at
+  `;
+
+export const getAuction = async (auctionId: string) => {
+  const [auction] = await prisma.$queryRaw(
+    buildAuctionQuery("a.id = $1"),
+    auctionId
   );
+
+  return auction;
+};
+
+export const getAuctionsBySellerId = async (sellerId: string) => {
+  return prisma.$queryRaw(buildAuctionQuery("a.seller_id = $1"), sellerId);
 };
 
 export const createAuction = async (data: {
@@ -77,11 +87,7 @@ export const getAuctionStats = async (
       sum(t.c) as views,
       count(distinct t.view_session_id) as uniques,
       sum(case when t.c = 1 then 1 else 0 end) as bounces,
-      sum(t.time) as time,
-      64 as bids,
-      4200 as highest_bid,
-      3 as bidders,
-      SUM(t.time) as last_bid
+      sum(t.time) as time
     from (
       select
         view_session_id,
@@ -123,4 +129,47 @@ export const getViewCohorts = async (
     startAt,
     endAt
   );
+};
+
+export const getSellerStatistics = async (
+  sellerId: string,
+  startAt: Date,
+  endAt: Date
+) => {
+  const buildQuery = (where: string) => `
+    select
+      count(id) total_auctions,
+      sum(case when is_settled then 1 else 0 end) total_settled_auctions,
+      sum(total_bids) total_bids,
+      sum(total_bidders) total_bidders,
+      sum(case when is_settled then last_bid_amount else 0 end) revenue
+      from (
+        select
+          a.id,
+          a.is_settled,
+          count(b.*) total_bids,
+          count(distinct b.bidder_id) total_bidders,
+          max(b.value) last_bid_amount
+        from auctions a
+        left join bids b on a.id = b.auction_id
+        where a.seller_id = $1
+        and ${where}
+        group by a.id
+    ) t
+  `;
+
+  const [statistics] = await prisma.$queryRaw(
+    `
+      select
+        a.*,
+        b.total_bids total_bids_from,
+        b.revenue revenue_from
+      from
+        (${buildQuery("1 = 1")}) a,
+        (${buildQuery("1 = 0")}) b
+    `,
+    sellerId
+  );
+
+  return statistics;
 };

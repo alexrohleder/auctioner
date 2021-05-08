@@ -6,12 +6,14 @@ import { useContext } from "react";
 import AuthContext from "../contexts/AuthContext";
 import Loading from "../components/Loading";
 import { url, useFetch } from "../lib/fetch";
+import { formatMoney } from "../lib/format";
 
 export default function Home() {
-  let statistics, activities;
+  let activities;
 
   const { user } = useContext(AuthContext);
   const auctions = useFetch(() => url("/api/auction", { sellerId: user.id }));
+  const statistics = useFetch(() => `/api/seller/${user.id}/statistics`);
 
   return (
     <Layout title="Dashboard">
@@ -20,22 +22,25 @@ export default function Home() {
           <div className="lg:grid-cols-4 grid flex-1 gap-4">
             <DashboardStatisticCard
               title="Total of bids"
-              currentValue={statistics?.total_bids}
-              previousValue={statistics?.total_bids_from}
-              info={`In ${statistics?.open_auctions} open auctions`}
+              currentValue={statistics.data?.total_bids}
+              previousValue={statistics.data?.total_bids_from}
+              info={`In ${
+                statistics.data?.total_auctions -
+                statistics.data?.total_settled_auctions
+              } open auctions`}
             />
             <DashboardStatisticCard
               title="Revenue"
-              currentValue={statistics?.revenue}
-              previousValue={statistics?.revenue_from}
-              format={(value) => `kr${value}`}
+              currentValue={statistics.data?.revenue}
+              previousValue={statistics.data?.revenue_from}
+              format={(value) => (value ? formatMoney(value, "NOK") : "N/A")}
             />
             <DashboardStatisticCard
               title="Convertion rate"
-              currentValue={statistics?.convertion_rate}
-              previousValue={statistics?.convertion_rate_from}
+              currentValue={statistics.data?.convertion_rate}
+              previousValue={statistics.data?.convertion_rate_from}
               format={(value) => `${value}%`}
-              info={`Out of ${statistics?.page_views} page views`}
+              info={`Out of ${statistics.data?.views} page views`}
               description="Percentage of visits that resulted in a bid"
             />
             <div className="flex items-center justify-center">

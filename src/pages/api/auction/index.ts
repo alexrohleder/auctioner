@@ -11,6 +11,11 @@ export default api()
       return abort(400, error.details);
     }
 
+    res.setHeader(
+      "Cache-Control",
+      "public, s-maxage=60, stale-while-revalidate=43200"
+    );
+
     res.json(await getAuctionsBySellerId(value.sellerId));
   })
   .post(async (req, res) => {
@@ -23,7 +28,7 @@ export default api()
         title: req.body.title,
         description: req.body.description,
         isPublished: req.body.isPublished,
-        isSettled: true,
+        isSettled: false,
       })
     );
   });

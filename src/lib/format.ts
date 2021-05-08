@@ -1,3 +1,5 @@
+import commaNumber from "comma-number";
+
 export function parseTime(val: number) {
   const days = ~~(val / 86400);
   const hours = ~~(val / 3600) - days * 24;
@@ -32,5 +34,5 @@ export function formatShortTime(val: number, formats = ["m", "s"], space = "") {
 }
 
 export function formatMoney(amount: number, currencyCode: string) {
-  return (amount / 100).toFixed(2) + " " + currencyCode;
+  return commaNumber((amount / 100).toFixed(2)) + " " + currencyCode;
 }
