@@ -83,12 +83,12 @@ model Auction {
 }
 
 model Bid {
-  id        String   @id @default(uuid())
-  bidderId  String   @map(name: "bidder_id")
-  auctionId String   @map(name: "auction_id")
-  value     Float
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  auction   Auction  @relation(fields: [auctionId], references: [id])
+  id         String   @id @default(uuid())
+  customerId String   @map(name: "customer_id")
+  auctionId  String   @map(name: "auction_id")
+  value      Float
+  createdAt  DateTime @default(now()) @map(name: "created_at")
+  auction    Auction  @relation(fields: [auctionId], references: [id])
 
   @@map(name: "bids")
 }

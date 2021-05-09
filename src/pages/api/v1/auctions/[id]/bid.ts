@@ -7,11 +7,17 @@ import notifyNewBid from "../../queues/notify-new-bid";
 import settlement from "../../queues/settlement";
 
 export default api().post(async (req, res) => {
-  const { data } = validate(req.body, {
-    id: Joi.string().uuid().required(),
-    bidderId: Joi.string().uuid().required(),
-    value: Joi.number().positive().precision(2).min(1).required(),
-  });
+  const { data } = validate(
+    {
+      ...req.body,
+      id: req.query.id,
+    },
+    {
+      id: Joi.string().uuid().required(),
+      customerId: Joi.string().uuid().required(),
+      value: Joi.number().positive().precision(2).min(1).required(),
+    }
+  );
 
   const auction = await prisma.auction.findUnique({
     where: {
@@ -49,7 +55,7 @@ export default api().post(async (req, res) => {
     }
   } else {
     if (data.value !== auction.bidIncrement) {
-      throw new BadRequestError("cannot bid different than bid increment");
+      throw new BadRequestError("Cannot bid different than bid increment");
     }
   }
 
@@ -57,7 +63,7 @@ export default api().post(async (req, res) => {
     await prisma.bid.create({
       data: {
         auctionId: data.id,
-        bidderId: data.bidderId,
+        customerId: data.customerId,
         value: data.value,
       },
     })

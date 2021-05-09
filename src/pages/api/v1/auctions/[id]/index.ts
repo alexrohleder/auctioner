@@ -14,7 +14,7 @@ export default api()
       include: {
         bids: {
           select: {
-            bidderId: true,
+            customerId: true,
             value: true,
             createdAt: true,
           },
@@ -30,15 +30,21 @@ export default api()
     res.json(auction);
   })
   .patch(async (req, res) => {
-    const { data } = validate(req.body, {
-      id: Joi.string().uuid().required(),
-      title: Joi.string(),
-      description: Joi.string(),
-      bidIncrement: Joi.number().positive().precision(2),
-      reservePrice: Joi.number().positive().precision(2),
-      buyItNowPrice: Joi.number().positive().precision(2),
-      isPublished: Joi.bool(),
-    });
+    const { data } = validate(
+      {
+        ...req.body,
+        id: req.query.id,
+      },
+      {
+        id: Joi.string().uuid().required(),
+        title: Joi.string(),
+        description: Joi.string(),
+        bidIncrement: Joi.number().positive().precision(2),
+        reservePrice: Joi.number().positive().precision(2),
+        buyItNowPrice: Joi.number().positive().precision(2),
+        isPublished: Joi.bool(),
+      }
+    );
 
     const auction = await prisma.auction.findUnique({
       where: {

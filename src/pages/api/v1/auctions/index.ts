@@ -22,7 +22,7 @@ export default api()
         include: {
           bids: {
             select: {
-              bidderId: true,
+              customerId: true,
               value: true,
               createdAt: true,
             },

@@ -13,7 +13,7 @@ export default Queue<Payload>("api/v1/queues/settlement", async (payload) => {
     include: {
       bids: {
         select: {
-          bidderId: true,
+          customerId: true,
           value: true,
           createdAt: true,
         },

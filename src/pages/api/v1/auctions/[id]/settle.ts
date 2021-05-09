@@ -6,7 +6,7 @@ import validate from "../../../../../lib/validate";
 import settlement from "../../queues/settlement";
 
 export default api().post(async (req, res) => {
-  const { data } = validate(req.body, {
+  const { data } = validate(req.query, {
     id: Joi.string().uuid().required(),
   });
 
