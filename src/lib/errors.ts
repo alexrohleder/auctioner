@@ -8,10 +8,12 @@ export class HttpError extends Error {
 }
 
 export class BadRequestError extends HttpError {
-  constructor(joiError: Joi.ValidationError) {
+  constructor(error: string | Joi.ValidationError) {
     super(
       400,
-      joiError.details.map((detail) => detail.message.replace(/"/g, "'"))
+      typeof error === "string"
+        ? [error]
+        : error.details.map((detail) => detail.message.replace(/"/g, "'"))
     );
   }
 }

@@ -2,6 +2,7 @@ import Joi from "joi";
 import api from "../../../../lib/api";
 import prisma from "../../../../lib/db";
 import validate from "../../../../lib/validate";
+import settlement from "../queues/settlement";
 
 export default api()
   .get(async (req, res) => {
@@ -39,26 +40,40 @@ export default api()
   .post(async (req, res) => {
     const { data } = validate(req.body, {
       sellerId: Joi.string().uuid().required(),
+      bidIncrement: Joi.number().positive().precision(2).required(),
+      startingPrice: Joi.number().positive().precision(2).required(),
+      reservePrice: Joi.number()
+        .positive()
+        .precision(2)
+        .greater(Joi.ref("startingPrice")),
+      buyItNowPrice: Joi.number()
+        .positive()
+        .precision(2)
+        .greater(Joi.ref("startingPrice")),
+      duration: Joi.number().allow(3, 5, 7, 10).required(),
       title: Joi.string().required(),
       description: Joi.string(),
-      startingPrice: Joi.number().positive().required(),
-      bidIncrement: Joi.number().positive().required(),
       isPublished: Joi.bool().required(),
-      isSettled: Joi.bool().required(),
     });
 
-    res.json(
-      await prisma.auction.create({
-        data: {
-          sellerId: data.sellerId,
-          title: data.title,
-          description: data.description,
-          startingPrice: data.startingPrice,
-          bidIncrement: data.bidIncrement,
-          currencyCode: data.currencyCode,
-          isPublished: data.isPublished,
-          isSettled: data.isSettled,
-        },
-      })
+    const auction = await prisma.auction.create({
+      data: {
+        sellerId: data.sellerId,
+        title: data.title,
+        description: data.description,
+        startingPrice: data.startingPrice,
+        bidIncrement: data.bidIncrement,
+        currencyCode: data.currencyCode,
+        duration: data.duration,
+        isPublished: data.isPublished,
+        isSettled: false,
+      },
+    });
+
+    res.json(auction);
+
+    settlement.enqueue(
+      { auctionId: auction.id },
+      { delay: `${auction.duration} days`, id: auction.id }
     );
   });

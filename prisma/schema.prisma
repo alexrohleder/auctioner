@@ -65,9 +65,12 @@ model VerificationRequest {
 model Auction {
   id            String   @id @default(uuid())
   sellerId      String   @map(name: "seller_id")
-  bidIncrement  Int      @map(name: "bid_increment")
-  startingPrice Int      @map(name: "starting_price")
+  bidIncrement  Float    @map(name: "bid_increment")
+  startingPrice Float    @map(name: "starting_price")
+  reservePrice  Float?   @map(name: "reserve_price")
+  buyItNowPrice Float?   @map(name: "buy_it_now_price")
   currencyCode  String   @map(name: "currency_code")
+  duration      Int
   title         String
   description   String?
   isPublished   Boolean  @map(name: "is_published")
@@ -83,7 +86,7 @@ model Bid {
   id        String   @id @default(uuid())
   bidderId  String   @map(name: "bidder_id")
   auctionId String   @map(name: "auction_id")
-  value     Int
+  value     Float
   createdAt DateTime @default(now()) @map(name: "created_at")
   auction   Auction  @relation(fields: [auctionId], references: [id])
 
