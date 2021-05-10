@@ -25,5 +25,9 @@ export default Queue<Payload>("api/v1/queues/settlement", async (payload) => {
     },
   });
 
+  if (auction.bids.length === 0) {
+    // todo: if auction finishs without bids, then send email asking to re-open
+  }
+
   // todo: notify the bidder and transfer the money to seller
 });

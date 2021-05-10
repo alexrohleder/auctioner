@@ -69,6 +69,11 @@ export default api().post(async (req, res) => {
     })
   );
 
-  settlement.enqueue({ auctionId: data.id }, { id: data.id });
-  notifyNewBid.enqueue({ auctionId: data.id });
+  // todo: if we reach the buy it now call this:
+  // settlement.enqueue({ auctionId: data.id }, { id: data.id });
+
+  notifyNewBid.enqueue(
+    { auctionId: data.id },
+    { id: data.id, delay: "10 minutes" } // so we batch notifications
+  );
 });

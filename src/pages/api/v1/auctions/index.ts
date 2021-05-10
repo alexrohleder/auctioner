@@ -2,6 +2,7 @@ import Joi from "joi";
 import api from "../../../../lib/api";
 import prisma from "../../../../lib/db";
 import validate from "../../../../lib/validate";
+import notifyNewBid from "../queues/notify-new-bid";
 import settlement from "../queues/settlement";
 
 export default api()
@@ -36,6 +37,8 @@ export default api()
         skip,
       })
     );
+
+    notifyNewBid.enqueue({ auctionId: "" });
   })
   .post(async (req, res) => {
     const { data } = validate(req.body, {

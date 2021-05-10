@@ -67,6 +67,8 @@ export default api()
       throw new HttpError(404);
     }
 
+    // todo: if no bids than allow changing starting price
+
     if (auction.isSettled) {
       throw new BadRequestError("Cannot modify settled auctions");
     }
