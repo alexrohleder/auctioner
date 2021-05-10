@@ -4,8 +4,12 @@ import z from "../../../../lib/validation";
 import notifyNewBid from "../queues/notify-new-bid";
 import settlement from "../queues/settlement";
 
+// todo: search by attributes
+// todo: save attributes
+
 const SelectSchema = z.object({
-  sellerId: z.string().uuid(),
+  sellerId: z.string().uuid().optional(),
+  categoryId: z.string().uuid().optional(),
   title: z.string().optional(),
   description: z.string().optional(),
   isPublished: z.boolean().optional(),
@@ -18,6 +22,7 @@ const SelectSchema = z.object({
 
 const InsertSchema = z.object({
   sellerId: z.string().uuid(),
+  categoryId: z.string().uuid(),
   bidIncrement: z.number().positive(),
   startingPrice: z.number().positive(),
   reservePrice: z.number().positive().optional(),
@@ -68,6 +73,7 @@ export default api()
     const auction = await prisma.auction.create({
       data: {
         sellerId: data.sellerId,
+        categoryId: data.categoryId,
         title: data.title,
         description: data.description,
         startingPrice: data.startingPrice,

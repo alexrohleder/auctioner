@@ -109,15 +109,16 @@ model Category {
 }
 
 model Attribute {
-  id         String             @id @default(uuid())
-  creatorId  String             @map(name: "creator_id")
-  categoryId String             @map(name: "category_id")
-  name       String
-  type       String
-  createdAt  DateTime           @default(now()) @map(name: "created_at")
-  updatedAt  DateTime           @default(now()) @map(name: "updated_at")
-  category   Category           @relation(fields: [categoryId], references: [id])
-  values     AuctionAttribute[]
+  id           String             @id @default(uuid())
+  creatorId    String             @map(name: "creator_id")
+  categoryId   String             @map(name: "category_id")
+  name         String
+  type         String
+  defaultValue String?            @map(name: "default_value")
+  createdAt    DateTime           @default(now()) @map(name: "created_at")
+  updatedAt    DateTime           @default(now()) @map(name: "updated_at")
+  category     Category           @relation(fields: [categoryId], references: [id])
+  values       AuctionAttribute[]
 
   @@unique([categoryId, name])
   @@map("attributes")
