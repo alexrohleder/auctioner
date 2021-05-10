@@ -63,20 +63,23 @@ model VerificationRequest {
 }
 
 model Auction {
-  id            String   @id @default(uuid())
-  sellerId      String   @map(name: "seller_id")
-  bidIncrement  Float    @map(name: "bid_increment")
-  startingPrice Float    @map(name: "starting_price")
-  reservePrice  Float?   @map(name: "reserve_price")
-  buyItNowPrice Float?   @map(name: "buy_it_now_price")
+  id            String             @id @default(uuid())
+  sellerId      String             @map(name: "seller_id")
+  categoryId    String             @map(name: "category_id")
+  bidIncrement  Float              @map(name: "bid_increment")
+  startingPrice Float              @map(name: "starting_price")
+  reservePrice  Float?             @map(name: "reserve_price")
+  buyItNowPrice Float?             @map(name: "buy_it_now_price")
   duration      Int
   title         String
   description   String?
-  isPublished   Boolean  @map(name: "is_published")
-  isSettled     Boolean  @map(name: "is_settled")
-  createdAt     DateTime @default(now()) @map(name: "created_at")
-  updatedAt     DateTime @default(now()) @map(name: "updated_at")
+  isPublished   Boolean            @map(name: "is_published")
+  isSettled     Boolean            @map(name: "is_settled")
+  createdAt     DateTime           @default(now()) @map(name: "created_at")
+  updatedAt     DateTime           @default(now()) @map(name: "updated_at")
   bids          Bid[]
+  category      Category           @relation(fields: [categoryId], references: [id])
+  attributes    AuctionAttribute[]
 
   @@map(name: "auctions")
 }
@@ -90,4 +93,44 @@ model Bid {
   auction    Auction  @relation(fields: [auctionId], references: [id])
 
   @@map(name: "bids")
+}
+
+model Category {
+  id         String      @id @default(uuid())
+  creatorId  String      @map(name: "creator_id")
+  name       String
+  createdAt  DateTime    @default(now()) @map(name: "created_at")
+  updatedAt  DateTime    @default(now()) @map(name: "updated_at")
+  auctions   Auction[]
+  attributes Attribute[]
+
+  @@unique([name])
+  @@map("categories")
+}
+
+model Attribute {
+  id         String             @id @default(uuid())
+  creatorId  String             @map(name: "creator_id")
+  categoryId String             @map(name: "category_id")
+  name       String
+  type       String
+  createdAt  DateTime           @default(now()) @map(name: "created_at")
+  updatedAt  DateTime           @default(now()) @map(name: "updated_at")
+  category   Category           @relation(fields: [categoryId], references: [id])
+  values     AuctionAttribute[]
+
+  @@unique([categoryId, name])
+  @@map("attributes")
+}
+
+model AuctionAttribute {
+  auctionId   String
+  attributeId String
+  value       String
+  updatedAt   DateTime  @default(now()) @map(name: "updated_at")
+  auction     Auction   @relation(fields: [auctionId], references: [id])
+  attribute   Attribute @relation(fields: [attributeId], references: [id])
+
+  @@id([auctionId, attributeId])
+  @@map("auctions_attributes")
 }

@@ -16,7 +16,7 @@ export default api()
   .get(async (req, res) => {
     const id = z.string().uuid().parse(req.query.id);
 
-    const auction = await prisma.auction.findFirst({
+    const auction = await prisma.auction.findUnique({
       include: {
         bids: {
           select: {
