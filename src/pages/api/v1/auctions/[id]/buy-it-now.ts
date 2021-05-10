@@ -1,25 +1,16 @@
-import Joi from "joi";
 import api from "../../../../../lib/api";
 import prisma from "../../../../../lib/db";
-import validate from "../../../../../lib/validate";
+import z from "../../../../../lib/validation";
 
 export default api().post(async (req, res) => {
-  const { data } = validate(
-    {
-      ...req.body,
-      id: req.query.id,
-    },
-    {
-      id: Joi.string().uuid().required(),
-      customerId: Joi.string().uuid().required(),
-    }
-  );
+  const id = z.string().uuid().parse(req.query.id);
+  const customerId = z.string().uuid().parse(req.body.customerId);
 
   // todo: payment
 
   await prisma.auction.update({
     where: {
-      id: data.id,
+      id,
     },
     data: {
       isSettled: true,

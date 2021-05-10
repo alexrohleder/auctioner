@@ -1,17 +1,14 @@
-import Joi from "joi";
 import api from "../../../../../lib/api";
 import prisma from "../../../../../lib/db";
 import { BadRequestError, HttpError } from "../../../../../lib/errors";
-import validate from "../../../../../lib/validate";
+import z from "../../../../../lib/validation";
 
 export default api().post(async (req, res) => {
-  const { data } = validate(req.query, {
-    id: Joi.string().uuid().required(),
-  });
+  const id = z.string().uuid().parse(req.query.id);
 
   const auction = await prisma.auction.findUnique({
     where: {
-      id: data.id,
+      id,
     },
   });
 

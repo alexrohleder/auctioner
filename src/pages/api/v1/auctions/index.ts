@@ -1,22 +1,36 @@
-import Joi from "joi";
 import api from "../../../../lib/api";
 import prisma from "../../../../lib/db";
-import validate from "../../../../lib/validate";
+import z from "../../../../lib/validation";
 import notifyNewBid from "../queues/notify-new-bid";
 import settlement from "../queues/settlement";
 
+const SelectSchema = z.object({
+  sellerId: z.string().uuid(),
+  title: z.string().optional(),
+  description: z.string().optional(),
+  isPublished: z.boolean().optional(),
+  isSettled: z.boolean().optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+  take: z.number().int().min(1).max(100),
+  skip: z.number().int().min(1).optional(),
+});
+
+const InsertSchema = z.object({
+  sellerId: z.string().uuid(),
+  bidIncrement: z.number().positive(),
+  startingPrice: z.number().positive(),
+  reservePrice: z.number().positive().optional(),
+  buyItNowPrice: z.number().positive().optional(),
+  duration: z.number().positive(),
+  title: z.string(),
+  description: z.string(),
+  isPublished: z.boolean(),
+});
+
 export default api()
   .get(async (req, res) => {
-    const { take, skip, where } = validate(req.query, {
-      ...validate.pagination,
-      sellerId: Joi.string().uuid(),
-      title: Joi.string(),
-      description: Joi.string(),
-      isPublished: Joi.bool(),
-      isSettled: Joi.bool(),
-      createdAt: Joi.date(),
-      updatedAt: Joi.date(),
-    });
+    const { take = 10, skip, ...data } = SelectSchema.parse(req.query);
 
     res.json(
       await prisma.auction.findMany({
@@ -32,8 +46,16 @@ export default api()
         orderBy: {
           createdAt: "desc",
         },
+        where: {
+          sellerId: data.sellerId,
+          title: data.title,
+          description: data.description,
+          isPublished: data.isPublished,
+          isSettled: data.isSettled,
+          createdAt: data.createdAt,
+          updatedAt: data.updatedAt,
+        },
         take,
-        where,
         skip,
       })
     );
@@ -41,23 +63,7 @@ export default api()
     notifyNewBid.enqueue({ auctionId: "" });
   })
   .post(async (req, res) => {
-    const { data } = validate(req.body, {
-      sellerId: Joi.string().uuid().required(),
-      bidIncrement: Joi.number().positive().precision(2).required(),
-      startingPrice: Joi.number().positive().precision(2).required(),
-      reservePrice: Joi.number()
-        .positive()
-        .precision(2)
-        .greater(Joi.ref("startingPrice")),
-      buyItNowPrice: Joi.number()
-        .positive()
-        .precision(2)
-        .greater(Joi.ref("startingPrice")),
-      duration: Joi.number().allow(3, 5, 7, 10).required(),
-      title: Joi.string().required(),
-      description: Joi.string(),
-      isPublished: Joi.bool().required(),
-    });
+    const data = InsertSchema.parse(req.body);
 
     const auction = await prisma.auction.create({
       data: {
@@ -66,7 +72,6 @@ export default api()
         description: data.description,
         startingPrice: data.startingPrice,
         bidIncrement: data.bidIncrement,
-        currencyCode: data.currencyCode,
         duration: data.duration,
         isPublished: data.isPublished,
         isSettled: false,

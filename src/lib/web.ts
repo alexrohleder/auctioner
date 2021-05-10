@@ -2,7 +2,7 @@ import useSWR from "swr";
 
 export const useFetch = useSWR;
 
-export const url = (uri: string, params?: Record<string, any>) => {
+export const url = (uri: string, params: Record<string, any> = {}) => {
   const map = Object.keys(params).reduce((arr, key) => {
     if (params[key] !== undefined) {
       const value = encodeURIComponent(
@@ -13,7 +13,7 @@ export const url = (uri: string, params?: Record<string, any>) => {
     }
 
     return arr;
-  }, []);
+  }, [] as string[]);
 
   if (map.length) {
     return `${uri}?${map.join("&")}`;

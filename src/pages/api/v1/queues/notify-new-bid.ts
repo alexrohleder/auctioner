@@ -1,6 +1,7 @@
 import prisma from "../../../../lib/db";
 import { Queue } from "quirrel/next";
 import mail from "../../../../lib/mail";
+import z from "../../../../lib/validation";
 
 type Payload = {
   auctionId: string;
@@ -9,9 +10,11 @@ type Payload = {
 export default Queue<Payload>(
   "api/v1/queues/notify-new-bid",
   async (payload) => {
+    const id = z.string().uuid().parse(payload.auctionId);
+
     const auction = await prisma.auction.findUnique({
       where: {
-        id: payload.auctionId,
+        id,
       },
       include: {
         bids: {

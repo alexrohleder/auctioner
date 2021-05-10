@@ -1,27 +1,17 @@
-import Joi from "joi";
 import api from "../../../../../lib/api";
 import prisma from "../../../../../lib/db";
 import { BadRequestError, HttpError } from "../../../../../lib/errors";
-import validate from "../../../../../lib/validate";
+import z from "../../../../../lib/validation";
 import notifyNewBid from "../../queues/notify-new-bid";
-import settlement from "../../queues/settlement";
 
 export default api().post(async (req, res) => {
-  const { data } = validate(
-    {
-      ...req.body,
-      id: req.query.id,
-    },
-    {
-      id: Joi.string().uuid().required(),
-      customerId: Joi.string().uuid().required(),
-      value: Joi.number().positive().precision(2).min(1).required(),
-    }
-  );
+  const id = z.string().uuid().parse(req.query.id);
+  const customerId = z.string().uuid().parse(req.body.customerId);
+  const value = z.number().positive().min(1).parse(req.body.value);
 
   const auction = await prisma.auction.findUnique({
     where: {
-      id: data.id,
+      id,
     },
     include: {
       bids: {
@@ -46,15 +36,15 @@ export default api().post(async (req, res) => {
   }
 
   if (auction.bids[0]) {
-    if (auction.bids[0].value >= data.value) {
+    if (auction.bids[0].value >= value) {
       throw new BadRequestError("Cannot bid less than current quote");
     }
 
-    if (data.value - auction.bidIncrement !== auction.bids[0].value) {
+    if (value - auction.bidIncrement !== auction.bids[0].value) {
       throw new BadRequestError("Cannot bid less than bid increment");
     }
   } else {
-    if (data.value !== auction.bidIncrement) {
+    if (value !== auction.bidIncrement) {
       throw new BadRequestError("Cannot bid different than bid increment");
     }
   }
@@ -62,9 +52,9 @@ export default api().post(async (req, res) => {
   res.json(
     await prisma.bid.create({
       data: {
-        auctionId: data.id,
-        customerId: data.customerId,
-        value: data.value,
+        auctionId: id,
+        customerId,
+        value,
       },
     })
   );
@@ -72,8 +62,5 @@ export default api().post(async (req, res) => {
   // todo: if we reach the buy it now call this:
   // settlement.enqueue({ auctionId: data.id }, { id: data.id });
 
-  notifyNewBid.enqueue(
-    { auctionId: data.id },
-    { id: data.id, delay: "10 minutes" } // so we batch notifications
-  );
+  notifyNewBid.enqueue({ auctionId: id }, { id, delay: "10 minutes" });
 });

@@ -1,18 +1,15 @@
-import Joi from "joi";
 import api from "../../../../../lib/api";
 import prisma from "../../../../../lib/db";
 import { HttpError } from "../../../../../lib/errors";
-import validate from "../../../../../lib/validate";
+import z from "../../../../../lib/validation";
 import settlement from "../../queues/settlement";
 
 export default api().post(async (req, res) => {
-  const { data } = validate(req.query, {
-    id: Joi.string().uuid().required(),
-  });
+  const id = z.string().uuid().parse(req.query.id);
 
   const auction = await prisma.auction.findUnique({
     where: {
-      id: data.id,
+      id,
     },
     include: {
       bids: {
@@ -34,7 +31,7 @@ export default api().post(async (req, res) => {
   if (auction.bids.length === 0) {
     await prisma.auction.update({
       where: {
-        id: data.id,
+        id,
       },
       data: {
         isSettled: true,
@@ -44,6 +41,6 @@ export default api().post(async (req, res) => {
     return res.json({ status: "CLOSED" });
   }
 
-  settlement.enqueue({ auctionId: data.id }, { id: data.id });
+  settlement.enqueue({ auctionId: id }, { id });
   res.json({ status: "ENQUEUED" });
 });

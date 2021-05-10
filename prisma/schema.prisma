@@ -69,7 +69,6 @@ model Auction {
   startingPrice Float    @map(name: "starting_price")
   reservePrice  Float?   @map(name: "reserve_price")
   buyItNowPrice Float?   @map(name: "buy_it_now_price")
-  currencyCode  String   @map(name: "currency_code")
   duration      Int
   title         String
   description   String?

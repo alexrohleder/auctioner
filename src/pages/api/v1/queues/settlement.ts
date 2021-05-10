@@ -1,14 +1,17 @@
 import prisma from "../../../../lib/db";
 import { Queue } from "quirrel/next";
+import z from "../../../../lib/validation";
 
 type Payload = {
   auctionId: string;
 };
 
 export default Queue<Payload>("api/v1/queues/settlement", async (payload) => {
+  const id = z.string().uuid().parse(payload.auctionId);
+
   const auction = await prisma.auction.findUnique({
     where: {
-      id: payload.auctionId,
+      id,
     },
     include: {
       bids: {
@@ -24,6 +27,11 @@ export default Queue<Payload>("api/v1/queues/settlement", async (payload) => {
       },
     },
   });
+
+  if (!auction) {
+    // todo: log
+    return;
+  }
 
   if (auction.bids.length === 0) {
     // todo: if auction finishs without bids, then send email asking to re-open

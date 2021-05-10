@@ -1,14 +1,20 @@
-import Joi from "joi";
 import api from "../../../../../lib/api";
 import prisma from "../../../../../lib/db";
 import { BadRequestError, HttpError } from "../../../../../lib/errors";
-import validate from "../../../../../lib/validate";
+import z from "../../../../../lib/validation";
+
+const UpdateSchema = z.object({
+  title: z.string().optional(),
+  description: z.string().optional(),
+  bidIncrement: z.number().positive().optional(),
+  reservePrice: z.number().positive().optional(),
+  buyItNowPrice: z.number().positive().optional(),
+  isPublished: z.boolean().optional(),
+});
 
 export default api()
   .get(async (req, res) => {
-    const { where } = validate(req.query, {
-      id: Joi.string().uuid().required(),
-    });
+    const id = z.string().uuid().parse(req.query.id);
 
     const auction = await prisma.auction.findFirst({
       include: {
@@ -20,7 +26,9 @@ export default api()
           },
         },
       },
-      where,
+      where: {
+        id,
+      },
     });
 
     if (!auction) {
@@ -30,25 +38,12 @@ export default api()
     res.json(auction);
   })
   .patch(async (req, res) => {
-    const { data } = validate(
-      {
-        ...req.body,
-        id: req.query.id,
-      },
-      {
-        id: Joi.string().uuid().required(),
-        title: Joi.string(),
-        description: Joi.string(),
-        bidIncrement: Joi.number().positive().precision(2),
-        reservePrice: Joi.number().positive().precision(2),
-        buyItNowPrice: Joi.number().positive().precision(2),
-        isPublished: Joi.bool(),
-      }
-    );
+    const id = z.string().uuid().parse(req.query.id);
+    const data = UpdateSchema.parse(req.body);
 
     const auction = await prisma.auction.findUnique({
       where: {
-        id: data.id,
+        id,
       },
       include: {
         bids: {
@@ -73,15 +68,13 @@ export default api()
       throw new BadRequestError("Cannot modify settled auctions");
     }
 
-    const { id, ...update } = data;
-
-    if (update.reservePrice < auction.bids[0]?.value) {
+    if (data.reservePrice && data.reservePrice < auction.bids[0]?.value) {
       throw new BadRequestError(
         "Cannot set reserve price to less than current quote"
       );
     }
 
-    if (update.buyItNowPrice < auction.bids[0]?.value) {
+    if (data.buyItNowPrice && data.buyItNowPrice < auction.bids[0]?.value) {
       throw new BadRequestError(
         "Cannot set buy it now price to less than current quote"
       );
@@ -92,7 +85,7 @@ export default api()
         where: {
           id,
         },
-        data: update,
+        data,
       })
     );
   });

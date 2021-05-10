@@ -65,10 +65,10 @@ function DashboardStatisticCard(props: Props) {
   let formattedPreviousValue = "";
   let changeColor = "";
   let changeIcon = null;
+  let isLoading = true;
 
-  const isLoading = typeof props.currentValue === "undefined";
-
-  if (!isLoading) {
+  if (props.currentValue !== undefined) {
+    isLoading = false;
     formattedCurrentValue = props.format(props.currentValue);
 
     if (typeof props.previousValue !== "undefined") {
