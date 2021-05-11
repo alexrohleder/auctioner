@@ -4,8 +4,8 @@ import { BadRequestError, HttpError } from "../../../../../../lib/errors";
 import z from "../../../../../../lib/validation";
 
 const SelectSchema = z.object({
+  categoryId: z.string().uuid(),
   creatorId: z.string().uuid().optional(),
-  categoryId: z.string().uuid().optional(),
   name: z.string().optional(),
   type: z.string().optional(),
   createdAt: z.date().optional(),
@@ -40,8 +40,8 @@ export default api()
           createdAt: "desc",
         },
         where: {
-          creatorId: data.creatorId,
           categoryId: data.categoryId,
+          creatorId: data.creatorId,
           name: data.name,
           type: data.type,
           createdAt: data.createdAt,
@@ -53,11 +53,12 @@ export default api()
     );
   })
   .post(async (req, res) => {
+    const categoryId = z.string().uuid().parse(req.query.categoryId);
     const data = InsertSchema.parse(req.body);
 
     const category = prisma.category.findUnique({
       where: {
-        id: data.categoryId,
+        id: categoryId,
       },
     });
 
@@ -78,8 +79,8 @@ export default api()
     res.json(
       await prisma.attribute.create({
         data: {
+          categoryId,
           creatorId: data.creatorId,
-          categoryId: data.categoryId,
           name: data.name,
           type: data.type,
           defaultValue: data.defaultValue,

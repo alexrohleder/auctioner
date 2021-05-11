@@ -17,12 +17,14 @@ function Auction() {
       last_bid_amount,
       last_bid_created_at,
     } = {},
-  } = useFetch(router.query.id ? `/api/auction/${router.query.id}` : null);
+  } = useFetch(
+    router.query.auctionId ? `/api/auction/${router.query.auctionId}` : null
+  );
 
   const { data: { views = 0, uniques = 0, bounces, time } = {} } = useFetch(
     router.query.id
       ? url("/api/auction/stats", {
-          auctionId: router.query.id,
+          auctionId: router.query.auctionId,
           startAt,
           endAt,
         })

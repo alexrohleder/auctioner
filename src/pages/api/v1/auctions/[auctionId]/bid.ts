@@ -5,7 +5,7 @@ import z from "../../../../../lib/validation";
 import notifyNewBid from "../../queues/notify-new-bid";
 
 export default api().post(async (req, res) => {
-  const id = z.string().uuid().parse(req.query.id);
+  const id = z.string().uuid().parse(req.query.auctionId);
   const customerId = z.string().uuid().parse(req.body.customerId);
   const value = z.number().positive().min(1).parse(req.body.value);
 

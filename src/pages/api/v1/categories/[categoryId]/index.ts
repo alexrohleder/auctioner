@@ -9,7 +9,7 @@ const UpdateSchema = z.object({
 
 export default api()
   .get(async (req, res) => {
-    const id = z.string().uuid().parse(req.query.id);
+    const id = z.string().uuid().parse(req.query.categoryId);
 
     const category = await prisma.category.findUnique({
       where: {
@@ -37,7 +37,7 @@ export default api()
     res.json(category);
   })
   .patch(async (req, res) => {
-    const id = z.string().uuid().parse(req.query.id);
+    const id = z.string().uuid().parse(req.query.categoryId);
     const data = UpdateSchema.parse(req.body);
 
     const category = await prisma.category.findUnique({

@@ -14,7 +14,7 @@ const UpdateSchema = z.object({
 
 export default api()
   .get(async (req, res) => {
-    const id = z.string().uuid().parse(req.query.id);
+    const id = z.string().uuid().parse(req.query.auctionId);
 
     const auction = await prisma.auction.findUnique({
       include: {
@@ -38,7 +38,7 @@ export default api()
     res.json(auction);
   })
   .patch(async (req, res) => {
-    const id = z.string().uuid().parse(req.query.id);
+    const id = z.string().uuid().parse(req.query.auctionId);
     const data = UpdateSchema.parse(req.body);
 
     const auction = await prisma.auction.findUnique({

@@ -5,7 +5,7 @@ import z from "../../../../../lib/validation";
 import settlement from "../../queues/settlement";
 
 export default api().post(async (req, res) => {
-  const id = z.string().uuid().parse(req.query.id);
+  const id = z.string().uuid().parse(req.query.auctionId);
 
   const auction = await prisma.auction.findUnique({
     where: {

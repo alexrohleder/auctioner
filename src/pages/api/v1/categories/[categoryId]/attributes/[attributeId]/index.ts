@@ -10,7 +10,7 @@ const UpdateSchema = z.object({
 
 export default api()
   .get(async (req, res) => {
-    const id = z.string().uuid().parse(req.query.id);
+    const id = z.string().uuid().parse(req.query.attributeId);
 
     const attribute = await prisma.attribute.findUnique({
       where: {
@@ -33,7 +33,7 @@ export default api()
     res.json(attribute);
   })
   .patch(async (req, res) => {
-    const id = z.string().uuid().parse(req.query.id);
+    const id = z.string().uuid().parse(req.query.attributeId);
     const data = UpdateSchema.parse(req.body);
 
     const attribute = await prisma.attribute.findUnique({
@@ -59,7 +59,7 @@ export default api()
     );
   })
   .delete(async (req, res) => {
-    const id = z.string().uuid().parse(req.query.id);
+    const id = z.string().uuid().parse(req.query.attributeId);
 
     res.json(
       await prisma.attribute.delete({

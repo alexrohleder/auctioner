@@ -3,7 +3,7 @@ import prisma from "../../../../../lib/db";
 import z from "../../../../../lib/validation";
 
 export default api().post(async (req, res) => {
-  const id = z.string().uuid().parse(req.query.id);
+  const id = z.string().uuid().parse(req.query.auctionId);
   const customerId = z.string().uuid().parse(req.body.customerId);
 
   // todo: payment
