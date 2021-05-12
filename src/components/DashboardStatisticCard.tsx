@@ -64,7 +64,7 @@ function DashboardStatisticCard(props: Props) {
   let formattedCurrentValue = "";
   let formattedPreviousValue = "";
   let changeColor = "";
-  let changeIcon = null;
+  let changeIcon: React.ReactElement | null = null;
   let isLoading = true;
 
   if (props.currentValue !== undefined) {

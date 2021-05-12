@@ -32,12 +32,14 @@ const request = (method: "post", url: string, body?: Record<string, any>) =>
       "Content-Type": "application/json",
     },
     body: body ? JSON.stringify(body) : undefined,
-  }).then((res) => {
+  }).then(async (res) => {
     if (res.ok) {
-      return res.json().then((data) => ({ data, error: null }));
+      const data = await res.json();
+      return { data, error: null };
     }
 
-    return res.text().then((error) => ({ data: null, error }));
+    const error = await res.text();
+    return { data: null, error };
   });
 
 export const post = (url: string, params: Record<string, any>) =>

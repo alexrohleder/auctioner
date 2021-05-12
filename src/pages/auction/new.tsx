@@ -1,13 +1,22 @@
-import { useRouter } from "next/router";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import Input from "../../components/Input";
 import Layout from "../../components/Layout";
 import Loading from "../../components/Loading";
-import { post } from "../../lib/web";
+
+function useNow() {
+  const [now, setNow] = useState("");
+
+  useEffect(() => {
+    setNow(new Date().toISOString().substr(0, "yyyy-mm-ddThh:mm".length));
+  }, []);
+
+  return now;
+}
 
 function CreateAuction() {
-  const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
-  const user = { id: "ba22dcb8-59f6-4466-ae55-82f88607af70" };
+  const [isValid, setValidity] = useState(false);
+  const now = useNow();
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -19,35 +28,18 @@ function CreateAuction() {
     const description = fields.description.value;
     const startingPrice = parseInt(fields.starting_price.value, 10);
     const bidIncrement = parseInt(fields.bid_increment.value, 10);
+    const reservePrice = parseInt(fields.reserve_price.value, 10);
+    const buyItNowPrice = parseInt(fields.buy_it_now_price.value, 10);
+    const duration = parseInt(fields.duration.value, 10);
+    const publicationDate = fields.publication_date.value;
     const isPublished = fields.is_published.value === "1";
 
-    // todo: further validate fields
-
     setIsSaving(true);
-
-    const { data, error } = await post("/api/auction", {
-      sellerId: user.id,
-      bidIncrement,
-      startingPrice,
-      currencyCode: "NOK",
-      title,
-      description,
-      isPublished,
-      //images: uploadedFiles,
-    });
-
-    setIsSaving(false);
-
-    if (error) {
-      // todo: show toast with error message
-    } else if (data?.length) {
-      router.push(`/auction/${data[0].id}`);
-      // todo: show toast with succesful message
-    }
   }
 
-  // todo: treat errors
-  async function onImageUpload(event: ChangeEvent<HTMLInputElement>) {}
+  function onChange(event: ChangeEvent<HTMLFormElement>) {
+    console.log(event);
+  }
 
   return (
     <Layout title="New Auction">
@@ -58,83 +50,104 @@ function CreateAuction() {
       </div>
       <div className="min-h-screen bg-gray-100">
         <div className="custom-container py-8">
-          <form onSubmit={onSubmit}>
+          <form onSubmit={onSubmit} onChange={onChange}>
             <fieldset>
               <legend className="font-semibold">General Information</legend>
-              <label className="block mt-2">
-                <span className="text-gray-700">Title</span>
-                <input
+              <div className="mt-2">
+                <Input
+                  label="Title"
                   type="text"
                   name="title"
-                  className="block w-full mt-1 rounded"
                   maxLength={120}
                   minLength={3}
                   required
                   autoFocus
                 />
-              </label>
-              <label className="block mt-2">
-                <span className="text-gray-700">Description</span>
-                <textarea
-                  className="block w-full mt-1 rounded"
-                  rows={3}
+              </div>
+              <div className="mt-2">
+                <Input
+                  label="Description"
+                  as="textarea"
                   name="description"
+                  rows={3}
+                  maxLength={2048}
                 />
-              </label>
+              </div>
             </fieldset>
 
-            <fieldset className="flex w-full gap-4 mt-8">
+            <fieldset className="mt-8">
               <legend className="font-semibold">Settlement</legend>
-              <label className="flex-1 mt-2">
-                <span className="text-gray-700">Starting Price</span>
-                <input
-                  type="number"
-                  name="starting_price"
-                  className="block w-full mt-1 rounded"
-                  defaultValue="0"
-                  min={0}
-                />
-              </label>
-              <label className="flex-1 mt-2">
-                <span className="text-gray-700">Bid Increment</span>
-                <input
-                  type="number"
-                  name="bid_increment"
-                  className="block w-full mt-1 rounded"
-                  defaultValue="0"
-                  min={0}
-                />
-              </label>
+              <div className="lg:grid-cols-4 grid gap-4 mt-2">
+                <div className="flex-1">
+                  <Input
+                    label="Starting Price"
+                    prefix="$"
+                    type="number"
+                    name="starting_price"
+                    defaultValue="10"
+                    min={0}
+                    required
+                  />
+                </div>
+                <div className="flex-1">
+                  <Input
+                    label="Bid Increment"
+                    prefix="$"
+                    type="number"
+                    name="bid_increment"
+                    defaultValue="1"
+                    min={1}
+                    required
+                  />
+                </div>
+                <div className="flex-1">
+                  <Input
+                    label="Reserve Price"
+                    prefix="$"
+                    type="number"
+                    name="bid_increment"
+                    min={0}
+                  />
+                </div>
+                <div className="flex-1">
+                  <Input
+                    label="Buy it Now Price"
+                    prefix="$"
+                    type="number"
+                    name="bid_increment"
+                  />
+                </div>
+              </div>
             </fieldset>
 
             <fieldset className="mt-8">
               <legend className="font-semibold">Visibility</legend>
-              <label className="block mt-2">
-                <input
-                  type="radio"
-                  name="is_published"
-                  value="1"
-                  defaultChecked
-                />
-                <span className="ml-2 text-gray-700">Published</span>
-              </label>
-              <label className="block">
-                <input type="radio" name="is_published" value="0" />
-                <span className="ml-2 text-gray-700">Not published</span>
-              </label>
+              <div className="lg:grid-cols-4 grid gap-4 mt-2">
+                <div className="flex-1">
+                  <Input
+                    label="Duration"
+                    as="select"
+                    name="duration"
+                    defaultValue={3}
+                    required
+                  >
+                    <option value={3}>3 days</option>
+                    <option value={5}>5 days</option>
+                    <option value={7}>7 days</option>
+                    <option value={10}>10 days</option>
+                  </Input>
+                </div>
+                <div className="flex-1">
+                  <Input
+                    label="Publication Date (UTC)"
+                    type="datetime-local"
+                    min={now}
+                    defaultValue={now}
+                    required
+                  />
+                </div>
+              </div>
             </fieldset>
-
-            <div className="mt-8">
-              <input
-                type="file"
-                id="images"
-                name="images"
-                accept="image/*"
-                className=""
-                onChange={onImageUpload}
-                multiple
-              />
-            </div>
 
             <div className="flex items-center justify-end gap-4 mt-8">
               {isSaving && <Loading />}
@@ -143,7 +156,7 @@ function CreateAuction() {
                 className="btn btn--primary"
                 disabled={isSaving}
               >
-                Submit
+                Create
               </button>
             </div>
           </form>
