@@ -1,7 +1,10 @@
+import { isPast, sub } from "date-fns";
 import api from "../../../../lib/api";
+import { cast } from "../../../../lib/casts";
 import prisma from "../../../../lib/db";
 import z from "../../../../lib/validation";
 import notifyNewBid from "../queues/notify-new-bid";
+import publish from "../queues/publish";
 import settlement from "../queues/settlement";
 
 // todo: search by attributes
@@ -94,12 +97,19 @@ export default api()
         buyItNowPrice: data.buyItNowPrice,
         duration: data.duration,
         publicateAt: data.publicateAt,
-        isPublished: false,
+        isPublished: isPast(sub(data.publicateAt, { minutes: 1 })),
         isSettled: false,
       },
     });
 
     res.json(auction);
+
+    if (!auction.isPublished) {
+      publish.enqueue(
+        { auctionId: auction.id },
+        { id: auction.id, runAt: auction.publicateAt }
+      );
+    }
 
     settlement.enqueue(
       { auctionId: auction.id },

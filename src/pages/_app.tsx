@@ -10,7 +10,7 @@ function App({ Component, pageProps }: AppProps) {
       value={{ id: "f501c593-206a-4406-bb9e-8197c55b2f98" }}
     >
       <Component {...pageProps} />
-      <ToastContainer position="bottom-right" limit={3} />
+      <ToastContainer position="bottom-right" limit={3} pauseOnHover={false} />
     </UserContext.Provider>
   );
 }

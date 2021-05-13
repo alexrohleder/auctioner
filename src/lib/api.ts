@@ -37,11 +37,14 @@ const api = () => {
   });
 
   handler.use((req, res, next) => {
-    for (const key in req.query) {
-      const val = req.query[key];
-      const casted = typeof val === "string" ? cast(val) : val.map(cast);
+    const input = ["query", "body"];
 
-      req.query[key] = casted as string | string[];
+    for (const channel of input) {
+      for (const key in req[channel]) {
+        const val = req[channel][key];
+        const casted = Array.isArray(val) ? val.map(cast) : cast(val);
+        req[channel][key] = casted as string | string[];
+      }
     }
 
     next();
