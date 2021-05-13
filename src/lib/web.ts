@@ -38,7 +38,7 @@ const request = (method: "post", url: string, body?: Record<string, any>) =>
       return { data, error: null };
     }
 
-    const error = await res.text();
+    const error = await res.json();
     return { data: null, error };
   });
 

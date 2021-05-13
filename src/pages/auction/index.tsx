@@ -5,8 +5,10 @@ import Loading from "../../components/Loading";
 import { url, useFetch } from "../../lib/web";
 
 function Auctions() {
-  const user = { id: "ba22dcb8-59f6-4466-ae55-82f88607af70" };
-  const auctions = useFetch(() => url("/api/auction", { sellerId: user.id }));
+  const user = { id: "f501c593-206a-4406-bb9e-8197c55b2f98" };
+  const auctions = useFetch(() =>
+    url("/api/v1/auctions", { sellerId: user.id })
+  );
 
   if (auctions.error) {
     return (

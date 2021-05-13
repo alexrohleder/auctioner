@@ -10,13 +10,13 @@ import settlement from "../queues/settlement";
 const SelectSchema = z.object({
   sellerId: z.string().uuid().optional(),
   categoryId: z.string().uuid().optional(),
-  title: z.string().optional(),
+  title: z.string().max(80).min(3).optional(),
   description: z.string().optional(),
   isPublished: z.boolean().optional(),
   isSettled: z.boolean().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
-  take: z.number().int().min(1).max(100),
+  take: z.number().int().min(1).max(100).optional(),
   skip: z.number().int().min(1).optional(),
 });
 
@@ -26,16 +26,18 @@ const InsertSchema = z
     categoryId: z.string().uuid(),
     bidIncrement: z.number().positive(),
     startingPrice: z.number().positive(),
-    reservePrice: z.number().positive().optional(),
-    buyItNowPrice: z.number().positive().optional(),
+    reservePrice: z.number().positive().nullable(),
+    buyItNowPrice: z.number().positive().nullable(),
     duration: z.number().positive(),
-    title: z.string(),
+    title: z.string().max(80).min(3),
     description: z.string(),
     isPublished: z.boolean(),
   })
   .refine(
     (data) =>
-      data.buyItNowPrice && data.buyItNowPrice >= data.startingPrice * 1.3,
+      data.buyItNowPrice
+        ? data.buyItNowPrice >= data.startingPrice * 1.3
+        : true,
     {
       message: "Buy it now price must be at least 30% more than starting price",
       path: ["buyItNowPrice"],

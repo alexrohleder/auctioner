@@ -7,12 +7,11 @@ const SelectSchema = z.object({
   name: z.string().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
-  take: z.number().int().min(1).max(100),
+  take: z.number().int().min(1).max(100).optional(),
   skip: z.number().int().min(1).optional(),
 });
 
 const InsertSchema = z.object({
-  creatorId: z.string().uuid(),
   name: z.string(),
 });
 
@@ -44,12 +43,13 @@ export default api()
     );
   })
   .post(async (req, res) => {
+    const creatorId = "0d1e45e5-1b8c-4265-95b8-a50183e7e7b0";
     const data = InsertSchema.parse(req.body);
 
     res.json(
       await prisma.category.create({
         data: {
-          creatorId: data.creatorId,
+          creatorId,
           name: data.name,
         },
       })

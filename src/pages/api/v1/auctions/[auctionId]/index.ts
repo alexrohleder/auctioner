@@ -4,7 +4,7 @@ import { BadRequestError, HttpError } from "../../../../../lib/errors";
 import z from "../../../../../lib/validation";
 
 const UpdateSchema = z.object({
-  title: z.string().optional(),
+  title: z.string().max(80).min(3).optional(),
   description: z.string().optional(),
   bidIncrement: z.number().positive().optional(),
   reservePrice: z.number().positive().optional(),

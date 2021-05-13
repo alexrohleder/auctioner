@@ -1093,7 +1093,7 @@ data-uri-to-buffer@3.0.1:
   resolved "https://registry.yarnpkg.com/data-uri-to-buffer/-/data-uri-to-buffer-3.0.1.tgz#594b8973938c5bc2c33046535785341abc4f3636"
   integrity sha512-WboRycPNsVw3B3TL559F7kuBUM4d8CgMEvk6xEJlOp7OBPjt6G7z8WMWlD2rOFZLk6OYfFIUGsCOWzcQH9K2og==
 
-date-fns@^2.16.1, date-fns@^2.21.3:
+date-fns@^2.16.1:
   version "2.21.3"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.21.3.tgz#8f5f6889d7a96bbcc1f0ea50239b397a83357f9b"
   integrity sha512-HeYdzCaFflc1i4tGbj7JKMjM4cKGYoyxwcIIkHzNgCkX8xXDNJDZXgDDVchIWpN4eQc3lH37WarduXFZJOtxfw==
@@ -1375,11 +1375,6 @@ expand-tilde@2.0.2:
   integrity sha1-l+gBqgUt8CRU3kawK/YhZCzchQI=
   dependencies:
     homedir-polyfill "^1.0.1"
-
-express-prettify@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/express-prettify/-/express-prettify-0.1.1.tgz#a6cbbcd3989a7452e79bb9a3e4c47b2c27494804"
-  integrity sha512-AtLYJhseS9bIwkG+tqSn4OKr7RJ8fxJ+/P8SDZ9XdcMiGPvi633c2YC8QaHJKokyffd6sHxSuyZ/eWwDX6kOpw==
 
 fast-decode-uri-component@^1.0.1:
   version "1.0.1"

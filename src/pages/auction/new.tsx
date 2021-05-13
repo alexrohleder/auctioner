@@ -1,7 +1,8 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Input from "../../components/Input";
 import Layout from "../../components/Layout";
 import Loading from "../../components/Loading";
+import { post } from "../../lib/web";
 
 function useNow() {
   const [now, setNow] = useState("");
@@ -13,7 +14,7 @@ function useNow() {
   return now;
 }
 
-function CreateAuction() {
+function NewAuction() {
   const [isSaving, setIsSaving] = useState(false);
   const [isValid, setValidity] = useState(false);
   const now = useNow();
@@ -32,13 +33,21 @@ function CreateAuction() {
     const buyItNowPrice = parseInt(fields.buy_it_now_price.value, 10);
     const duration = parseInt(fields.duration.value, 10);
     const publicationDate = fields.publication_date.value;
-    const isPublished = fields.is_published.value === "1";
+
+    post("/api/v1/auctions", {
+      sellerId: "f501c593-206a-4406-bb9e-8197c55b2f98",
+      categoryId: "24df7ada-1fa5-496e-92cf-8d906d93a034",
+      title,
+      description,
+      bidIncrement,
+      startingPrice,
+      reservePrice,
+      buyItNowPrice,
+      duration,
+      isPublished: true,
+    });
 
     setIsSaving(true);
-  }
-
-  function onChange(event: ChangeEvent<HTMLFormElement>) {
-    console.log(event);
   }
 
   return (
@@ -50,7 +59,7 @@ function CreateAuction() {
       </div>
       <div className="min-h-screen bg-gray-100">
         <div className="custom-container py-8">
-          <form onSubmit={onSubmit} onChange={onChange}>
+          <form onSubmit={onSubmit}>
             <fieldset>
               <legend className="font-semibold">General Information</legend>
               <div className="mt-2">
@@ -58,7 +67,7 @@ function CreateAuction() {
                   label="Title"
                   type="text"
                   name="title"
-                  maxLength={120}
+                  maxLength={80}
                   minLength={3}
                   required
                   autoFocus
@@ -105,7 +114,7 @@ function CreateAuction() {
                     label="Reserve Price"
                     prefix="$"
                     type="number"
-                    name="bid_increment"
+                    name="reserve_price"
                     min={0}
                   />
                 </div>
@@ -114,7 +123,7 @@ function CreateAuction() {
                     label="Buy it Now Price"
                     prefix="$"
                     type="number"
-                    name="bid_increment"
+                    name="buy_it_now_price"
                   />
                 </div>
               </div>
@@ -141,11 +150,29 @@ function CreateAuction() {
                   <Input
                     label="Publication Date (UTC)"
                     type="datetime-local"
+                    name="publication_date"
                     min={now}
                     defaultValue={now}
                     required
                   />
                 </div>
+              </div>
+            </fieldset>
+
+            <fieldset className="mt-8">
+              <legend className="font-semibold">Product Information</legend>
+              <div className="lg:grid-cols-4 grid gap-4 mt-2">
+                <Input
+                  label="Category"
+                  as="select"
+                  name="category"
+                  defaultValue="24df7ada-1fa5-496e-92cf-8d906d93a034"
+                  required
+                >
+                  <option value="24df7ada-1fa5-496e-92cf-8d906d93a034">
+                    Schedule
+                  </option>
+                </Input>
               </div>
             </fieldset>
 
@@ -166,4 +193,4 @@ function CreateAuction() {
   );
 }
 
-export default CreateAuction;
+export default NewAuction;

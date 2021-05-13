@@ -7,11 +7,12 @@ import { url, useFetch } from "../lib/web";
 import { money } from "../lib/format";
 
 export default function Home() {
-  let activities;
+  let activities, statistics;
 
-  const user = { id: "ba22dcb8-59f6-4466-ae55-82f88607af70" };
-  const auctions = useFetch(() => url("/api/auction", { sellerId: user.id }));
-  const statistics = useFetch(() => `/api/seller/${user.id}/statistics`);
+  const user = { id: "f501c593-206a-4406-bb9e-8197c55b2f98" };
+  const auctions = useFetch(() =>
+    url("/api/v1/auctions", { sellerId: user.id })
+  );
 
   return (
     <Layout title="Dashboard">
@@ -20,25 +21,24 @@ export default function Home() {
           <div className="lg:grid-cols-4 grid flex-1 gap-4">
             <DashboardStatisticCard
               title="Total of bids"
-              currentValue={statistics.data?.total_bids}
-              previousValue={statistics.data?.total_bids_from}
+              currentValue={statistics?.total_bids}
+              previousValue={statistics?.total_bids_from}
               info={`In ${
-                statistics.data?.total_auctions -
-                statistics.data?.total_settled_auctions
+                statistics?.total_auctions - statistics?.total_settled_auctions
               } open auctions`}
             />
             <DashboardStatisticCard
               title="Revenue"
-              currentValue={statistics.data?.revenue}
-              previousValue={statistics.data?.revenue_from}
+              currentValue={statistics?.revenue}
+              previousValue={statistics?.revenue_from}
               format={(value) => (value ? money(value, "NOK") : "N/A")}
             />
             <DashboardStatisticCard
               title="Convertion rate"
-              currentValue={statistics.data?.convertion_rate}
-              previousValue={statistics.data?.convertion_rate_from}
+              currentValue={statistics?.convertion_rate}
+              previousValue={statistics?.convertion_rate_from}
               format={(value) => `${value}%`}
-              info={`Out of ${statistics.data?.views} page views`}
+              info={`Out of ${statistics?.views} page views`}
               description="Percentage of visits that resulted in a bid"
             />
             <div className="flex items-center justify-center">
