@@ -1,23 +1,19 @@
-import { FormEvent, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { FormEvent, useContext, useState } from "react";
+import { toast } from "react-toastify";
 import Input from "../../components/Input";
 import Layout from "../../components/Layout";
 import Loading from "../../components/Loading";
-import { post } from "../../lib/web";
-
-function useNow() {
-  const [now, setNow] = useState("");
-
-  useEffect(() => {
-    setNow(new Date().toISOString().substr(0, "yyyy-mm-ddThh:mm".length));
-  }, []);
-
-  return now;
-}
+import UserContext from "../../contexts/UserContext";
+import useNow from "../../hooks/useNow";
+import { post, useFetch } from "../../lib/web";
 
 function NewAuction() {
+  const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
-  const [isValid, setValidity] = useState(false);
+  const user = useContext(UserContext);
   const now = useNow();
+  const categories = useFetch("/api/v1/categories");
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -32,10 +28,12 @@ function NewAuction() {
     const reservePrice = parseInt(fields.reserve_price.value, 10);
     const buyItNowPrice = parseInt(fields.buy_it_now_price.value, 10);
     const duration = parseInt(fields.duration.value, 10);
-    const publicationDate = fields.publication_date.value;
+    const publicateAt = fields.publicate_at.value;
 
-    post("/api/v1/auctions", {
-      sellerId: "f501c593-206a-4406-bb9e-8197c55b2f98",
+    setIsSaving(true);
+
+    const { data, error } = await post("/api/v1/auctions", {
+      sellerId: user!.id,
       categoryId: "24df7ada-1fa5-496e-92cf-8d906d93a034",
       title,
       description,
@@ -44,10 +42,17 @@ function NewAuction() {
       reservePrice,
       buyItNowPrice,
       duration,
-      isPublished: true,
+      publicateAt,
     });
 
-    setIsSaving(true);
+    setIsSaving(false);
+
+    if (error) {
+      toast.error("Failed to create auction");
+    } else {
+      toast.success("Auction created");
+      router.replace(`/auctions/${data.id}`);
+    }
   }
 
   return (
@@ -150,7 +155,7 @@ function NewAuction() {
                   <Input
                     label="Publication Date (UTC)"
                     type="datetime-local"
-                    name="publication_date"
+                    name="publicate_at"
                     min={now}
                     defaultValue={now}
                     required
@@ -162,16 +167,12 @@ function NewAuction() {
             <fieldset className="mt-8">
               <legend className="font-semibold">Product Information</legend>
               <div className="lg:grid-cols-4 grid gap-4 mt-2">
-                <Input
-                  label="Category"
-                  as="select"
-                  name="category"
-                  defaultValue="24df7ada-1fa5-496e-92cf-8d906d93a034"
-                  required
-                >
-                  <option value="24df7ada-1fa5-496e-92cf-8d906d93a034">
-                    Schedule
-                  </option>
+                <Input label="Category" as="select" name="category" required>
+                  {categories.data?.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
                 </Input>
               </div>
             </fieldset>

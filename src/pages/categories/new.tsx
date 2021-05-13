@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { FormEvent, useState } from "react";
+import { toast } from "react-toastify";
 import Input from "../../components/Input";
 import Layout from "../../components/Layout";
 import Loading from "../../components/Loading";
@@ -24,9 +25,9 @@ function NewCategory() {
     setIsSaving(false);
 
     if (error) {
-      // todo: display error toast
+      toast.error("Failed to create category");
     } else {
-      // todo: display success toast
+      toast.success("Category created");
       router.replace(`/categories/${data.id}`);
     }
   }

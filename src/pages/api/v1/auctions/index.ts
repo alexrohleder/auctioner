@@ -14,6 +14,7 @@ const SelectSchema = z.object({
   description: z.string().optional(),
   isPublished: z.boolean().optional(),
   isSettled: z.boolean().optional(),
+  publicateAt: z.date().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
   take: z.number().int().min(1).max(100).optional(),
@@ -31,7 +32,7 @@ const InsertSchema = z
     duration: z.number().positive(),
     title: z.string().max(80).min(3),
     description: z.string(),
-    isPublished: z.boolean(),
+    publicateAt: z.date(),
   })
   .refine(
     (data) =>
@@ -92,7 +93,8 @@ export default api()
         reservePrice: data.reservePrice,
         buyItNowPrice: data.buyItNowPrice,
         duration: data.duration,
-        isPublished: data.isPublished,
+        publicateAt: data.publicateAt,
+        isPublished: false,
         isSettled: false,
       },
     });
