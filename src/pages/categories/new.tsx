@@ -27,7 +27,7 @@ function NewCategory() {
       // todo: display error toast
     } else {
       // todo: display success toast
-      router.replace(`/category/${data.id}`);
+      router.replace(`/categories/${data.id}`);
     }
   }
 

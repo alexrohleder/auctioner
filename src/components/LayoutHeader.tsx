@@ -32,8 +32,11 @@ function LayoutHeader() {
           <LayoutHeaderNavigationLink href="/dashboard">
             Dashboard
           </LayoutHeaderNavigationLink>
-          <LayoutHeaderNavigationLink href="/auction">
+          <LayoutHeaderNavigationLink href="/auctions">
             Auctions
+          </LayoutHeaderNavigationLink>
+          <LayoutHeaderNavigationLink href="/categories">
+            Categories
           </LayoutHeaderNavigationLink>
           <LayoutHeaderNavigationLink href="/activities">
             Activities
