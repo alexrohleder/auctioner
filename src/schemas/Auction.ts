@@ -6,8 +6,8 @@ export const InsertSchema = z
     categoryId: z.string().uuid(),
     bidIncrement: z.number().positive(),
     startingPrice: z.number().positive(),
-    reservePrice: z.number().positive().optional(),
-    buyItNowPrice: z.number().positive().optional(),
+    reservePrice: z.number().positive().nullable(),
+    buyItNowPrice: z.number().positive().nullable(),
     duration: z.number().positive(),
     title: z.string(),
     description: z.string(),
@@ -15,7 +15,9 @@ export const InsertSchema = z
   })
   .refine(
     (data) =>
-      data.buyItNowPrice && data.buyItNowPrice >= data.startingPrice * 1.3,
+      data.buyItNowPrice === null
+        ? true
+        : data.buyItNowPrice >= data.startingPrice * 1.3,
     {
       message: "Buy it now price must be at least 30% more than starting price",
       path: ["buyItNowPrice"],

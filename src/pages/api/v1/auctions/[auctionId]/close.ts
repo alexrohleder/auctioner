@@ -28,20 +28,18 @@ export default api().post(async (req, res) => {
     throw new HttpError(404);
   }
 
-  if (auction.statuses[0].status === AuctionStatuses.OPEN) {
-    throw new BadRequestError("Auction is not closed");
-  }
-
-  if (auction.statuses[0].status === AuctionStatuses.SOLD) {
-    throw new BadRequestError("Cannot re-open sold auctions");
+  if (auction.statuses[0].status !== AuctionStatuses.OPEN) {
+    throw new BadRequestError("Auction is not open");
   }
 
   res.json(
     await prisma.auctionStatus.create({
       data: {
         auctionId: auction.id,
-        status: AuctionStatuses.OPEN,
+        status: AuctionStatuses.CLOSED,
       },
     })
   );
+
+  // todo: notify bidders if any
 });

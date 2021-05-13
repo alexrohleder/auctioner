@@ -1,3 +1,4 @@
+import { AuctionStatuses } from ".prisma/client";
 import api from "../../../../../lib/api";
 import prisma from "../../../../../lib/db";
 import { BadRequestError, HttpError } from "../../../../../lib/errors";
@@ -6,6 +7,7 @@ import z from "../../../../../lib/validation";
 const UpdateSchema = z.object({
   title: z.string().max(80).min(3).optional(),
   description: z.string().optional(),
+  startingPrice: z.number().positive().optional(),
   bidIncrement: z.number().positive().optional(),
   reservePrice: z.number().positive().optional(),
   buyItNowPrice: z.number().positive().optional(),
@@ -55,6 +57,15 @@ export default api()
           },
           take: 1,
         },
+        statuses: {
+          select: {
+            status: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 1,
+        },
       },
     });
 
@@ -62,10 +73,12 @@ export default api()
       throw new HttpError(404);
     }
 
-    // todo: if no bids than allow changing starting price
+    if (auction.statuses[0].status === AuctionStatuses.SOLD) {
+      throw new BadRequestError("Cannot modify sold auctions");
+    }
 
-    if (auction.isSettled) {
-      throw new BadRequestError("Cannot modify settled auctions");
+    if (data.startingPrice && auction.bids.length > 0) {
+      throw new BadRequestError("Cannot modify starting price after first bid");
     }
 
     if (data.reservePrice && data.reservePrice < auction.bids[0]?.value) {

@@ -1,8 +1,10 @@
+import { AuctionStatuses } from ".prisma/client";
 import api from "../../../../../lib/api";
 import prisma from "../../../../../lib/db";
 import { BadRequestError, HttpError } from "../../../../../lib/errors";
 import z from "../../../../../lib/validation";
 import notifyNewBid from "../../queues/notify-new-bid";
+import settlement from "../../queues/settlement";
 
 export default api().post(async (req, res) => {
   const id = z.string().uuid().parse(req.query.auctionId);
@@ -23,6 +25,15 @@ export default api().post(async (req, res) => {
         },
         take: 1,
       },
+      statuses: {
+        select: {
+          status: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 1,
+      },
     },
   });
 
@@ -30,9 +41,10 @@ export default api().post(async (req, res) => {
     throw new HttpError(404);
   }
 
-  if (auction.isSettled) {
-    // todo: perhaps test current time against auction duration too?
-    throw new BadRequestError("Cannot bid in settled auctions");
+  if (auction.statuses[0].status !== AuctionStatuses.OPEN) {
+    throw new BadRequestError(
+      `Cannot bid in auction with ${auction.statuses[0].status} status`
+    );
   }
 
   if (auction.bids[0]) {
@@ -59,8 +71,9 @@ export default api().post(async (req, res) => {
     })
   );
 
-  // todo: if we reach the buy it now call this:
-  // settlement.enqueue({ auctionId: data.id }, { id: data.id });
+  if (auction.buyItNowPrice && value >= auction.buyItNowPrice) {
+    settlement.enqueue({ auctionId: auction.id }, { id: auction.id });
+  }
 
   notifyNewBid.enqueue({ auctionId: id }, { id, delay: "10 minutes" });
 });

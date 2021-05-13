@@ -1,8 +1,8 @@
+import { AuctionStatuses } from ".prisma/client";
 import api from "../../../../../lib/api";
 import prisma from "../../../../../lib/db";
-import { HttpError } from "../../../../../lib/errors";
+import { BadRequestError, HttpError } from "../../../../../lib/errors";
 import z from "../../../../../lib/validation";
-import settlement from "../../queues/settlement";
 
 export default api().post(async (req, res) => {
   const id = z.string().uuid().parse(req.query.auctionId);
@@ -21,6 +21,15 @@ export default api().post(async (req, res) => {
         },
         take: 1,
       },
+      statuses: {
+        select: {
+          status: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 1,
+      },
     },
   });
 
@@ -28,19 +37,22 @@ export default api().post(async (req, res) => {
     throw new HttpError(404);
   }
 
-  if (auction.bids.length === 0) {
-    await prisma.auction.update({
-      where: {
-        id,
-      },
-      data: {
-        isSettled: true,
-      },
-    });
-
-    return res.json({ status: "CLOSED" });
+  if (auction.statuses[0].status !== AuctionStatuses.OPEN) {
+    throw new BadRequestError("Cannot settle an auction that is not open");
   }
 
-  settlement.enqueue({ auctionId: id }, { id });
-  res.json({ status: "ENQUEUED" });
+  if (auction.bids.length === 0) {
+    throw new BadRequestError("Cannot settle an auction without bids");
+  }
+
+  res.json(
+    await prisma.auctionStatus.create({
+      data: {
+        auctionId: id,
+        status: AuctionStatuses.SOLD,
+      },
+    })
+  );
+
+  // todo: notify bidder and transfer money
 });

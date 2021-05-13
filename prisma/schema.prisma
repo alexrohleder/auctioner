@@ -63,24 +63,26 @@ model VerificationRequest {
 }
 
 model Auction {
-  id            String             @id @default(uuid())
-  sellerId      String             @map(name: "seller_id")
-  categoryId    String             @map(name: "category_id")
-  bidIncrement  Float              @map(name: "bid_increment")
-  startingPrice Float              @map(name: "starting_price")
-  reservePrice  Float?             @map(name: "reserve_price")
-  buyItNowPrice Float?             @map(name: "buy_it_now_price")
-  duration      Int
-  title         String
-  description   String?
-  isPublished   Boolean            @default(true) @map(name: "is_published")
-  isSettled     Boolean            @default(false) @map(name: "is_settled")
-  publicateAt   DateTime           @default(now()) @map(name: "publicate_at")
-  createdAt     DateTime           @default(now()) @map(name: "created_at")
-  updatedAt     DateTime           @default(now()) @map(name: "updated_at")
-  bids          Bid[]
-  category      Category           @relation(fields: [categoryId], references: [id])
-  attributes    AuctionAttribute[]
+  id         String @id @default(uuid())
+  sellerId   String @map(name: "seller_id")
+  categoryId String @map(name: "category_id")
+
+  bidIncrement  Float  @map(name: "bid_increment")
+  startingPrice Float  @map(name: "starting_price")
+  reservePrice  Float? @map(name: "reserve_price")
+  buyItNowPrice Float? @map(name: "buy_it_now_price")
+
+  duration    Int
+  title       String
+  description String?
+
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+  bids       Bid[]
+  statuses   AuctionStatus[]
+  category   Category           @relation(fields: [categoryId], references: [id])
+  attributes AuctionAttribute[]
 
   @@map(name: "auctions")
 }
@@ -94,6 +96,21 @@ model Bid {
   auction    Auction  @relation(fields: [auctionId], references: [id])
 
   @@map(name: "bids")
+}
+
+enum AuctionStatuses {
+  OPEN
+  CLOSED
+  SOLD
+  EXPIRED
+}
+
+model AuctionStatus {
+  id        String          @id @default(uuid())
+  auctionId String          @map(name: "auction_id")
+  status    AuctionStatuses
+  createdAt DateTime        @default(now()) @map(name: "created_at")
+  auction   Auction         @relation(fields: [auctionId], references: [id])
 }
 
 model Category {

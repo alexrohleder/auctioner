@@ -1,13 +1,10 @@
-import { isPast, sub } from "date-fns";
+import { AuctionStatuses } from ".prisma/client";
 import api from "../../../../lib/api";
-import { cast } from "../../../../lib/casts";
 import prisma from "../../../../lib/db";
 import z from "../../../../lib/validation";
-import notifyNewBid from "../queues/notify-new-bid";
-import publish from "../queues/publish";
 import settlement from "../queues/settlement";
 
-// todo: search by attributes
+// todo: search by attributes and statuses
 // todo: save attributes
 
 const SelectSchema = z.object({
@@ -15,9 +12,6 @@ const SelectSchema = z.object({
   categoryId: z.string().uuid().optional(),
   title: z.string().max(80).min(3).optional(),
   description: z.string().optional(),
-  isPublished: z.boolean().optional(),
-  isSettled: z.boolean().optional(),
-  publicateAt: z.date().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
   take: z.number().int().min(1).max(100).optional(),
@@ -35,7 +29,6 @@ const InsertSchema = z
     duration: z.number().positive(),
     title: z.string().max(80).min(3),
     description: z.string(),
-    publicateAt: z.date(),
   })
   .refine(
     (data) =>
@@ -70,8 +63,6 @@ export default api()
           sellerId: data.sellerId,
           title: data.title,
           description: data.description,
-          isPublished: data.isPublished,
-          isSettled: data.isSettled,
           createdAt: data.createdAt,
           updatedAt: data.updatedAt,
         },
@@ -79,8 +70,6 @@ export default api()
         skip,
       })
     );
-
-    notifyNewBid.enqueue({ auctionId: "" });
   })
   .post(async (req, res) => {
     const data = InsertSchema.parse(req.body);
@@ -96,20 +85,15 @@ export default api()
         reservePrice: data.reservePrice,
         buyItNowPrice: data.buyItNowPrice,
         duration: data.duration,
-        publicateAt: data.publicateAt,
-        isPublished: isPast(sub(data.publicateAt, { minutes: 1 })),
-        isSettled: false,
+        statuses: {
+          create: {
+            status: AuctionStatuses.OPEN,
+          },
+        },
       },
     });
 
     res.json(auction);
-
-    if (!auction.isPublished) {
-      publish.enqueue(
-        { auctionId: auction.id },
-        { id: auction.id, runAt: auction.publicateAt }
-      );
-    }
 
     settlement.enqueue(
       { auctionId: auction.id },
