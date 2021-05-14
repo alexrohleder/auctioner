@@ -3,16 +3,12 @@ import DashboardStatisticCard from "../components/DashboardStatisticCard";
 import Layout from "../components/Layout";
 import AuctionCard from "../components/AuctionCard";
 import Loading from "../components/Loading";
-import { url, useFetch } from "../lib/web";
 import { money } from "../lib/format";
+import useAuctions from "../hooks/auctions/useAuctions";
 
 export default function Home() {
   let activities, statistics;
-
-  const user = { id: "f501c593-206a-4406-bb9e-8197c55b2f98" };
-  const auctions = useFetch(() =>
-    url("/api/v1/auctions", { sellerId: user.id })
-  );
+  const auctions = useAuctions();
 
   return (
     <Layout title="Dashboard">
@@ -31,7 +27,7 @@ export default function Home() {
               title="Revenue"
               currentValue={statistics?.revenue}
               previousValue={statistics?.revenue_from}
-              format={(value) => (value ? money(value, "NOK") : "N/A")}
+              format={(value) => (value ? money(value) : "N/A")}
             />
             <DashboardStatisticCard
               title="Convertion rate"
@@ -42,7 +38,7 @@ export default function Home() {
               description="Percentage of visits that resulted in a bid"
             />
             <div className="flex items-center justify-center">
-              <Link href="/auction/new">
+              <Link href="/auctions/new">
                 <a className="btn btn--primary">New Auction</a>
               </Link>
             </div>
@@ -55,26 +51,14 @@ export default function Home() {
             {auctions.data?.length === 0 && (
               <div className="pt-16 text-center">
                 <div className="mb-2">No auctions yet</div>
-                <Link href="/auction/new">
+                <Link href="/auctions/new">
                   <a className="btn">Create First Auction</a>
                 </Link>
               </div>
             )}
-            {auctions.data?.length > 0 &&
-              auctions.data.map((auction) => (
-                <AuctionCard
-                  key={auction.id}
-                  id={auction.id}
-                  title={auction.title}
-                  description={auction.description}
-                  currencyCode={auction.currency_code}
-                  images={auction.images}
-                  totalBids={auction.total_bids}
-                  totalBidders={auction.total_bidders}
-                  lastBidAmount={auction.last_bid_amount}
-                  lastBidCreatedAt={auction.last_bid_created_at}
-                />
-              ))}
+            {auctions.data?.map((auction) => (
+              <AuctionCard key={auction.id} {...auction} />
+            ))}
             {auctions.isValidating && (
               <div className="flex justify-center pt-16">
                 <Loading />

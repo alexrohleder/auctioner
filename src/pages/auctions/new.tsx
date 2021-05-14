@@ -5,14 +5,12 @@ import Input from "../../components/Input";
 import Layout from "../../components/Layout";
 import Loading from "../../components/Loading";
 import UserContext from "../../contexts/UserContext";
-import useNow from "../../hooks/useNow";
 import { post, useFetch } from "../../lib/web";
 
 function NewAuction() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const user = useContext(UserContext);
-  const now = useNow();
   const categories = useFetch("/api/v1/categories");
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -28,7 +26,6 @@ function NewAuction() {
     const reservePrice = parseInt(fields.reserve_price.value, 10);
     const buyItNowPrice = parseInt(fields.buy_it_now_price.value, 10);
     const duration = parseInt(fields.duration.value, 10);
-    const publicateAt = fields.publicate_at.value;
 
     setIsSaving(true);
 
@@ -42,7 +39,6 @@ function NewAuction() {
       reservePrice,
       buyItNowPrice,
       duration,
-      publicateAt,
     });
 
     setIsSaving(false);
@@ -150,16 +146,6 @@ function NewAuction() {
                     <option value={7}>7 days</option>
                     <option value={10}>10 days</option>
                   </Input>
-                </div>
-                <div className="flex-1">
-                  <Input
-                    label="Publication Date (UTC)"
-                    type="datetime-local"
-                    name="publicate_at"
-                    min={now}
-                    defaultValue={now}
-                    required
-                  />
                 </div>
               </div>
             </fieldset>

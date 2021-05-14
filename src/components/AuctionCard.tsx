@@ -1,17 +1,9 @@
 import Link from "next/link";
 import { ReactNode } from "react";
 import { money } from "../lib/format";
+import { AuctionResource } from "../resources/AuctionResource";
 
-type Props = {
-  id: string;
-  title: string;
-  description: string;
-  currencyCode: string;
-  images: string[];
-  totalBids: number;
-  totalBidders: number;
-  lastBidAmount: number | null;
-  lastBidCreatedAt: string | null;
+type Props = AuctionResource & {
   withImages?: boolean;
 };
 
@@ -47,22 +39,20 @@ function AuctionCard(props: Props) {
           <div className="grid items-center h-full grid-cols-4 gap-2">
             <Statistic
               title="Highest bid"
-              value={
-                props.lastBidAmount
-                  ? money(props.lastBidAmount, props.currencyCode)
-                  : "N/A"
-              }
+              value={props.lastBidAmount ? money(props.lastBidAmount) : "N/A"}
             />
-            <Statistic title="Last bid" value={props.lastBidCreatedAt} />
+            <Statistic
+              title="Last bid"
+              value={props.lastBidCreatedAt || "N/A"}
+            />
             <Statistic title="Total bids" value={props.totalBids} />
             <Statistic title="Total bidders" value={props.totalBidders} />
           </div>
         </div>
       </div>
       <div className="flex items-center justify-between h-12 px-4 border-t">
-        <div />
         <div>
-          <Link href={`/auction/${props.id}`}>
+          <Link href={`/auctions/${props.id}`}>
             <a className="text-semibold hover:underline text-blue-700">
               See stats
             </a>

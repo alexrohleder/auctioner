@@ -2,6 +2,7 @@ import { AuctionStatuses } from ".prisma/client";
 import api from "../../../../lib/api";
 import prisma from "../../../../lib/db";
 import z from "../../../../lib/validation";
+import createAuctionResource from "../../../../resources/AuctionResource";
 import settlement from "../queues/settlement";
 
 // todo: search by attributes and statuses
@@ -45,31 +46,26 @@ export default api()
   .get(async (req, res) => {
     const { take = 10, skip, ...data } = SelectSchema.parse(req.query);
 
-    res.json(
-      await prisma.auction.findMany({
-        include: {
-          bids: {
-            select: {
-              customerId: true,
-              value: true,
-              createdAt: true,
-            },
-          },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-        where: {
-          sellerId: data.sellerId,
-          title: data.title,
-          description: data.description,
-          createdAt: data.createdAt,
-          updatedAt: data.updatedAt,
-        },
-        take,
-        skip,
-      })
-    );
+    const auctions = await prisma.auction.findMany({
+      include: {
+        bids: true,
+        statuses: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      where: {
+        sellerId: data.sellerId,
+        title: data.title,
+        description: data.description,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
+      },
+      take,
+      skip,
+    });
+
+    res.json(auctions.map((auction) => createAuctionResource(auction)));
   })
   .post(async (req, res) => {
     const data = InsertSchema.parse(req.body);

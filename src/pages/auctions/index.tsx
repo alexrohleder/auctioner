@@ -2,13 +2,10 @@ import Link from "next/link";
 import AuctionCard from "../../components/AuctionCard";
 import Layout from "../../components/Layout";
 import Loading from "../../components/Loading";
-import { url, useFetch } from "../../lib/web";
+import useAuctions from "../../hooks/auctions/useAuctions";
 
 function Auctions() {
-  const user = { id: "f501c593-206a-4406-bb9e-8197c55b2f98" };
-  const auctions = useFetch(() =>
-    url("/api/v1/auctions", { sellerId: user.id })
-  );
+  const auctions = useAuctions();
 
   if (auctions.error) {
     return (
@@ -35,27 +32,14 @@ function Auctions() {
           </Link>
         </div>
         <div className="lg:grid-cols-2 grid gap-4">
-          {auctions.data?.length &&
-            auctions.data?.map((auction) => (
-              <AuctionCard
-                key={auction.id}
-                id={auction.id}
-                title={auction.title}
-                description={auction.description}
-                currencyCode={auction.currency_code}
-                images={auction.images}
-                totalBids={auction.total_bids}
-                totalBidders={auction.total_bidders}
-                lastBidAmount={auction.last_bid_amount}
-                lastBidCreatedAt={auction.last_bid_created_at}
-                withImages
-              />
-            ))}
+          {auctions.data?.map((auction) => (
+            <AuctionCard key={auction.id} {...auction} withImages />
+          ))}
           {auctions.data?.length === 0 && (
             <div className="lg:col-span-2 text-center">
               You don't have any auction yet.
               <div className="mt-2">
-                <Link href="/auction/new">
+                <Link href="/auctions/new">
                   <a className="btn btn--primary">New Auction</a>
                 </Link>
               </div>

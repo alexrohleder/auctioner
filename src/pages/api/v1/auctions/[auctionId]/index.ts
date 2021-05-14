@@ -3,6 +3,7 @@ import api from "../../../../../lib/api";
 import prisma from "../../../../../lib/db";
 import { BadRequestError, HttpError } from "../../../../../lib/errors";
 import z from "../../../../../lib/validation";
+import createAuctionResource from "../../../../../resources/AuctionResource";
 
 const UpdateSchema = z.object({
   title: z.string().max(80).min(3).optional(),
@@ -11,7 +12,6 @@ const UpdateSchema = z.object({
   bidIncrement: z.number().positive().optional(),
   reservePrice: z.number().positive().optional(),
   buyItNowPrice: z.number().positive().optional(),
-  isPublished: z.boolean().optional(),
 });
 
 export default api()
@@ -20,13 +20,8 @@ export default api()
 
     const auction = await prisma.auction.findUnique({
       include: {
-        bids: {
-          select: {
-            customerId: true,
-            value: true,
-            createdAt: true,
-          },
-        },
+        bids: true,
+        statuses: true,
       },
       where: {
         id,
@@ -37,7 +32,7 @@ export default api()
       throw new HttpError(404);
     }
 
-    res.json(auction);
+    res.json(createAuctionResource(auction));
   })
   .patch(async (req, res) => {
     const id = z.string().uuid().parse(req.query.auctionId);

@@ -17,7 +17,7 @@ const api = () => {
         errors = err.errors.map(format);
       } else if (err instanceof HttpError) {
         status = err.statusCode;
-        errors = err.errors;
+        errors = [err.reason];
       }
 
       res.status(status).json({

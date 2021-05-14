@@ -42,5 +42,5 @@ const request = (method: "post", url: string, body?: Record<string, any>) =>
     return { data: null, error };
   });
 
-export const post = (url: string, params: Record<string, any>) =>
+export const post = (url: string, params?: Record<string, any>) =>
   request("post", url, params);
