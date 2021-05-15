@@ -1,10 +1,14 @@
+import { AttributeType, Prisma } from ".prisma/client";
 import api from "../../../../lib/api";
 import prisma from "../../../../lib/db";
 import z from "../../../../lib/validation";
 
 const SelectSchema = z.object({
-  creatorId: z.string().uuid().optional(),
   name: z.string().optional(),
+  type: z
+    .string()
+    .optional()
+    .refine((type) => (type ? AttributeType[type] !== undefined : true)),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
   take: z.number().int().min(1).max(100).optional(),
@@ -13,6 +17,9 @@ const SelectSchema = z.object({
 
 const InsertSchema = z.object({
   name: z.string(),
+  slug: z.string(),
+  type: z.string().refine((type) => AttributeType[type] !== undefined),
+  options: z.array(z.object({ name: z.string() })).optional(),
 });
 
 export default api()
@@ -25,9 +32,15 @@ export default api()
     );
 
     res.json(
-      await prisma.category.findMany({
+      await prisma.attribute.findMany({
         include: {
-          attributes: {
+          categories: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          options: {
             select: {
               name: true,
             },
@@ -38,6 +51,7 @@ export default api()
         },
         where: {
           name: data.name,
+          type: data.type ? AttributeType[data.type] : undefined,
           createdAt: data.createdAt,
           updatedAt: data.updatedAt,
         },
@@ -49,11 +63,23 @@ export default api()
   .post(async (req, res) => {
     const data = InsertSchema.parse(req.body);
 
-    res.json(
-      await prisma.category.create({
-        data: {
-          name: data.name,
+    const payload: Prisma.AttributeCreateArgs = {
+      data: {
+        name: data.name,
+        slug: data.slug,
+        type: AttributeType[data.type],
+        isRequired: true,
+        isFilterable: true,
+      },
+    };
+
+    if (data.options) {
+      payload.data.options = {
+        createMany: {
+          data: data.options,
         },
-      })
-    );
+      };
+    }
+
+    res.json(await prisma.attribute.create(payload));
   });

@@ -18,6 +18,8 @@ const api = () => {
       } else if (err instanceof HttpError) {
         status = err.statusCode;
         errors = [err.reason];
+      } else {
+        console.error(errors);
       }
 
       res.status(status).json({

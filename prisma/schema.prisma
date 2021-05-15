@@ -115,7 +115,6 @@ model AuctionStatus {
 
 model Category {
   id         String      @id @default(uuid())
-  creatorId  String      @map(name: "creator_id")
   name       String
   createdAt  DateTime    @default(now()) @map(name: "created_at")
   updatedAt  DateTime    @default(now()) @map(name: "updated_at")
@@ -126,20 +125,39 @@ model Category {
   @@map("categories")
 }
 
+enum AttributeType {
+  TEXT
+  NUMBER
+  BOOLEAN
+  DROPDOWN
+}
+
 model Attribute {
   id           String             @id @default(uuid())
-  creatorId    String             @map(name: "creator_id")
-  categoryId   String             @map(name: "category_id")
   name         String
-  type         String
-  defaultValue String?            @map(name: "default_value")
+  slug         String
+  type         AttributeType
+  isRequired   Boolean
+  isFilterable Boolean
   createdAt    DateTime           @default(now()) @map(name: "created_at")
   updatedAt    DateTime           @default(now()) @map(name: "updated_at")
-  category     Category           @relation(fields: [categoryId], references: [id])
+  options      AttributeOption[]
+  categories   Category[]
   values       AuctionAttribute[]
 
-  @@unique([categoryId, name])
+  @@unique([name, slug])
   @@map("attributes")
+}
+
+model AttributeOption {
+  attributeId String
+  name        String
+  createdAt   DateTime  @default(now()) @map(name: "created_at")
+  updatedAt   DateTime  @default(now()) @map(name: "updated_at")
+  attribute   Attribute @relation(fields: [attributeId], references: [id])
+
+  @@unique([attributeId, name])
+  @@map("attributes_options")
 }
 
 model AuctionAttribute {

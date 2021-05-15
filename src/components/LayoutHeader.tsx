@@ -38,6 +38,9 @@ function LayoutHeader() {
           <LayoutHeaderNavigationLink href="/categories">
             Categories
           </LayoutHeaderNavigationLink>
+          <LayoutHeaderNavigationLink href="/attributes">
+            Attributes
+          </LayoutHeaderNavigationLink>
           <LayoutHeaderNavigationLink href="/activities">
             Activities
           </LayoutHeaderNavigationLink>

@@ -5,11 +5,17 @@ import z from "../../../../../lib/validation";
 
 const UpdateSchema = z.object({
   name: z.string(),
+  attributes: z.array(z.object({ id: z.string().uuid() })),
 });
 
 export default api()
   .get(async (req, res) => {
     const id = z.string().uuid().parse(req.query.categoryId);
+
+    res.setHeader(
+      "Cache-Control",
+      "public, s-maxage=1200, stale-while-revalidate=600"
+    );
 
     const category = await prisma.category.findUnique({
       where: {
@@ -57,6 +63,9 @@ export default api()
         },
         data: {
           name: data.name,
+          attributes: {
+            connect: data.attributes,
+          },
         },
       })
     );

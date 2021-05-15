@@ -46,6 +46,11 @@ export default api()
   .get(async (req, res) => {
     const { take = 10, skip, ...data } = SelectSchema.parse(req.query);
 
+    res.setHeader(
+      "Cache-Control",
+      "public, s-maxage=1200, stale-while-revalidate=600"
+    );
+
     const auctions = await prisma.auction.findMany({
       include: {
         bids: true,
