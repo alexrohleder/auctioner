@@ -106,11 +106,13 @@ function Category() {
             </button>
           </div>
         </div>
-        <fieldset className="flex flex-col gap-8" disabled={!category.data}>
-          <form id="category-form" onSubmit={onSave}>
-            <fieldset>
-              <legend className="font-semibold">General Information</legend>
-              <div className="mt-2">
+      </div>
+      <div className="min-h-screen bg-gray-100 border-t">
+        <div className="custom-container py-8">
+          <fieldset className="flex flex-col gap-8" disabled={!category.data}>
+            <form id="category-form" onSubmit={onSave}>
+              <fieldset className="p-4 bg-white border rounded shadow">
+                <legend className="font-semibold">General Information</legend>
                 <Input
                   label="Name"
                   type="text"
@@ -121,35 +123,40 @@ function Category() {
                   required
                   autoFocus
                 />
-              </div>
-            </fieldset>
-          </form>
-
-          <fieldset>
-            <legend className="font-semibold">Attributes</legend>
-            <form
-              className="flex gap-2 p-4 mt-2 border rounded"
-              onSubmit={onAttachAttribute}
-            >
-              <Input label="Attribute" name="attribute" type="select" required>
-                {attributes.data?.map((attribute) => (
-                  <option key={attribute.id} value={attribute.id}>
-                    {attribute.name}
-                  </option>
-                ))}
-              </Input>
-              <button type="submit" className="btn mt-7">
-                Attach
-              </button>
+              </fieldset>
             </form>
-            <pre>{JSON.stringify(localAttrs, null, 4)}</pre>
+
+            <fieldset className="p-4 bg-white border rounded shadow">
+              <legend className="font-semibold">Attributes</legend>
+              <form className="flex gap-4" onSubmit={onAttachAttribute}>
+                <div className="flex-1">
+                  <Input
+                    label="Attribute"
+                    name="attribute"
+                    type="select"
+                    required
+                  >
+                    {attributes.data?.map((attribute) => (
+                      <option key={attribute.id} value={attribute.id}>
+                        {attribute.name}
+                      </option>
+                    ))}
+                  </Input>
+                </div>
+                <button type="submit" className="btn mt-7">
+                  Attach
+                </button>
+              </form>
+
+              <pre>{JSON.stringify(localAttrs, null, 4)}</pre>
+            </fieldset>
           </fieldset>
-        </fieldset>
-        <FormSubmitBar
-          isValidating={category.isValidating}
-          isSubmitting={isSubmitting}
-          form="category-form"
-        />
+          <FormSubmitBar
+            isValidating={category.isValidating}
+            isSubmitting={isSubmitting}
+            form="category-form"
+          />
+        </div>
       </div>
     </Layout>
   );
