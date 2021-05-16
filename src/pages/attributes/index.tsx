@@ -15,6 +15,7 @@ function Attributes() {
       </Layout>
     );
   }
+
   return (
     <Layout title="Attributes">
       <div className="custom-container py-8">
@@ -32,7 +33,7 @@ function Attributes() {
         {attributes.data?.length && (
           <div className="flex flex-col gap-2">
             {attributes.data.map((attribute) => (
-              <Link href={`/attributes/${attribute.id}`}>
+              <Link key={attribute.id} href={`/attributes/${attribute.id}`}>
                 <a
                   key={attribute.id}
                   className="hover:bg-gray-50 px-4 py-2 border rounded"

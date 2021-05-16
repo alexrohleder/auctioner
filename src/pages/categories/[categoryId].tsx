@@ -126,7 +126,7 @@ function Category() {
               className="flex gap-2 p-4 mt-2 border rounded"
               onSubmit={onAttachAttribute}
             >
-              <Input label="Attribute" name="attribute" as="select" required>
+              <Input label="Attribute" name="attribute" type="select" required>
                 {attributes.data?.map((attribute) => (
                   <option key={attribute.id} value={attribute.id}>
                     {attribute.name}

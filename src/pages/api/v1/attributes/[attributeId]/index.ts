@@ -1,12 +1,9 @@
-import api from "../../../../../../../lib/api";
-import prisma from "../../../../../../../lib/db";
-import { HttpError } from "../../../../../../../lib/errors";
-import z from "../../../../../../../lib/validation";
-
-const UpdateSchema = z.object({
-  name: z.string(),
-  type: z.string(),
-});
+import { AttributeType } from ".prisma/client";
+import api from "../../../../../lib/api";
+import prisma from "../../../../../lib/db";
+import { HttpError } from "../../../../../lib/errors";
+import z from "../../../../../lib/validation";
+import { AttributeUpdateSchema } from "../../../../../schemas/AttributeSchema";
 
 export default api()
   .get(async (req, res) => {
@@ -17,12 +14,7 @@ export default api()
         id,
       },
       include: {
-        category: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
+        options: true,
       },
     });
 
@@ -34,7 +26,7 @@ export default api()
   })
   .patch(async (req, res) => {
     const id = z.string().uuid().parse(req.query.attributeId);
-    const data = UpdateSchema.parse(req.body);
+    const data = AttributeUpdateSchema.parse(req.body);
 
     const attribute = await prisma.attribute.findUnique({
       where: {
@@ -53,7 +45,7 @@ export default api()
         },
         data: {
           name: data.name,
-          type: data.type,
+          type: data.type as AttributeType,
         },
       })
     );

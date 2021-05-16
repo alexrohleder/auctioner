@@ -1,38 +1,64 @@
-import { ReactNode } from "react";
+import { forwardRef } from "react";
+import { FieldError } from "react-hook-form";
 
-interface Props extends React.ComponentPropsWithoutRef<"input"> {
+interface TextAreaProps extends React.ComponentPropsWithoutRef<"textarea"> {
+  type: "textarea";
+}
+
+interface SelectProps extends React.ComponentPropsWithoutRef<"select"> {
+  type: "select";
+}
+
+interface InputProps extends React.ComponentPropsWithoutRef<"input"> {
+  type: "text" | "number" | "checkbox";
+}
+
+type Props = (TextAreaProps | SelectProps | InputProps) & {
   label: string;
-  as?: "input" | "textarea" | "select";
-  prefix?: string;
-  rows?: number;
-  children?: ReactNode;
-}
+  error?: FieldError;
+};
 
-function Input({ label, prefix, as = "input", ...props }: Props) {
-  const Element = as as string;
+const Input = forwardRef(
+  ({ label, prefix, type, error, ...props }: Props, ref) => {
+    const Element = type === "textarea" || type === "select" ? type : "input";
 
-  return (
-    <label className="block">
-      <span className="text-gray-700">
-        {label}
-        {props.required && (
-          <span className="ml-1 text-red-600" title="This field is required">
-            *
-          </span>
+    let elementProps: any = {
+      ...props,
+      className: "block mt-1 rounded disabled:opacity-50",
+    };
+
+    if (Element === "input") {
+      elementProps.type = type;
+    }
+
+    if (type !== "checkbox") {
+      elementProps.className += " w-full";
+    }
+
+    if (error) {
+      elementProps.className += " border-red-600 ring-red-500";
+    }
+
+    return (
+      <label className="block">
+        <span className="text-gray-700">
+          {label}
+          {props.required && (
+            <span className="ml-1 text-red-600" title="This field is required">
+              *
+            </span>
+          )}
+        </span>
+        <div className="flex items-center gap-2">
+          {prefix}
+          <Element {...elementProps} ref={ref} />
+        </div>
+        {error?.message && (
+          <p className="mt-1 text-sm text-red-600">{error.message}</p>
         )}
-      </span>
-      <div className="flex items-center gap-2">
-        {prefix}
-        <Element
-          {...{
-            ...props,
-            className:
-              "block w-full mt-1 rounded invalid:border-red-600 invalid:ring-red-500 disabled:opacity-50",
-          }}
-        />
-      </div>
-    </label>
-  );
-}
+      </label>
+    );
+  }
+);
 
 export default Input;

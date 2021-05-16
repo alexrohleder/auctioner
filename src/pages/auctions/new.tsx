@@ -1,3 +1,4 @@
+import { AttributeType } from ".prisma/client";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -7,6 +8,10 @@ import Loading from "../../components/Loading";
 import UserContext from "../../contexts/UserContext";
 import useCategories from "../../hooks/categories/useCategories";
 import { post } from "../../lib/web";
+
+const AttributeTypeToInputType = {
+  [AttributeType.DROPDOWN]: "select",
+};
 
 function NewAuction() {
   const router = useRouter();
@@ -103,7 +108,7 @@ function NewAuction() {
               <div className="mt-2">
                 <Input
                   label="Description"
-                  as="textarea"
+                  type="textarea"
                   name="description"
                   rows={3}
                   maxLength={2048}
@@ -162,7 +167,7 @@ function NewAuction() {
                 <div className="flex-1">
                   <Input
                     label="Duration"
-                    as="select"
+                    type="select"
                     name="duration"
                     defaultValue={3}
                     required
@@ -181,7 +186,7 @@ function NewAuction() {
               <div className="lg:grid-cols-4 grid gap-4 mt-2">
                 <Input
                   label="Category"
-                  as="select"
+                  type="select"
                   name="category"
                   value={categoryId}
                   onChange={(event) => setCategoryId(event.target.value)}
@@ -204,8 +209,7 @@ function NewAuction() {
                     <Input
                       key={attribute.id}
                       label={attribute.name}
-                      as={attribute.type === "DROPDOWN" ? "select" : "input"}
-                      type="text"
+                      type={AttributeTypeToInputType[attribute.type]}
                       id={attribute.id}
                       required={attribute.isRequired}
                       value={attributes[attribute.id]?.value}

@@ -133,17 +133,16 @@ enum AttributeType {
 }
 
 model Attribute {
-  id           String             @id @default(uuid())
-  name         String
-  slug         String
-  type         AttributeType
-  isRequired   Boolean
-  isFilterable Boolean
-  createdAt    DateTime           @default(now()) @map(name: "created_at")
-  updatedAt    DateTime           @default(now()) @map(name: "updated_at")
-  options      AttributeOption[]
-  categories   Category[]
-  values       AuctionAttribute[]
+  id         String             @id @default(uuid())
+  name       String
+  slug       String
+  type       AttributeType
+  isRequired Boolean
+  createdAt  DateTime           @default(now()) @map(name: "created_at")
+  updatedAt  DateTime           @default(now()) @map(name: "updated_at")
+  options    AttributeOption[]
+  categories Category[]
+  values     AuctionAttribute[]
 
   @@unique([name, slug])
   @@map("attributes")
