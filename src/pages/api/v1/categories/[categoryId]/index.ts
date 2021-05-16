@@ -2,11 +2,7 @@ import api from "../../../../../lib/api";
 import prisma from "../../../../../lib/db";
 import { HttpError } from "../../../../../lib/errors";
 import z from "../../../../../lib/validation";
-
-const UpdateSchema = z.object({
-  name: z.string(),
-  attributes: z.array(z.object({ id: z.string().uuid() })),
-});
+import { AuctionUpdateSchema } from "../../../../../schemas/AuctionSchema";
 
 export default api()
   .get(async (req, res) => {
@@ -43,7 +39,7 @@ export default api()
   })
   .post(async (req, res) => {
     const id = z.string().uuid().parse(req.query.categoryId);
-    const data = UpdateSchema.parse(req.body);
+    const data = AuctionUpdateSchema.parse(req.body);
 
     const category = await prisma.category.findUnique({
       where: {

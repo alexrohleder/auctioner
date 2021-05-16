@@ -4,9 +4,9 @@ type Props = {
 
 function Loading(props: Props) {
   return (
-    <div className="flex">
+    <div className="flex gap-2 mr-3">
       <svg
-        className={`animate-spin w-5 h-5 mr-3${props.label ? " mt-[2px]" : ""}`}
+        className={`animate-spin w-5 h-5${props.label ? " mt-[2px]" : ""}`}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"

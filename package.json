@@ -24,7 +24,6 @@
     "react-hook-form": "^7.6.0",
     "react-toastify": "^7.0.4",
     "swr": "^0.5.6",
-    "unique-concat": "^0.2.2",
     "zod": "^1.11.17"
   },
   "devDependencies": {

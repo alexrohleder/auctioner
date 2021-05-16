@@ -1,9 +1,21 @@
 .btn {
-  @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 hover:bg-gray-50 focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none inline-flex items-center px-4 py-2 text-base font-medium leading-6 text-black transition bg-white border border-gray-500 rounded cursor-pointer;
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 hover:bg-gray-50 focus:bg-gray-100 inline-flex items-center px-4 py-2 text-base font-medium leading-6 text-black transition bg-white border border-gray-500 rounded cursor-pointer;
+}
+
+.btn:disabled {
+  @apply opacity-50 pointer-events-none;
+}
+
+.btn--sm {
+  @apply px-2 py-1 text-sm;
 }
 
 .btn--primary {
   @apply hover:bg-gray-900 focus:border-gray-800 focus:bg-gray-900 text-white bg-gray-800 border-transparent;
+}
+
+.btn--link {
+  @apply hover:bg-gray-200 focus:ring-blue-700 text-blue-700 bg-transparent border-transparent;
 }
 
 .placeholder {

@@ -2,6 +2,7 @@ import Loading from "./Loading";
 
 type Props = {
   isSubmitting: boolean;
+  isDirty?: boolean;
   isValidating?: boolean;
   form?: string;
 };

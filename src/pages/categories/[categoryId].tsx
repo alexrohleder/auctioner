@@ -1,55 +1,85 @@
 import { format } from "date-fns";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import concat from "unique-concat";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Input from "../../components/Input";
 import Layout from "../../components/Layout";
 import useAttributes from "../../hooks/attributes/useAttributes";
 import useCategory from "../../hooks/categories/useCategory";
 import { post } from "../../lib/web";
 import FormSubmitBar from "../../components/FormSubmitBar";
+import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AuctionUpdateSchema } from "../../schemas/AuctionSchema";
+import * as z from "zod";
+import { toast } from "react-toastify";
+
+type Input = z.infer<typeof AuctionUpdateSchema>;
 
 function Category() {
   const { query } = useRouter();
+
   const category = useCategory(query.categoryId as string);
+  const didReset = useRef(false);
   const attributes = useAttributes();
-  const [localAttrs, setLocalAttrs] = useState([]);
+  const attrInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setSubmitting] = useState(false);
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    control,
+  } = useForm({
+    defaultValues: { name: "", attributes: [] } as Input,
+    resolver: zodResolver(AuctionUpdateSchema),
+  });
+
+  const { fields: attrs, append, remove } = useFieldArray({
+    control,
+    name: "attributes",
+  });
+
   useEffect(() => {
-    const attrs = category.data?.attributes;
+    if (category.data && !didReset.current) {
+      reset({
+        name: category.data.name,
+        attributes: category.data.attributes,
+      });
 
-    if (attrs) {
-      setLocalAttrs((c) => concat(c, attrs, (i) => i.id));
+      didReset.current = true;
     }
-  }, [category.data?.attributes]);
+  }, [category.data]);
 
-  function onAttachAttribute(event) {
-    event.preventDefault();
+  const unselectedAttrs = attributes.data
+    ? attributes.data.filter(({ id }) => !attrs.find((a) => a.id === id))
+    : [];
 
-    const elements = event.currentTarget.elements as any;
-    const fields: Record<string, HTMLInputElement> = elements;
-    const id = fields.attribute.value;
-
-    setLocalAttrs((c) => concat(c, [{ id }], (i) => i.id));
-  }
-
-  async function onSave(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    const elements = event.currentTarget.elements as any;
-    const fields: Record<string, HTMLInputElement> = elements;
-
+  const onSubmit: SubmitHandler<Input> = async (input) => {
     setSubmitting(true);
 
-    await post(`/api/v1/categories/${query.categoryId}`, {
-      name: fields.name.value,
-      attributes: localAttrs,
-    });
+    const { error } = await post(
+      `/api/v1/categories/${query.categoryId}`,
+      input
+    );
 
     setSubmitting(false);
-  }
+
+    if (error) {
+      toast.error("Failed to update category");
+    } else {
+      toast.success("Category updated");
+    }
+  };
+
+  const onAttachAttribute = () => {
+    if (attrInputRef.current?.value) {
+      append({
+        id: attrInputRef.current.value,
+      });
+    }
+  };
 
   if (category.error) {
     return (
@@ -109,57 +139,79 @@ function Category() {
       </div>
       <div className="min-h-screen bg-gray-100 border-t">
         <div className="custom-container py-8">
-          <fieldset className="flex flex-col gap-8" disabled={!category.data}>
-            <form id="category-form" onSubmit={onSave}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <fieldset className="flex flex-col gap-8" disabled={!category.data}>
               <fieldset className="p-4 bg-white border rounded shadow">
                 <legend className="font-semibold">General Information</legend>
                 <Input
                   label="Name"
                   type="text"
-                  name="name"
-                  maxLength={80}
-                  minLength={3}
-                  defaultValue={category.data?.name}
-                  required
+                  {...register("name")}
+                  error={errors.name}
                   autoFocus
                 />
               </fieldset>
-            </form>
-
-            <fieldset className="p-4 bg-white border rounded shadow">
-              <legend className="font-semibold">Attributes</legend>
-              <form className="flex gap-4" onSubmit={onAttachAttribute}>
-                <div className="flex-1">
-                  <Input
-                    label="Attribute"
-                    name="attribute"
-                    type="select"
-                    required
+              <fieldset className="p-4 bg-white border rounded shadow">
+                <legend className="font-semibold">Attributes</legend>
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <Input
+                      label="Attribute"
+                      type="select"
+                      ref={attrInputRef}
+                      disabled={unselectedAttrs.length === 0}
+                    >
+                      {unselectedAttrs.map((attribute) => (
+                        <option key={attribute.id} value={attribute.id}>
+                          {attribute.name}
+                        </option>
+                      ))}
+                    </Input>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn mt-7"
+                    onClick={onAttachAttribute}
+                    disabled={unselectedAttrs.length === 0}
                   >
-                    {attributes.data?.map((attribute) => (
-                      <option key={attribute.id} value={attribute.id}>
-                        {attribute.name}
-                      </option>
-                    ))}
-                  </Input>
+                    Attach
+                  </button>
                 </div>
-                <button type="submit" className="btn mt-7">
-                  Attach
-                </button>
-              </form>
+                <div className="flex flex-col gap-2 mt-4">
+                  {attrs.map(({ id }, index) => {
+                    const attribute = attributes.data?.find(
+                      (attr) => attr.id === id
+                    );
 
-              <pre>{JSON.stringify(localAttrs, null, 4)}</pre>
+                    if (attribute) {
+                      return (
+                        <div
+                          key={id}
+                          className="hover:bg-gray-100 flex items-center justify-between px-4 py-2 border rounded"
+                        >
+                          {attribute.name}
+                          <button
+                            type="button"
+                            className="btn btn--link btn--sm"
+                            onClick={() => remove(index)}
+                          >
+                            remove
+                          </button>
+                        </div>
+                      );
+                    }
+                  })}
+                </div>
+              </fieldset>
+              <FormSubmitBar
+                isValidating={category.isValidating}
+                isSubmitting={isSubmitting}
+              />
             </fieldset>
-          </fieldset>
-          <FormSubmitBar
-            isValidating={category.isValidating}
-            isSubmitting={isSubmitting}
-            form="category-form"
-          />
+          </form>
         </div>
       </div>
     </Layout>
   );
 }
-
 export default Category;
