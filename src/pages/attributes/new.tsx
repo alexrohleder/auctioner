@@ -13,6 +13,7 @@ import {
   ShouldHaveAtLeast2Options,
 } from "../../schemas/AttributeSchema";
 import * as z from "zod";
+import FormSubmitBar from "../../components/FormSubmitBar";
 
 type Input = z.infer<typeof AttributeInsertSchema>;
 
@@ -146,16 +147,7 @@ function NewAttribute() {
                 </div>
               </fieldset>
             )}
-            <div className="flex items-center justify-end gap-4 mt-8">
-              {isSaving && <Loading />}
-              <button
-                type="submit"
-                className="btn btn--primary"
-                disabled={isSaving}
-              >
-                Create
-              </button>
-            </div>
+            <FormSubmitBar isSubmitting={isSaving} />
           </form>
         </div>
       </div>

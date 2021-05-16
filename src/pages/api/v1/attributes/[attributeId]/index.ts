@@ -24,7 +24,7 @@ export default api()
 
     res.json(attribute);
   })
-  .patch(async (req, res) => {
+  .post(async (req, res) => {
     const id = z.string().uuid().parse(req.query.attributeId);
     const data = AttributeUpdateSchema.parse(req.body);
 

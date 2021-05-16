@@ -5,16 +5,17 @@ import concat from "unique-concat";
 import { FormEvent, useEffect, useState } from "react";
 import Input from "../../components/Input";
 import Layout from "../../components/Layout";
-import Loading from "../../components/Loading";
 import useAttributes from "../../hooks/attributes/useAttributes";
 import useCategory from "../../hooks/categories/useCategory";
 import { post } from "../../lib/web";
+import FormSubmitBar from "../../components/FormSubmitBar";
 
 function Category() {
   const { query } = useRouter();
   const category = useCategory(query.categoryId as string);
   const attributes = useAttributes();
   const [localAttrs, setLocalAttrs] = useState([]);
+  const [isSubmitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const attrs = category.data?.attributes;
@@ -40,10 +41,14 @@ function Category() {
     const elements = event.currentTarget.elements as any;
     const fields: Record<string, HTMLInputElement> = elements;
 
+    setSubmitting(true);
+
     await post(`/api/v1/categories/${query.categoryId}`, {
       name: fields.name.value,
       attributes: localAttrs,
     });
+
+    setSubmitting(false);
   }
 
   if (category.error) {
@@ -138,23 +143,13 @@ function Category() {
               </button>
             </form>
             <pre>{JSON.stringify(localAttrs, null, 4)}</pre>
-            <p className="mt-2">No attributes yet.</p>
           </fieldset>
         </fieldset>
-        {category.isValidating && (
-          <div className="flex justify-center mt-16">
-            <Loading />
-          </div>
-        )}
-        <div className="flex items-center justify-end gap-4 mt-8">
-          <button
-            type="submit"
-            className="btn btn--primary"
-            form="category-form"
-          >
-            Save
-          </button>
-        </div>
+        <FormSubmitBar
+          isValidating={category.isValidating}
+          isSubmitting={isSubmitting}
+          form="category-form"
+        />
       </div>
     </Layout>
   );

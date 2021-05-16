@@ -55,7 +55,7 @@ export default api()
 
     res.json(createAuctionResource(auction));
   })
-  .patch(async (req, res) => {
+  .post(async (req, res) => {
     const id = z.string().uuid().parse(req.query.auctionId);
     const data = UpdateSchema.parse(req.body);
 

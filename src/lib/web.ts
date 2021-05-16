@@ -1,6 +1,23 @@
 import useSWR from "swr";
 
-export const useFetch = useSWR;
+export const useFetch: typeof useSWR = (...[key, _, options]) => {
+  return useSWR(
+    key,
+    async (url) => {
+      const res = await fetch(url);
+
+      if (!res.ok) {
+        const error = new Error("An error occurred while fetching the data.");
+        error.info = await res.json();
+        error.status = res.status;
+        throw error;
+      }
+
+      return res.json();
+    },
+    options
+  );
+};
 
 export const url = (uri: string, params: Record<string, any> = {}) => {
   const map = Object.keys(params).reduce((arr, key) => {
@@ -23,7 +40,7 @@ export const url = (uri: string, params: Record<string, any> = {}) => {
 };
 
 const request = (
-  method: "post" | "patch" | "delete",
+  method: "post" | "delete",
   url: string,
   body?: Record<string, any>
 ) =>
@@ -36,18 +53,19 @@ const request = (
       "Content-Type": "application/json",
     },
     body: body ? JSON.stringify(body) : undefined,
-  }).then(async (res) => {
-    if (res.ok) {
-      const data = await res.json();
-      return { data, error: null };
-    }
+  })
+    .then(async (res) => {
+      if (res.ok) {
+        const data = await res.json();
+        return { data, error: null };
+      }
 
-    const error = await res.json();
-    return { data: null, error };
-  });
+      const error = await res.json();
+      return { data: null, error };
+    })
+    .catch((error) => {
+      return { data: null, error };
+    });
 
 export const post = (url: string, params?: Record<string, any>) =>
   request("post", url, params);
-
-export const patch = (url: string, params?: Record<string, any>) =>
-  request("patch", url, params);

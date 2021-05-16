@@ -29,8 +29,7 @@ export default api()
         },
         attributes: {
           select: {
-            name: true,
-            type: true,
+            id: true,
           },
         },
       },
@@ -42,7 +41,7 @@ export default api()
 
     res.json(category);
   })
-  .patch(async (req, res) => {
+  .post(async (req, res) => {
     const id = z.string().uuid().parse(req.query.categoryId);
     const data = UpdateSchema.parse(req.body);
 
