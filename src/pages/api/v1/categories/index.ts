@@ -29,7 +29,11 @@ export default api()
         include: {
           attributes: {
             select: {
+              id: true,
               name: true,
+              type: true,
+              isRequired: true,
+              options: true,
             },
           },
         },

@@ -22,7 +22,11 @@ export const url = (uri: string, params: Record<string, any> = {}) => {
   return uri;
 };
 
-const request = (method: "post", url: string, body?: Record<string, any>) =>
+const request = (
+  method: "post" | "patch" | "delete",
+  url: string,
+  body?: Record<string, any>
+) =>
   fetch(url, {
     method,
     cache: "no-cache",
@@ -44,3 +48,6 @@ const request = (method: "post", url: string, body?: Record<string, any>) =>
 
 export const post = (url: string, params?: Record<string, any>) =>
   request("post", url, params);
+
+export const patch = (url: string, params?: Record<string, any>) =>
+  request("patch", url, params);

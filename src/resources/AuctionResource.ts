@@ -1,13 +1,33 @@
 import { Prisma } from "@prisma/client";
 
-type Payload = Prisma.AuctionGetPayload<{
-  include: {
-    bids: true;
-    statuses: true;
-  };
-}>;
+export const payload = {
+  bids: true,
+  statuses: true,
+  category: {
+    select: {
+      name: true,
+      attributes: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          type: true,
+          isRequired: true,
+          options: {
+            select: {
+              name: true,
+            },
+          },
+          values: true,
+        },
+      },
+    },
+  },
+};
 
-const createAuctionResource = (auction: Payload) => {
+const createAuctionResource = (
+  auction: Prisma.AuctionGetPayload<{ select: typeof payload }>
+) => {
   let lastBidAmount: number | null = null;
   let lastBidCreatedAt: Date | null = null;
   let totalBids = 0;

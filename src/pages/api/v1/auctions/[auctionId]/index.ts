@@ -21,6 +21,27 @@ export default api()
     const auction = await prisma.auction.findUnique({
       include: {
         bids: true,
+        category: {
+          select: {
+            name: true,
+            attributes: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                type: true,
+                isRequired: true,
+                options: {
+                  select: {
+                    name: true,
+                  },
+                },
+                values: true,
+              },
+            },
+          },
+        },
+        attributes: true,
         statuses: true,
       },
       where: {

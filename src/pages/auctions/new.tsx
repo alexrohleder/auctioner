@@ -1,17 +1,32 @@
 import { useRouter } from "next/router";
-import { FormEvent, useContext, useState } from "react";
+import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Input from "../../components/Input";
 import Layout from "../../components/Layout";
 import Loading from "../../components/Loading";
 import UserContext from "../../contexts/UserContext";
-import { post, useFetch } from "../../lib/web";
+import useCategories from "../../hooks/categories/useCategories";
+import { post } from "../../lib/web";
 
 function NewAuction() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const user = useContext(UserContext);
-  const categories = useFetch("/api/v1/categories");
+  const categories = useCategories();
+  const [categoryId, setCategoryId] = useState<string>();
+  const [attributes, setAttributes] = useState({});
+
+  const category = categoryId
+    ? categories?.data?.find((category) => category.id === categoryId)
+    : null;
+
+  useEffect(() => {
+    setCategoryId((category) => {
+      if (category === undefined) {
+        return categories.data?.[0].id;
+      }
+    });
+  }, [categories.data]);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -31,7 +46,7 @@ function NewAuction() {
 
     const { data, error } = await post("/api/v1/auctions", {
       sellerId: user!.id,
-      categoryId: "24df7ada-1fa5-496e-92cf-8d906d93a034",
+      categoryId,
       title,
       description,
       bidIncrement,
@@ -39,6 +54,7 @@ function NewAuction() {
       reservePrice,
       buyItNowPrice,
       duration,
+      attributes: Object.values(attributes),
     });
 
     setIsSaving(false);
@@ -49,6 +65,16 @@ function NewAuction() {
       toast.success("Auction created");
       router.replace(`/auctions/${data.id}`);
     }
+  }
+
+  function onChangeAttribute(event: ChangeEvent<HTMLInputElement>) {
+    setAttributes((attributes) => ({
+      ...attributes,
+      [event.target.id]: {
+        attributeId: event.target.id,
+        value: event.target.value,
+      },
+    }));
   }
 
   return (
@@ -153,7 +179,14 @@ function NewAuction() {
             <fieldset className="mt-8">
               <legend className="font-semibold">Product Information</legend>
               <div className="lg:grid-cols-4 grid gap-4 mt-2">
-                <Input label="Category" as="select" name="category" required>
+                <Input
+                  label="Category"
+                  as="select"
+                  name="category"
+                  value={categoryId}
+                  onChange={(event) => setCategoryId(event.target.value)}
+                  required
+                >
                   {categories.data?.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}
@@ -162,6 +195,32 @@ function NewAuction() {
                 </Input>
               </div>
             </fieldset>
+
+            {category?.attributes.length && (
+              <fieldset className="mt-8">
+                <legend className="font-semibold">Category Attributes</legend>
+                <div className="lg:grid-cols-4 grid gap-4 mt-2">
+                  {category.attributes.map((attribute) => (
+                    <Input
+                      key={attribute.id}
+                      label={attribute.name}
+                      as={attribute.type === "DROPDOWN" ? "select" : "input"}
+                      type="text"
+                      id={attribute.id}
+                      required={attribute.isRequired}
+                      value={attributes[attribute.id]?.value}
+                      onChange={onChangeAttribute}
+                    >
+                      {attribute.options.map((option) => (
+                        <option key={option.name} value={option.name}>
+                          {option.name}
+                        </option>
+                      ))}
+                    </Input>
+                  ))}
+                </div>
+              </fieldset>
+            )}
 
             <div className="flex items-center justify-end gap-4 mt-8">
               {isSaving && <Loading />}

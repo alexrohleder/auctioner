@@ -30,6 +30,9 @@ const InsertSchema = z
     duration: z.number().positive(),
     title: z.string().max(80).min(3),
     description: z.string(),
+    attributes: z.array(
+      z.object({ attributeId: z.string().uuid(), value: z.string() })
+    ),
   })
   .refine(
     (data) =>
@@ -86,6 +89,11 @@ export default api()
         reservePrice: data.reservePrice,
         buyItNowPrice: data.buyItNowPrice,
         duration: data.duration,
+        attributes: {
+          createMany: {
+            data: data.attributes,
+          },
+        },
         statuses: {
           create: {
             status: AuctionStatuses.OPEN,

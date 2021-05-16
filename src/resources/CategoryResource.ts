@@ -7,6 +7,10 @@ export type CategoryResource = Prisma.CategoryGetPayload<{
         id: true;
       };
     };
-    attributes: true;
+    attributes: {
+      include: {
+        options: true;
+      };
+    };
   };
 }>;
