@@ -66,7 +66,7 @@ export default api()
     );
   })
   .delete(async (req, res) => {
-    const id = z.string().uuid().parse(req.query.id);
+    const id = z.string().uuid().parse(req.query.categoryId);
 
     res.json(
       await prisma.category.delete({

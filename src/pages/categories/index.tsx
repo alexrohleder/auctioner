@@ -33,11 +33,8 @@ function Categories() {
         {categories.data?.length && (
           <div className="flex flex-col gap-2">
             {categories.data.map((category) => (
-              <Link href={`/categories/${category.id}`}>
-                <a
-                  key={category.id}
-                  className="hover:bg-gray-50 px-4 py-2 border rounded"
-                >
+              <Link key={category.id} href={`/categories/${category.id}`}>
+                <a className="hover:bg-gray-50 px-4 py-2 border rounded">
                   {category.name}
                 </a>
               </Link>

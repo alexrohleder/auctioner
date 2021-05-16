@@ -13,16 +13,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AuctionUpdateSchema } from "../../schemas/AuctionSchema";
 import * as z from "zod";
 import { toast } from "react-toastify";
+import useDeleteCategory from "../../hooks/categories/useDeleteCategory";
 
 type Input = z.infer<typeof AuctionUpdateSchema>;
 
 function Category() {
-  const { query } = useRouter();
-  const category = useCategory(query.categoryId as string);
+  const router = useRouter();
+  const categoryId = router.query.categoryId as string;
+  const category = useCategory(categoryId);
   const didReset = useRef(false);
   const attributes = useAttributes();
   const attrInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setSubmitting] = useState(false);
+  const [deleteCategory, isDeleting] = useDeleteCategory();
 
   const {
     register,
@@ -58,10 +61,7 @@ function Category() {
   const onSubmit: SubmitHandler<Input> = async (input) => {
     setSubmitting(true);
 
-    const { error } = await post(
-      `/api/v1/categories/${query.categoryId}`,
-      input
-    );
+    const { error } = await post(`/api/v1/categories/${categoryId}`, input);
 
     setSubmitting(false);
 
@@ -69,6 +69,17 @@ function Category() {
       toast.error("Failed to update category");
     } else {
       toast.success("Category updated");
+    }
+  };
+
+  const onDelete = async () => {
+    const { error } = await deleteCategory(categoryId);
+
+    // todo: treat error
+    // todo: treat loading
+
+    if (!error) {
+      router.replace("/categories");
     }
   };
 
@@ -125,7 +136,11 @@ function Category() {
           </div>
         </div>
         <div className="flex items-center justify-center">
-          <button className="btn btn--primary" disabled={!category.data}>
+          <button
+            className="btn btn--primary"
+            disabled={!category.data}
+            onClick={onDelete}
+          >
             Delete Category
           </button>
         </div>
