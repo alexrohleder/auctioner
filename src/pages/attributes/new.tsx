@@ -147,7 +147,9 @@ function NewAttribute() {
                 </div>
               </fieldset>
             )}
-            <FormSubmitBar isSubmitting={isSaving} />
+            <div className="mt-8">
+              <FormSubmitBar isSubmitting={isSaving} />
+            </div>
           </form>
         </div>
       </div>

@@ -45,13 +45,19 @@ export default api()
         },
         data: {
           name: data.name,
-          type: data.type as AttributeType,
+          isRequired: data.isRequired,
         },
       })
     );
   })
   .delete(async (req, res) => {
     const id = z.string().uuid().parse(req.query.attributeId);
+
+    await prisma.auctionAttribute.deleteMany({
+      where: {
+        attributeId: id,
+      },
+    });
 
     res.json(
       await prisma.attribute.delete({

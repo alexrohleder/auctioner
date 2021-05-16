@@ -9,8 +9,8 @@ type Props = {
 
 function FormSubmitBar(props: Props) {
   return (
-    <div className="bottom-4 fixed left-0 right-0">
-      <div className="custom-container flex items-center justify-between px-4 py-2 bg-white border rounded shadow-lg">
+    <div className="bottom-4 sticky left-0 right-0">
+      <div className="custom-container flex items-center justify-between px-4 py-2 bg-white border rounded shadow">
         <div className="flex text-gray-700">
           {props.isValidating && <Loading label="Fetching data..." />}
         </div>

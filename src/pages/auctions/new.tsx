@@ -209,7 +209,7 @@ function NewAuction() {
                     <Input
                       key={attribute.id}
                       label={attribute.name}
-                      type={AttributeTypeToInputType[attribute.type]}
+                      type={AttributeTypeToInputType[attribute.type] || "text"}
                       id={attribute.id}
                       required={attribute.isRequired}
                       value={attributes[attribute.id]?.value}

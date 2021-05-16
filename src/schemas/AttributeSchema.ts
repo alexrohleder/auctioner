@@ -25,7 +25,6 @@ export const AttributeInsertSchema = z
 
 export const AttributeUpdateSchema = z.object({
   name,
-  type,
   isRequired: z.boolean(),
 });
 

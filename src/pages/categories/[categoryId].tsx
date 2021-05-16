@@ -18,7 +18,6 @@ type Input = z.infer<typeof AuctionUpdateSchema>;
 
 function Category() {
   const { query } = useRouter();
-
   const category = useCategory(query.categoryId as string);
   const didReset = useRef(false);
   const attributes = useAttributes();
@@ -96,52 +95,46 @@ function Category() {
 
   return (
     <Layout title={title}>
-      <div className="custom-container flex flex-col gap-8 py-8">
-        <div className="lg:grid-cols-4 grid flex-1 gap-4">
-          <div className="p-4 border rounded">
-            <div className="font-semibold">Created at</div>
-            <div className="flex items-center h-8 text-lg">
-              {category.data
-                ? format(new Date(category.data.createdAt), "dd MMM yyyy hh:ss")
-                : DataPlaceholder}
-            </div>
+      <div className="custom-container lg:grid-cols-4 grid gap-4 py-8">
+        <div className="p-4 border rounded">
+          <div className="font-semibold">Created at</div>
+          <div className="flex items-center h-8 text-lg">
+            {category.data
+              ? format(new Date(category.data.createdAt), "dd MMM yyyy hh:ss")
+              : DataPlaceholder}
           </div>
-          <div className="p-4 border rounded">
-            <div className="font-semibold">Amount of Auctions</div>
-            <div className="flex items-center justify-between h-8 text-lg">
-              {category.data ? category.data.auctions.length : DataPlaceholder}
-              {category.data && (
+        </div>
+        <div className="p-4 border rounded">
+          <div className="font-semibold">Amount of Auctions</div>
+          <div className="flex items-center justify-between h-8 text-lg">
+            {category.data ? category.data.auctions.length : DataPlaceholder}
+            {category.data && (
+              <a className="hover:underline text-sm text-blue-700">See all</a>
+            )}
+          </div>
+        </div>
+        <div className="p-4 border rounded">
+          <div className="font-semibold">Amount of Attributes</div>
+          <div className="flex items-center justify-between h-8 text-lg">
+            {category.data ? category.data.attributes.length : DataPlaceholder}
+            {category.data && (
+              <Link href="/attributes">
                 <a className="hover:underline text-sm text-blue-700">See all</a>
-              )}
-            </div>
+              </Link>
+            )}
           </div>
-          <div className="p-4 border rounded">
-            <div className="font-semibold">Amount of Attributes</div>
-            <div className="flex items-center justify-between h-8 text-lg">
-              {category.data
-                ? category.data.attributes.length
-                : DataPlaceholder}
-              {category.data && (
-                <Link href="/attributes">
-                  <a className="hover:underline text-sm text-blue-700">
-                    See all
-                  </a>
-                </Link>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center justify-center">
-            <button className="btn btn--primary" disabled={!category.data}>
-              Delete Category
-            </button>
-          </div>
+        </div>
+        <div className="flex items-center justify-center">
+          <button className="btn btn--primary" disabled={!category.data}>
+            Delete Category
+          </button>
         </div>
       </div>
       <div className="min-h-screen bg-gray-100 border-t">
         <div className="custom-container py-8">
           <form onSubmit={handleSubmit(onSubmit)}>
             <fieldset className="flex flex-col gap-8" disabled={!category.data}>
-              <fieldset className="p-4 bg-white border rounded shadow">
+              <fieldset>
                 <legend className="font-semibold">General Information</legend>
                 <Input
                   label="Name"
@@ -151,7 +144,7 @@ function Category() {
                   autoFocus
                 />
               </fieldset>
-              <fieldset className="p-4 bg-white border rounded shadow">
+              <fieldset>
                 <legend className="font-semibold">Attributes</legend>
                 <div className="flex gap-4">
                   <div className="flex-1">
@@ -187,7 +180,7 @@ function Category() {
                       return (
                         <div
                           key={id}
-                          className="hover:bg-gray-100 flex items-center justify-between px-4 py-2 border rounded"
+                          className="hover:bg-white bg-gray-50 flex items-center justify-between px-4 py-2 border rounded"
                         >
                           {attribute.name}
                           <button
@@ -201,6 +194,11 @@ function Category() {
                       );
                     }
                   })}
+                  {attrs.length === 0 && (
+                    <div className="text-center">
+                      <p>No attributes attached yet.</p>
+                    </div>
+                  )}
                 </div>
               </fieldset>
               <FormSubmitBar

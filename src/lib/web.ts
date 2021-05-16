@@ -39,7 +39,7 @@ export const url = (uri: string, params: Record<string, any> = {}) => {
   return uri;
 };
 
-const request = (
+export const request = (
   method: "post" | "delete",
   url: string,
   body?: Record<string, any>

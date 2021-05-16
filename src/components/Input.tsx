@@ -19,7 +19,7 @@ type Props = (TextAreaProps | SelectProps | InputProps) & {
 };
 
 const Input = forwardRef(
-  ({ label, prefix, type, error, ...props }: Props, ref) => {
+  ({ label, prefix, type, error, children, ...props }: Props, ref) => {
     const Element = type === "textarea" || type === "select" ? type : "input";
 
     let elementProps: any = {
@@ -51,7 +51,9 @@ const Input = forwardRef(
         </span>
         <div className="flex items-center gap-2">
           {prefix}
-          <Element {...elementProps} ref={ref} />
+          <Element {...elementProps} ref={ref}>
+            {type === "select" ? children : null}
+          </Element>
         </div>
         {error?.message && (
           <p className="mt-1 text-sm text-red-600">{error.message}</p>
