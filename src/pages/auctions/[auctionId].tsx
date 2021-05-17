@@ -11,12 +11,16 @@ import { AuctionUpdateSchema } from "../../schemas/AuctionSchema";
 import * as z from "zod";
 import { useEffect, useState } from "react";
 import FormSubmitBar from "../../components/FormSubmitBar";
+import { setValueAsOptionalNumber } from "../../lib/validation";
+import { post } from "../../lib/web";
+import { toast } from "react-toastify";
 
 type Input = z.infer<typeof AuctionUpdateSchema>;
 
 function Auction() {
   const router = useRouter();
-  const auction = useAuction(router.query.auctionId as string);
+  const auctionId = router.query.auctionId as string;
+  const auction = useAuction(auctionId);
   const { settle, canSettle } = useSettleAuction();
   const { close, canClose } = useCloseAuction();
   const { reOpen, canReOpen } = useReOpenAuction();
@@ -46,11 +50,19 @@ function Auction() {
     }
   }, [auction.data]);
 
-  const onSubmit: SubmitHandler<Input> = (input) => {
-    console.log({ input });
-  };
+  const onSubmit: SubmitHandler<Input> = async (input) => {
+    setSubmitting(true);
 
-  console.log(errors);
+    const { error } = await post(`/api/v1/auctions/${auctionId}`, input);
+
+    setSubmitting(false);
+
+    if (error) {
+      toast.error("Failed to update auction");
+    } else {
+      toast.success("Auction updated");
+    }
+  };
 
   return (
     <Layout title="Auction">
@@ -91,6 +103,7 @@ function Auction() {
                 <Input
                   label="Title"
                   type="text"
+                  error={errors.title}
                   {...register("title")}
                   autoFocus
                 />
@@ -99,6 +112,7 @@ function Auction() {
                 <Input
                   label="Description"
                   type="textarea"
+                  error={errors.description}
                   {...register("description")}
                   rows={3}
                 />
@@ -113,8 +127,11 @@ function Auction() {
                     label="Starting Price"
                     prefix="$"
                     type="number"
-                    {...register("startingPrice", { valueAsNumber: true })}
+                    error={errors.startingPrice}
                     disabled={hasBids}
+                    {...register("startingPrice", {
+                      setValueAs: setValueAsOptionalNumber,
+                    })}
                   />
                 </div>
                 <div className="flex-1">
@@ -122,8 +139,11 @@ function Auction() {
                     label="Bid Increment"
                     prefix="$"
                     type="number"
-                    {...register("bidIncrement", { valueAsNumber: true })}
+                    error={errors.bidIncrement}
                     disabled={hasBids}
+                    {...register("bidIncrement", {
+                      setValueAs: setValueAsOptionalNumber,
+                    })}
                   />
                 </div>
                 <div className="flex-1">
@@ -131,7 +151,10 @@ function Auction() {
                     label="Reserve Price"
                     prefix="$"
                     type="number"
-                    {...register("reservePrice", { valueAsNumber: true })}
+                    error={errors.reservePrice}
+                    {...register("reservePrice", {
+                      setValueAs: setValueAsOptionalNumber,
+                    })}
                   />
                 </div>
                 <div className="flex-1">
@@ -139,7 +162,11 @@ function Auction() {
                     label="Buy it Now Price"
                     prefix="$"
                     type="number"
-                    {...register("buyItNowPrice", { valueAsNumber: true })}
+                    step="0.01"
+                    error={errors.buyItNowPrice}
+                    {...register("buyItNowPrice", {
+                      setValueAs: setValueAsOptionalNumber,
+                    })}
                   />
                 </div>
               </div>
@@ -152,8 +179,9 @@ function Auction() {
                   <Input
                     label="Duration"
                     type="select"
-                    {...register("duration")}
                     disabled={hasBids}
+                    error={errors.duration}
+                    {...register("duration", { valueAsNumber: true })}
                   >
                     <option value={3}>3 days</option>
                     <option value={5}>5 days</option>
@@ -167,7 +195,13 @@ function Auction() {
             <fieldset className="mt-8">
               <legend className="font-semibold">Product Information</legend>
               <div className="lg:grid-cols-4 grid gap-4 mt-2">
-                <Input label="Category" type="select" name="category" required>
+                <Input
+                  label="Category"
+                  type="select"
+                  name="category"
+                  required
+                  disabled
+                >
                   <option>{auction.data?.category.name}</option>
                 </Input>
               </div>

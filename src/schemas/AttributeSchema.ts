@@ -2,7 +2,14 @@ import { AttributeType } from ".prisma/client";
 import z from "../lib/validation";
 
 const name = z.string().nonempty().max(60);
-const slug = z.string().nonempty().max(60);
+const slug = z
+  .string()
+  .nonempty()
+  .max(60)
+  .regex(
+    /^[\w\d_]*$/,
+    "Should contain only characters, numbers and underscores"
+  );
 const type = z.string().refine((type) => AttributeType[type] !== undefined);
 const options = z.array(z.object({ name: z.string().nonempty() }));
 

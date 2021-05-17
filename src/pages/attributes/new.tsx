@@ -5,7 +5,6 @@ import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 import Input from "../../components/Input";
 import Layout from "../../components/Layout";
-import Loading from "../../components/Loading";
 import { post } from "../../lib/web";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -91,17 +90,28 @@ function NewAttribute() {
                 />
               </div>
               <div className="mt-2">
-                <Input {...register("slug")} label="Slug" type="text" />
+                <Input
+                  {...register("slug")}
+                  label="Slug"
+                  type="text"
+                  error={errors.slug}
+                />
               </div>
               <div className="mt-2">
                 <Input
                   {...register("isRequired")}
                   label="Required"
                   type="checkbox"
+                  error={errors.isRequired}
                 />
               </div>
               <div className="mt-2">
-                <Input {...register("type")} label="Type" type="select">
+                <Input
+                  {...register("type")}
+                  label="Type"
+                  type="select"
+                  error={errors.type}
+                >
                   {Object.values(AttributeType).map((type) => (
                     <option key={type} value={type}>
                       {type}
@@ -119,7 +129,7 @@ function NewAttribute() {
                       label=""
                       {...register(`options.${optionIndex}.name` as const)}
                       type="text"
-                      error={errors?.options?.[optionIndex]?.name}
+                      error={errors.options?.[optionIndex]?.name}
                       defaultValue={option.name}
                     />
 
