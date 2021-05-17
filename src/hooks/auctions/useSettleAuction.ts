@@ -28,7 +28,11 @@ const useSettleAuction = () => {
   }
 
   function canSettle(auction?: AuctionResource) {
-    return !isSettling && auction?.status === AuctionStatuses.OPEN;
+    return (
+      !isSettling &&
+      auction?.status === AuctionStatuses.OPEN &&
+      auction.bids.length > 0
+    );
   }
 
   return {
