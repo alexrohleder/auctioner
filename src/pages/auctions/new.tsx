@@ -212,7 +212,7 @@ function NewAuction() {
                       type={AttributeTypeToInputType[attribute.type] || "text"}
                       id={attribute.id}
                       required={attribute.isRequired}
-                      value={attributes[attribute.id]?.value}
+                      value={attributes[attribute.id]?.value || ""}
                       onChange={onChangeAttribute}
                     >
                       {attribute.options.map((option) => (

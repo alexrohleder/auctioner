@@ -10,12 +10,12 @@ import { post } from "../../lib/web";
 import FormSubmitBar from "../../components/FormSubmitBar";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AuctionUpdateSchema } from "../../schemas/AuctionSchema";
+import { CategoryUpdateSchema } from "../../schemas/CategorySchema";
 import * as z from "zod";
 import { toast } from "react-toastify";
 import useDeleteCategory from "../../hooks/categories/useDeleteCategory";
 
-type Input = z.infer<typeof AuctionUpdateSchema>;
+type Input = z.infer<typeof CategoryUpdateSchema>;
 
 function Category() {
   const router = useRouter();
@@ -35,7 +35,7 @@ function Category() {
     control,
   } = useForm({
     defaultValues: { name: "", attributes: [] } as Input,
-    resolver: zodResolver(AuctionUpdateSchema),
+    resolver: zodResolver(CategoryUpdateSchema),
   });
 
   const { fields: attrs, append, remove } = useFieldArray({

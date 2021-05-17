@@ -1,9 +1,18 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
+import { SubmitHandler, useForm } from "react-hook-form";
+import Input from "../../components/Input";
 import Layout from "../../components/Layout";
 import useAuction from "../../hooks/auctions/useAuction";
 import useCloseAuction from "../../hooks/auctions/useCloseAuction";
 import useReOpenAuction from "../../hooks/auctions/useReOpenAuction";
 import useSettleAuction from "../../hooks/auctions/useSettleAuction";
+import { AuctionUpdateSchema } from "../../schemas/AuctionSchema";
+import * as z from "zod";
+import { useEffect, useState } from "react";
+import FormSubmitBar from "../../components/FormSubmitBar";
+
+type Input = z.infer<typeof AuctionUpdateSchema>;
 
 function Auction() {
   const router = useRouter();
@@ -11,6 +20,37 @@ function Auction() {
   const { settle, canSettle } = useSettleAuction();
   const { close, canClose } = useCloseAuction();
   const { reOpen, canReOpen } = useReOpenAuction();
+  const [isSubmitting, setSubmitting] = useState(false);
+  const hasBids = auction.data ? auction.data.bids.length > 0 : false;
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<Input>({
+    resolver: zodResolver(AuctionUpdateSchema),
+  });
+
+  useEffect(() => {
+    if (auction.data) {
+      reset({
+        title: auction.data.title,
+        startingPrice: auction.data.startingPrice,
+        bidIncrement: auction.data.bidIncrement,
+        duration: auction.data.duration,
+        reservePrice: auction.data.reservePrice || undefined,
+        buyItNowPrice: auction.data.buyItNowPrice || undefined,
+        description: auction.data.description || undefined,
+      });
+    }
+  }, [auction.data]);
+
+  const onSubmit: SubmitHandler<Input> = (input) => {
+    console.log({ input });
+  };
+
+  console.log(errors);
 
   return (
     <Layout title="Auction">
@@ -38,7 +78,137 @@ function Auction() {
             Re Open
           </button>
         </div>
-        <pre>{JSON.stringify(auction, null, 4)}</pre>
+      </div>
+      <div className="min-h-screen bg-gray-100 border-t">
+        <form
+          className="custom-container py-8"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <fieldset disabled={!auction.data}>
+            <fieldset>
+              <legend className="font-semibold">General Information</legend>
+              <div className="mt-2">
+                <Input
+                  label="Title"
+                  type="text"
+                  {...register("title")}
+                  autoFocus
+                />
+              </div>
+              <div className="mt-2">
+                <Input
+                  label="Description"
+                  type="textarea"
+                  {...register("description")}
+                  rows={3}
+                />
+              </div>
+            </fieldset>
+
+            <fieldset className="mt-8">
+              <legend className="font-semibold">Settlement</legend>
+              <div className="lg:grid-cols-4 grid gap-4 mt-2">
+                <div className="flex-1">
+                  <Input
+                    label="Starting Price"
+                    prefix="$"
+                    type="number"
+                    {...register("startingPrice", { valueAsNumber: true })}
+                    disabled={hasBids}
+                  />
+                </div>
+                <div className="flex-1">
+                  <Input
+                    label="Bid Increment"
+                    prefix="$"
+                    type="number"
+                    {...register("bidIncrement", { valueAsNumber: true })}
+                    disabled={hasBids}
+                  />
+                </div>
+                <div className="flex-1">
+                  <Input
+                    label="Reserve Price"
+                    prefix="$"
+                    type="number"
+                    {...register("reservePrice", { valueAsNumber: true })}
+                  />
+                </div>
+                <div className="flex-1">
+                  <Input
+                    label="Buy it Now Price"
+                    prefix="$"
+                    type="number"
+                    {...register("buyItNowPrice", { valueAsNumber: true })}
+                  />
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset className="mt-8">
+              <legend className="font-semibold">Visibility</legend>
+              <div className="lg:grid-cols-4 grid gap-4 mt-2">
+                <div className="flex-1">
+                  <Input
+                    label="Duration"
+                    type="select"
+                    {...register("duration")}
+                    disabled={hasBids}
+                  >
+                    <option value={3}>3 days</option>
+                    <option value={5}>5 days</option>
+                    <option value={7}>7 days</option>
+                    <option value={10}>10 days</option>
+                  </Input>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset className="mt-8">
+              <legend className="font-semibold">Product Information</legend>
+              <div className="lg:grid-cols-4 grid gap-4 mt-2">
+                <Input label="Category" type="select" name="category" required>
+                  <option>{auction.data?.category.name}</option>
+                </Input>
+              </div>
+            </fieldset>
+
+            {auction.data?.category.attributes.length && (
+              <fieldset className="mt-8">
+                <legend className="font-semibold">Category Attributes</legend>
+                <div className="lg:grid-cols-4 grid gap-4 mt-2">
+                  {auction.data?.category.attributes.map((attribute) => (
+                    <Input
+                      key={attribute.id}
+                      label={attribute.name}
+                      type="text"
+                      id={attribute.id}
+                      required={attribute.isRequired}
+                      defaultValue={
+                        auction.data?.category.attributes.find(
+                          (attr) => attr.id === attribute.id
+                        )?.values[0].value || ""
+                      }
+                      disabled
+                    >
+                      {attribute.options.map((option) => (
+                        <option key={option.name} value={option.name}>
+                          {option.name}
+                        </option>
+                      ))}
+                    </Input>
+                  ))}
+                </div>
+              </fieldset>
+            )}
+          </fieldset>
+          <div className="mt-8">
+            <FormSubmitBar
+              isValidating={auction.isValidating}
+              isSubmitting={isSubmitting}
+            />
+          </div>
+        </form>
       </div>
     </Layout>
   );

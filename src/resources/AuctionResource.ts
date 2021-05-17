@@ -26,7 +26,7 @@ export const payload = {
 };
 
 const createAuctionResource = (
-  auction: Prisma.AuctionGetPayload<{ select: typeof payload }>
+  auction: Prisma.AuctionGetPayload<{ include: typeof payload }>
 ) => {
   let lastBidAmount: number | null = null;
   let lastBidCreatedAt: Date | null = null;

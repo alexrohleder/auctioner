@@ -4,15 +4,7 @@ import prisma from "../../../../../lib/db";
 import { BadRequestError, HttpError } from "../../../../../lib/errors";
 import z from "../../../../../lib/validation";
 import createAuctionResource from "../../../../../resources/AuctionResource";
-
-const UpdateSchema = z.object({
-  title: z.string().max(80).min(3).optional(),
-  description: z.string().optional(),
-  startingPrice: z.number().positive().optional(),
-  bidIncrement: z.number().positive().optional(),
-  reservePrice: z.number().positive().optional(),
-  buyItNowPrice: z.number().positive().optional(),
-});
+import { AuctionUpdateSchema } from "../../../../../schemas/AuctionSchema";
 
 export default api()
   .get(async (req, res) => {
@@ -57,7 +49,7 @@ export default api()
   })
   .post(async (req, res) => {
     const id = z.string().uuid().parse(req.query.auctionId);
-    const data = UpdateSchema.parse(req.body);
+    const data = AuctionUpdateSchema.parse(req.body);
 
     const auction = await prisma.auction.findUnique({
       where: {
@@ -95,6 +87,10 @@ export default api()
 
     if (data.startingPrice && auction.bids.length > 0) {
       throw new BadRequestError("Cannot modify starting price after first bid");
+    }
+
+    if (data.duration && auction.bids.length > 0) {
+      throw new BadRequestError("Cannot modify duration after first bid");
     }
 
     if (data.reservePrice && data.reservePrice < auction.bids[0]?.value) {
