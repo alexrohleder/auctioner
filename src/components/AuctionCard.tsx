@@ -30,7 +30,7 @@ function AuctionCard(props: Props) {
       <div className="p-4">
         <div className="flex items-center h-8 mb-4">
           <div className="overflow-ellipsis overflow-hidden text-xl font-semibold">
-            <Link href={`/auction/${props.id}`}>
+            <Link href={`/auctions/${props.id}`}>
               <a>{props.title}</a>
             </Link>
           </div>
