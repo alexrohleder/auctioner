@@ -190,7 +190,6 @@ function NewAuction() {
                   name="category"
                   value={categoryId}
                   onChange={(event) => setCategoryId(event.target.value)}
-                  required
                 >
                   {categories.data?.map((category) => (
                     <option key={category.id} value={category.id}>

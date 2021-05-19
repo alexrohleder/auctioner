@@ -7,6 +7,13 @@ const bidIncrement = z.number().positive();
 const reservePrice = z.number().positive();
 const buyItNowPrice = z.number().positive();
 
+const attributes = z.array(
+  z.object({
+    attributeId: z.string().uuid(),
+    value: z.string(),
+  })
+);
+
 const duration = z
   .number()
   .positive()
@@ -20,4 +27,25 @@ export const AuctionUpdateSchema = z.object({
   reservePrice: reservePrice.optional(),
   buyItNowPrice: buyItNowPrice.optional(),
   duration: duration.optional(),
+});
+
+export const AuctionSelectSchema = z.object({
+  sellerId: z.string().uuid().optional(),
+  categoryId: z.string().uuid().optional(),
+  title: title.optional(),
+  take: z.number().int().min(1).max(100).optional(),
+  skip: z.number().int().min(1).optional(),
+});
+
+export const AuctionInsertSchema = z.object({
+  sellerId: z.string().uuid(),
+  categoryId: z.string().uuid().optional(),
+  bidIncrement,
+  startingPrice,
+  reservePrice: reservePrice.nullable(),
+  buyItNowPrice: buyItNowPrice.nullable(),
+  duration,
+  title,
+  description,
+  attributes,
 });

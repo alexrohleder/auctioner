@@ -2,7 +2,7 @@ import { AuctionStatuses } from ".prisma/client";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { post } from "../../lib/web";
-import { AuctionResource } from "../../resources/AuctionResource";
+import { Auction } from "../../queries/Auction";
 
 const useReOpenAuction = () => {
   const [isReOpening, setReOpening] = useState(false);
@@ -27,8 +27,8 @@ const useReOpenAuction = () => {
     setReOpening(false);
   }
 
-  function canReOpen(auction?: AuctionResource) {
-    return !isReOpening && auction?.status === AuctionStatuses.CLOSED;
+  function canReOpen(auction?: Auction) {
+    return !isReOpening && auction?.currentStatus === AuctionStatuses.CLOSED;
   }
 
   return {

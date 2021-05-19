@@ -1,4 +1,3 @@
-import { AttributeType } from ".prisma/client";
 import api from "../../../../../lib/api";
 import prisma from "../../../../../lib/db";
 import { HttpError } from "../../../../../lib/errors";
@@ -53,11 +52,20 @@ export default api()
   .delete(async (req, res) => {
     const id = z.string().uuid().parse(req.query.attributeId);
 
-    await prisma.auctionAttribute.deleteMany({
-      where: {
-        attributeId: id,
-      },
-    });
+    {
+      // todo: replace this by ON DELETE CASCADE when prisma support it
+      await prisma.auctionAttribute.deleteMany({
+        where: {
+          attributeId: id,
+        },
+      });
+
+      await prisma.attributeOption.deleteMany({
+        where: {
+          attributeId: id,
+        },
+      });
+    }
 
     res.json(
       await prisma.attribute.delete({

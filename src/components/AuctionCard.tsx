@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { ReactNode } from "react";
 import { money } from "../lib/format";
-import { AuctionResource } from "../resources/AuctionResource";
+import { Auction } from "../queries/Auction";
 
-type Props = AuctionResource & {
+type Props = Auction & {
   withImages?: boolean;
 };
 

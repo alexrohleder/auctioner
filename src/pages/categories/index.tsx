@@ -30,7 +30,7 @@ function Categories() {
             <a className="btn btn--primary">New Category</a>
           </Link>
         </div>
-        {categories.data?.length && (
+        {categories.data && categories.data.length > 0 && (
           <div className="flex flex-col gap-2">
             {categories.data.map((category) => (
               <Link key={category.id} href={`/categories/${category.id}`}>

@@ -63,9 +63,9 @@ model VerificationRequest {
 }
 
 model Auction {
-  id         String @id @default(uuid())
-  sellerId   String @map(name: "seller_id")
-  categoryId String @map(name: "category_id")
+  id         String  @id @default(uuid())
+  sellerId   String  @map(name: "seller_id")
+  categoryId String? @map(name: "category_id")
 
   bidIncrement  Float  @map(name: "bid_increment")
   startingPrice Float  @map(name: "starting_price")
@@ -81,7 +81,7 @@ model Auction {
 
   bids       Bid[]
   statuses   AuctionStatus[]
-  category   Category           @relation(fields: [categoryId], references: [id])
+  category   Category?          @relation(fields: [categoryId], references: [id])
   attributes AuctionAttribute[]
 
   @@map(name: "auctions")

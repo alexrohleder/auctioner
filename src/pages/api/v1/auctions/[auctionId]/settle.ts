@@ -3,41 +3,17 @@ import api from "../../../../../lib/api";
 import prisma from "../../../../../lib/db";
 import { BadRequestError, HttpError } from "../../../../../lib/errors";
 import z from "../../../../../lib/validation";
+import { getAuction } from "../../../../../queries/Auction";
 
 export default api().post(async (req, res) => {
   const id = z.string().uuid().parse(req.query.auctionId);
-
-  const auction = await prisma.auction.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      bids: {
-        select: {
-          value: true,
-        },
-        orderBy: {
-          value: "desc",
-        },
-        take: 1,
-      },
-      statuses: {
-        select: {
-          status: true,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-        take: 1,
-      },
-    },
-  });
+  const auction = await getAuction(id);
 
   if (!auction) {
     throw new HttpError(404);
   }
 
-  if (auction.statuses[0].status !== AuctionStatuses.OPEN) {
+  if (auction.currentStatus !== AuctionStatuses.OPEN) {
     throw new BadRequestError("Cannot settle an auction that is not open");
   }
 

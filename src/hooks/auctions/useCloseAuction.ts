@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { post } from "../../lib/web";
-import { AuctionResource } from "../../resources/AuctionResource";
+import { Auction } from "../../queries/Auction";
 
 const useCloseAuction = () => {
   const [isClosing, setClosing] = useState(false);
@@ -26,8 +26,8 @@ const useCloseAuction = () => {
     setClosing(false);
   }
 
-  function canClose(auction?: AuctionResource) {
-    return !isClosing && auction?.status === "OPEN";
+  function canClose(auction?: Auction) {
+    return !isClosing && auction?.currentStatus === "OPEN";
   }
 
   return {

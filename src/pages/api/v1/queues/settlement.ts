@@ -42,7 +42,7 @@ export default Queue<Payload>("api/v1/queues/settlement", async (payload) => {
     return;
   }
 
-  if (auction.statuses[0].status !== AuctionStatuses.OPEN) {
+  if (auction.currentStatus !== AuctionStatuses.OPEN) {
     return;
   }
 
@@ -55,8 +55,8 @@ export default Queue<Payload>("api/v1/queues/settlement", async (payload) => {
     }
   } else {
     if (
-      (auction.reservePrice && auction.bids[0].value >= auction.reservePrice) ||
-      (auction.buyItNowPrice && auction.bids[0].value >= auction.buyItNowPrice)
+      (auction.reservePrice && auction.lastBidAmount >= auction.reservePrice) ||
+      (auction.buyItNowPrice && auction.lastBidAmount >= auction.buyItNowPrice)
     ) {
       status = AuctionStatuses.SOLD;
     } else if (isExpired) {

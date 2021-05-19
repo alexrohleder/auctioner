@@ -1,12 +1,12 @@
 import { useContext } from "react";
 import UserContext from "../../contexts/UserContext";
 import { url, useFetch } from "../../lib/web";
-import { AuctionResource } from "../../resources/AuctionResource";
+import { Auction } from "../../queries/Auction";
 
 const useAuctions = () => {
   const user = useContext(UserContext);
 
-  return useFetch<AuctionResource[]>(
+  return useFetch<Auction[]>(
     user ? url("/api/v1/auctions", { sellerId: user.id }) : null
   );
 };

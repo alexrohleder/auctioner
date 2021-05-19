@@ -2,7 +2,7 @@ import { AuctionStatuses } from ".prisma/client";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { post } from "../../lib/web";
-import { AuctionResource } from "../../resources/AuctionResource";
+import { Auction } from "../../queries/Auction";
 
 const useSettleAuction = () => {
   const [isSettling, setSettling] = useState(false);
@@ -27,10 +27,10 @@ const useSettleAuction = () => {
     setSettling(false);
   }
 
-  function canSettle(auction?: AuctionResource) {
+  function canSettle(auction?: Auction) {
     return (
       !isSettling &&
-      auction?.status === AuctionStatuses.OPEN &&
+      auction?.currentStatus === AuctionStatuses.OPEN &&
       auction.bids.length > 0
     );
   }

@@ -3,6 +3,7 @@ import api from "../../../../../lib/api";
 import prisma from "../../../../../lib/db";
 import { BadRequestError, HttpError } from "../../../../../lib/errors";
 import z from "../../../../../lib/validation";
+import { getAuction } from "../../../../../queries/Auction";
 import notifyNewBid from "../../queues/notify-new-bid";
 import settlement from "../../queues/settlement";
 
@@ -10,49 +11,24 @@ export default api().post(async (req, res) => {
   const id = z.string().uuid().parse(req.query.auctionId);
   const customerId = z.string().uuid().parse(req.body.customerId);
   const value = z.number().positive().min(1).parse(req.body.value);
-
-  const auction = await prisma.auction.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      bids: {
-        select: {
-          value: true,
-        },
-        orderBy: {
-          value: "desc",
-        },
-        take: 1,
-      },
-      statuses: {
-        select: {
-          status: true,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-        take: 1,
-      },
-    },
-  });
+  const auction = await getAuction(id);
 
   if (!auction) {
     throw new HttpError(404);
   }
 
-  if (auction.statuses[0].status !== AuctionStatuses.OPEN) {
+  if (auction.currentStatus !== AuctionStatuses.OPEN) {
     throw new BadRequestError(
-      `Cannot bid in auction with ${auction.statuses[0].status} status`
+      `Cannot bid in auction with ${auction.currentStatus} status`
     );
   }
 
-  if (auction.bids[0]) {
-    if (auction.bids[0].value >= value) {
+  if (auction.lastBidAmount) {
+    if (auction.lastBidAmount >= value) {
       throw new BadRequestError("Cannot bid less than current quote");
     }
 
-    if (value - auction.bidIncrement !== auction.bids[0].value) {
+    if (value - auction.bidIncrement !== auction.lastBidAmount) {
       throw new BadRequestError("Cannot bid less than bid increment");
     }
   } else {

@@ -30,7 +30,7 @@ function Attributes() {
             <a className="btn btn--primary">New Attribute</a>
           </Link>
         </div>
-        {attributes.data?.length && (
+        {attributes.data && attributes.data.length > 0 && (
           <div className="flex flex-col gap-2">
             {attributes.data.map((attribute) => (
               <Link key={attribute.id} href={`/attributes/${attribute.id}`}>
