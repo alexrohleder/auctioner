@@ -27,8 +27,8 @@ function NewAuction() {
 
   useEffect(() => {
     setCategoryId((category) => {
-      if (category === undefined) {
-        return categories.data?.[0].id;
+      if (category === undefined && categories.data?.length) {
+        return categories.data[0].id;
       }
     });
   }, [categories.data]);
@@ -62,9 +62,8 @@ function NewAuction() {
       attributes: Object.values(attributes),
     });
 
-    setIsSaving(false);
-
     if (error) {
+      setIsSaving(false);
       toast.error("Failed to create auction");
     } else {
       toast.success("Auction created");
@@ -190,6 +189,7 @@ function NewAuction() {
                   name="category"
                   value={categoryId}
                   onChange={(event) => setCategoryId(event.target.value)}
+                  disabled={categories.data?.length === 0}
                 >
                   {categories.data?.map((category) => (
                     <option key={category.id} value={category.id}>

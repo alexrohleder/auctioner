@@ -67,7 +67,7 @@ export default function Home() {
           </div>
           <div className="lg:mt-0 lg:grid-col-span-2 mt-4">
             <div className="font-semibold">Recent Activity</div>
-            <div className="flex flex-col gap-4 py-4" />
+            <div className="flex flex-col gap-4 py-4">No activities yet.</div>
           </div>
         </div>
       </div>

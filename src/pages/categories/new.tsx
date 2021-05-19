@@ -22,9 +22,8 @@ function NewCategory() {
       name: fields.name.value,
     });
 
-    setIsSaving(false);
-
     if (error) {
+      setIsSaving(false);
       toast.error("Failed to create category");
     } else {
       toast.success("Category created");

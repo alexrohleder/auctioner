@@ -58,9 +58,8 @@ function NewAttribute() {
 
     const { data, error } = await post("/api/v1/attributes", input);
 
-    setIsSaving(false);
-
     if (error) {
+      setIsSaving(false);
       toast.error("Failed to create attribute");
     } else {
       toast.success("Attribute created");
