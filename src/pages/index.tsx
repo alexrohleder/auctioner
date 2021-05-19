@@ -2,13 +2,23 @@ import Link from "next/link";
 
 function Home() {
   return (
-    <div className="custom-container py-8">
-      <div className="mb-5 font-semibold">Homepage</div>
-      <p className="mt-1">
-        <Link href="/dashboard">
-          <a className="hover:underline text-blue-500">Dashboard</a>
-        </Link>
-      </p>
+    <div>
+      <div className="border-b">
+        <header className="custom-container">
+          <div className="flex items-center justify-between py-4">
+            <Link href="/">
+              <a>
+                <div className="w-12 h-12 bg-gray-300 rounded" />
+              </a>
+            </Link>
+            <div>
+              <Link href="/">
+                <a className="btn btn--primary">Go to dashboard</a>
+              </Link>
+            </div>
+          </div>
+        </header>
+      </div>
     </div>
   );
 }
