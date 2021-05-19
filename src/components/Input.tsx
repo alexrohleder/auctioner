@@ -36,7 +36,7 @@ const Input = forwardRef(
     }
 
     if (error) {
-      elementProps.className += " border-red-600 ring-red-500";
+      elementProps.className += " focus:border-red-600 focus:ring-red-500";
     }
 
     return (

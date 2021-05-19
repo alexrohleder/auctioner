@@ -75,10 +75,10 @@ function Category() {
   const onDelete = async () => {
     const { error } = await deleteCategory(categoryId);
 
-    // todo: treat error
-    // todo: treat loading
-
-    if (!error) {
+    if (error) {
+      toast.error("Failed to delete category");
+    } else {
+      toast.success("Category deleted");
       router.replace("/categories");
     }
   };
@@ -135,17 +135,9 @@ function Category() {
             )}
           </div>
         </div>
-        <div className="flex items-center justify-center">
-          <button
-            className="btn btn--primary"
-            disabled={!category.data}
-            onClick={onDelete}
-          >
-            Delete Category
-          </button>
-        </div>
+        <div />
       </div>
-      <div className="min-h-screen bg-gray-100 border-t">
+      <div className="flex-1 bg-gray-100 border-t">
         <div className="custom-container py-8">
           <form onSubmit={handleSubmit(onSubmit)}>
             <fieldset className="flex flex-col gap-8" disabled={!category.data}>
@@ -219,6 +211,8 @@ function Category() {
               <FormSubmitBar
                 isValidating={category.isValidating}
                 isSubmitting={isSubmitting}
+                isDeleting={isDeleting}
+                onDelete={onDelete}
               />
             </fieldset>
           </form>

@@ -74,7 +74,7 @@ function NewAttribute() {
           <div className="text-4xl font-semibold">New Attribute</div>
         </div>
       </div>
-      <div className="min-h-screen bg-gray-100">
+      <div className="flex-1 bg-gray-100">
         <div className="custom-container py-8">
           <form onSubmit={handleSubmit(onSubmit)}>
             <fieldset>

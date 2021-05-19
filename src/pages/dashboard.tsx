@@ -45,7 +45,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="min-h-screen bg-gray-100">
+      <div className="flex-1 bg-gray-100">
         <div className="custom-container lg:grid-cols-4 grid gap-4 transform -translate-y-8">
           <div className="lg:col-span-2 flex flex-col gap-8">
             {auctions.data?.length === 0 && (

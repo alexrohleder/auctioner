@@ -91,7 +91,7 @@ function Auction() {
           </button>
         </div>
       </div>
-      <div className="min-h-screen bg-gray-100 border-t">
+      <div className="flex-1 bg-gray-100 border-t">
         <form
           className="custom-container py-8"
           onSubmit={handleSubmit(onSubmit)}

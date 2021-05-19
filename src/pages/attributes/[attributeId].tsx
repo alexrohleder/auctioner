@@ -10,7 +10,6 @@ import { AttributeUpdateSchema } from "../../schemas/AttributeSchema";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Input from "../../components/Input";
-import { AttributeType } from ".prisma/client";
 import { post } from "../../lib/web";
 import { toast } from "react-toastify";
 
@@ -50,13 +49,13 @@ function Attribute() {
     }
   };
 
-  const onDeleteAttribute = async () => {
+  const onDelete = async () => {
     const { error } = await deleteAttribute(attributeId);
 
-    // todo: treat errors
-    // todo: treat loading
-
-    if (!error) {
+    if (error) {
+      toast.error("Failed to delete attribute");
+    } else {
+      toast.success("Attribute deleted");
       router.replace("/attributes");
     }
   };
@@ -84,19 +83,18 @@ function Attribute() {
               : DataPlaceholder}
           </div>
         </div>
-        <div />
-        <div />
-        <div className="flex items-center justify-center">
-          <button
-            className="btn btn--primary"
-            disabled={!attribute.data}
-            onClick={onDeleteAttribute}
-          >
-            Delete Attribute
-          </button>
+        <div className="p-4 border rounded">
+          <div className="font-semibold">Last updated at</div>
+          <div className="flex items-center h-8 text-lg">
+            {attribute.data
+              ? format(new Date(attribute.data.updatedAt), "dd MMM yyyy hh:ss")
+              : DataPlaceholder}
+          </div>
         </div>
+        <div />
+        <div />
       </div>
-      <div className="min-h-screen bg-gray-100 border-t">
+      <div className="flex-1 bg-gray-100 border-t">
         <form
           className="custom-container py-8"
           onSubmit={handleSubmit(onSubmit)}
@@ -122,17 +120,8 @@ function Attribute() {
               />
             </div>
             <div className="mt-2">
-              <Input
-                label="Type"
-                type="select"
-                defaultValue={attribute.data?.type}
-                disabled
-              >
-                {Object.values(AttributeType).map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
+              <Input label="Type" type="select" disabled>
+                <option>{attribute.data?.type}</option>
               </Input>
             </div>
           </fieldset>
@@ -140,6 +129,8 @@ function Attribute() {
             <FormSubmitBar
               isValidating={attribute.isValidating}
               isSubmitting={isSubmitting}
+              isDeleting={isDeleting}
+              onDelete={onDelete}
             />
           </div>
         </form>

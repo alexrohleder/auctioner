@@ -2,31 +2,51 @@ import Loading from "./Loading";
 
 type Props = {
   isSubmitting: boolean;
+  isDeleting?: boolean;
   isDirty?: boolean;
   isValidating?: boolean;
   form?: string;
+  onDelete?: () => void;
 };
 
 function FormSubmitBar(props: Props) {
+  const isButtonsDisabled =
+    props.isValidating || props.isSubmitting || props.isDeleting;
+
+  const onDelete = () => {
+    if (props.onDelete) {
+      const shouldContinue = confirm("Do you really want to delete this?");
+
+      if (shouldContinue) {
+        props.onDelete();
+      }
+    }
+  };
+
   return (
-    <div className="bottom-4 sticky left-0 right-0">
-      <div className="custom-container flex items-center justify-between px-4 py-2 bg-white border border-gray-500 rounded shadow">
-        <div className="flex text-gray-700">
-          {props.isValidating && <Loading label="Fetching data..." />}
-        </div>
-        <div className="flex items-center gap-4">
-          {props.isSubmitting && <Loading />}
-          <div className="flex items-center justify-end gap-4">
+    <div className="custom-container flex items-center justify-between px-0 py-2">
+      <div className="flex text-gray-700">
+        {props.isValidating && <Loading label="Fetching data..." />}
+      </div>
+      <div className="flex items-center gap-4">
+        {props.isSubmitting && <Loading />}
+        <fieldset
+          className="flex items-center justify-end gap-4"
+          disabled={isButtonsDisabled}
+        >
+          {props.onDelete && (
             <button
-              type="submit"
-              className="btn btn--primary"
-              form={props.form}
-              disabled={props.isValidating || props.isSubmitting}
+              type="button"
+              className="btn btn--danger"
+              onClick={onDelete}
             >
-              Save
+              Delete
             </button>
-          </div>
-        </div>
+          )}
+          <button type="submit" className="btn btn--primary" form={props.form}>
+            Save
+          </button>
+        </fieldset>
       </div>
     </div>
   );
