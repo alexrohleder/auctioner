@@ -3,6 +3,7 @@ import { Queue } from "quirrel/next";
 import z from "../../../../lib/validation";
 import { add, isPast } from "date-fns";
 import { AuctionStatuses } from ".prisma/client";
+import { getAuction } from "../../../../queries/Auction";
 
 type Payload = {
   auctionId: string;
@@ -10,33 +11,7 @@ type Payload = {
 
 export default Queue<Payload>("api/v1/queues/settlement", async (payload) => {
   const id = z.string().uuid().parse(payload.auctionId);
-
-  const auction = await prisma.auction.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      bids: {
-        select: {
-          customerId: true,
-          value: true,
-        },
-        orderBy: {
-          value: "desc",
-        },
-        take: 1,
-      },
-      statuses: {
-        select: {
-          status: true,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-        take: 1,
-      },
-    },
-  });
+  const auction = await getAuction(id);
 
   if (!auction) {
     return;
@@ -55,8 +30,11 @@ export default Queue<Payload>("api/v1/queues/settlement", async (payload) => {
     }
   } else {
     if (
-      (auction.reservePrice && auction.lastBidAmount >= auction.reservePrice) ||
-      (auction.buyItNowPrice && auction.lastBidAmount >= auction.buyItNowPrice)
+      auction.lastBidAmount &&
+      ((auction.reservePrice &&
+        auction.lastBidAmount >= auction.reservePrice) ||
+        (auction.buyItNowPrice &&
+          auction.lastBidAmount >= auction.buyItNowPrice))
     ) {
       status = AuctionStatuses.SOLD;
     } else if (isExpired) {

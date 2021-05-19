@@ -4,9 +4,13 @@ import prisma from "../lib/db";
 const select = {
   id: true,
   title: true,
+  description: true,
+  startingPrice: true,
   bidIncrement: true,
   buyItNowPrice: true,
+  reservePrice: true,
   duration: true,
+  createdAt: true,
   bids: {
     select: {
       customerId: true,

@@ -202,39 +202,40 @@ function Auction() {
                   required
                   disabled
                 >
-                  <option>{auction.data?.category.name}</option>
+                  <option>{auction.data?.category?.name}</option>
                 </Input>
               </div>
             </fieldset>
 
-            {auction.data?.category.attributes.length && (
-              <fieldset className="mt-8">
-                <legend className="font-semibold">Category Attributes</legend>
-                <div className="lg:grid-cols-4 grid gap-4 mt-2">
-                  {auction.data?.category.attributes.map((attribute) => (
-                    <Input
-                      key={attribute.id}
-                      label={attribute.name}
-                      type="text"
-                      id={attribute.id}
-                      required={attribute.isRequired}
-                      defaultValue={
-                        auction.data?.category.attributes.find(
-                          (attr) => attr.id === attribute.id
-                        )?.values[0].value || ""
-                      }
-                      disabled
-                    >
-                      {attribute.options.map((option) => (
-                        <option key={option.name} value={option.name}>
-                          {option.name}
-                        </option>
-                      ))}
-                    </Input>
-                  ))}
-                </div>
-              </fieldset>
-            )}
+            {auction.data?.category?.attributes &&
+              auction.data.category.attributes.length && (
+                <fieldset className="mt-8">
+                  <legend className="font-semibold">Category Attributes</legend>
+                  <div className="lg:grid-cols-4 grid gap-4 mt-2">
+                    {auction.data.category.attributes.map((attribute) => (
+                      <Input
+                        key={attribute.id}
+                        label={attribute.name}
+                        type="text"
+                        id={attribute.id}
+                        required={attribute.isRequired}
+                        defaultValue={
+                          auction.data?.category?.attributes.find(
+                            (attr) => attr.id === attribute.id
+                          )?.values[0].value || ""
+                        }
+                        disabled
+                      >
+                        {attribute.options.map((option) => (
+                          <option key={option.name} value={option.name}>
+                            {option.name}
+                          </option>
+                        ))}
+                      </Input>
+                    ))}
+                  </div>
+                </fieldset>
+              )}
           </fieldset>
           <div className="mt-8">
             <FormSubmitBar
