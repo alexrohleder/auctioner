@@ -47,7 +47,6 @@ export const AuctionSelectSchema = z.object({
 });
 
 export const AuctionInsertSchema = z.object({
-  sellerId: z.string().uuid(),
   categoryId: z.string().uuid().optional(),
   bidIncrement,
   startingPrice,

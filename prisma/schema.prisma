@@ -8,23 +8,38 @@ generator client {
   previewFeatures = ["selectRelationCount"]
 }
 
-model Account {
-  id                 String    @id @default(uuid())
-  compoundId         String    @unique @map(name: "compound_id")
-  userId             Int       @map(name: "user_id")
-  providerType       String    @map(name: "provider_type")
-  providerId         String    @map(name: "provider_id")
-  providerAccountId  String    @map(name: "provider_account_id")
-  refreshToken       String?   @map(name: "refresh_token")
-  accessToken        String?   @map(name: "access_token")
-  accessTokenExpires DateTime? @map(name: "access_token_expires")
-  createdAt          DateTime  @default(now()) @map(name: "created_at")
-  updatedAt          DateTime  @default(now()) @map(name: "updated_at")
+enum OrganizationRole {
+  SUPERADMIN
+  CUSTOMER
+}
 
-  @@index([providerAccountId], name: "providerAccountId")
-  @@index([providerId], name: "providerId")
-  @@index([userId], name: "userId")
-  @@map(name: "accounts")
+model Organization {
+  id    String           @id @default(uuid())
+  name  String
+  role  OrganizationRole
+  users User[]
+
+  @@map("organizations")
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  USER
+}
+
+model User {
+  id             String       @id @default(uuid())
+  organizationId String
+  email          String
+  password       String
+  role           UserRole
+  createdAt      DateTime     @default(now()) @map(name: "created_at")
+  updatedAt      DateTime     @default(now()) @map(name: "updated_at")
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@unique([organizationId, email])
+  @@map(name: "users")
 }
 
 model Session {
@@ -37,29 +52,6 @@ model Session {
   updatedAt    DateTime @default(now()) @map(name: "updated_at")
 
   @@map(name: "sessions")
-}
-
-model User {
-  id            String    @id @default(uuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map(name: "email_verified")
-  image         String?
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
-  updatedAt     DateTime  @default(now()) @map(name: "updated_at")
-
-  @@map(name: "users")
-}
-
-model VerificationRequest {
-  id         String   @id @default(uuid())
-  identifier String
-  token      String   @unique
-  expires    DateTime
-  createdAt  DateTime @default(now()) @map(name: "created_at")
-  updatedAt  DateTime @default(now()) @map(name: "updated_at")
-
-  @@map(name: "verification_requests")
 }
 
 model Auction {

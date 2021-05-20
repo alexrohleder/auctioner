@@ -1,7 +1,11 @@
+import { signOut } from "next-auth/client";
 import Link from "next/link";
+import useUser from "../hooks/useUser";
 import LayoutHeaderNavigationLink from "./LayoutHeaderNavigationLink";
 
 function LayoutHeader() {
+  const user = useUser();
+
   return (
     <div className="border-b">
       <header className="custom-container">
@@ -25,7 +29,10 @@ function LayoutHeader() {
                 Docs
               </a>
             </Link>
-            <div className="w-10 h-10 bg-gray-300 rounded" />
+            <div
+              className="w-10 h-10 bg-gray-300 rounded"
+              onClick={() => signOut()}
+            />
           </div>
         </div>
         <div className="flex gap-2 overflow-x-auto">
@@ -35,12 +42,16 @@ function LayoutHeader() {
           <LayoutHeaderNavigationLink href="/auctions">
             Auctions
           </LayoutHeaderNavigationLink>
-          <LayoutHeaderNavigationLink href="/categories">
-            Categories
-          </LayoutHeaderNavigationLink>
-          <LayoutHeaderNavigationLink href="/attributes">
-            Attributes
-          </LayoutHeaderNavigationLink>
+          {user.isAdmin && (
+            <>
+              <LayoutHeaderNavigationLink href="/categories">
+                Categories
+              </LayoutHeaderNavigationLink>
+              <LayoutHeaderNavigationLink href="/attributes">
+                Attributes
+              </LayoutHeaderNavigationLink>
+            </>
+          )}
           <LayoutHeaderNavigationLink href="/activities">
             Activities
           </LayoutHeaderNavigationLink>
