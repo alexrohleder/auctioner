@@ -1,6 +1,5 @@
 import { AuctionStatuses } from ".prisma/client";
 import api from "../../../../../lib/api";
-import prisma from "../../../../../lib/db";
 import { BadRequestError, HttpError } from "../../../../../lib/errors";
 import z from "../../../../../lib/validation";
 import { getAuction, updateAuction } from "../../../../../queries/Auction";

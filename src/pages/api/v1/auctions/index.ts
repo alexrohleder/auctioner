@@ -1,3 +1,4 @@
+import { getSession } from "next-auth/client";
 import api from "../../../../lib/api";
 import { createAuction, getAuctions } from "../../../../queries/Auction";
 import {
@@ -32,9 +33,10 @@ export default api()
   })
   .post(async (req, res) => {
     const data = AuctionInsertSchema.parse(req.body);
+    const session = await getSession({ req });
 
     const auction = await createAuction({
-      sellerId: data.sellerId,
+      sellerId: session!.user.id as string,
       categoryId: data.categoryId,
       title: data.title,
       description: data.description,

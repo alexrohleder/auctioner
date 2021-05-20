@@ -1,12 +1,11 @@
 import { AttributeType } from ".prisma/client";
 import { useRouter } from "next/router";
-import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import CloudinaryUpload from "../../components/CloudinaryUpload";
 import Input from "../../components/Input";
 import Layout from "../../components/Layout";
 import Loading from "../../components/Loading";
-import UserContext from "../../contexts/UserContext";
 import useCategories from "../../hooks/categories/useCategories";
 import { post } from "../../lib/web";
 
@@ -17,7 +16,6 @@ const AttributeTypeToInputType = {
 function NewAuction() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
-  const user = useContext(UserContext);
   const categories = useCategories();
   const [categoryId, setCategoryId] = useState<string>();
   const [attributes, setAttributes] = useState({});
@@ -53,7 +51,6 @@ function NewAuction() {
     setIsSaving(true);
 
     const { data, error } = await post("/api/v1/auctions", {
-      sellerId: user!.id,
       categoryId,
       title,
       description,

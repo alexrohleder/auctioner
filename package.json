@@ -16,6 +16,7 @@
     "date-fns": "^2.21.3",
     "http-status-codes": "^2.1.4",
     "next": "10.2.0",
+    "next-auth": "^3.23.1",
     "next-connect": "^0.10.1",
     "preact": "^10.5.13",
     "quirrel": "^1.4.4",

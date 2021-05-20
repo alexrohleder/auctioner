@@ -1,17 +1,25 @@
 import { AppProps } from "next/dist/next-server/lib/router/router";
+import { Provider as SessionProvider } from "next-auth/client";
 import { ToastContainer } from "react-toastify";
-import UserContext from "../contexts/UserContext";
+import { ComponentType } from "react";
+import AuthenticationGuard from "../components/AuthGuard";
 import "../assets/main.css";
 import "react-toastify/dist/ReactToastify.css";
 
-function App({ Component, pageProps }: AppProps) {
+type Props = AppProps & {
+  Component: ComponentType & {
+    isPublic?: boolean;
+  };
+};
+
+function App({ Component, pageProps }: Props) {
   return (
-    <UserContext.Provider
-      value={{ id: "f501c593-206a-4406-bb9e-8197c55b2f98" }}
-    >
-      <Component {...pageProps} />
+    <SessionProvider session={pageProps.session}>
+      <AuthenticationGuard>
+        <Component {...pageProps} />
+      </AuthenticationGuard>
       <ToastContainer position="bottom-right" limit={3} pauseOnHover={false} />
-    </UserContext.Provider>
+    </SessionProvider>
   );
 }
 

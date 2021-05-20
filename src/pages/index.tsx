@@ -1,7 +1,11 @@
 import Link from "next/link";
 import Head from "next/head";
+import { useSession } from "next-auth/client";
 
 function Home() {
+  // let session = null;
+  const [session, loading] = useSession();
+
   return (
     <div>
       <Head>
@@ -23,8 +27,11 @@ function Home() {
           </div>
         </header>
       </div>
+      <pre>{JSON.stringify(session, null, 4)}</pre>
     </div>
   );
 }
+
+Home.isPublic = true;
 
 export default Home;
