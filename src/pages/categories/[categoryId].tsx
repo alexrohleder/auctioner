@@ -119,20 +119,12 @@ function Category() {
           <div className="font-semibold">Amount of Auctions</div>
           <div className="flex items-center justify-between h-8 text-lg">
             {category.data ? category.data.auctions.length : DataPlaceholder}
-            {category.data && (
-              <a className="hover:underline text-sm text-blue-700">See all</a>
-            )}
           </div>
         </div>
         <div className="p-4 border rounded">
           <div className="font-semibold">Amount of Attributes</div>
           <div className="flex items-center justify-between h-8 text-lg">
             {category.data ? category.data.attributes.length : DataPlaceholder}
-            {category.data && (
-              <Link href="/attributes">
-                <a className="hover:underline text-sm text-blue-700">See all</a>
-              </Link>
-            )}
           </div>
         </div>
         <div />
