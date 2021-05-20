@@ -2,6 +2,7 @@ import { AttributeType } from ".prisma/client";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import CloudinaryUpload from "../../components/CloudinaryUpload";
 import Input from "../../components/Input";
 import Layout from "../../components/Layout";
 import Loading from "../../components/Loading";
@@ -20,6 +21,8 @@ function NewAuction() {
   const categories = useCategories();
   const [categoryId, setCategoryId] = useState<string>();
   const [attributes, setAttributes] = useState({});
+  const [isUploadingMedia, setUploadingMedia] = useState(false);
+  const [medias, setMedias] = useState([]);
 
   const category = categoryId
     ? categories?.data?.find((category) => category.id === categoryId)
@@ -60,6 +63,7 @@ function NewAuction() {
       buyItNowPrice,
       duration,
       attributes: Object.values(attributes),
+      medias,
     });
 
     if (error) {
@@ -225,12 +229,25 @@ function NewAuction() {
               </fieldset>
             )}
 
+            <fieldset className="mt-8">
+              <legend className="font-semibold">Medias</legend>
+              <div className="mt-2">
+                <CloudinaryUpload
+                  images={medias}
+                  setImages={setMedias}
+                  isLoading={isUploadingMedia}
+                  isDisabled={isSaving}
+                  setLoading={setUploadingMedia}
+                />
+              </div>
+            </fieldset>
+
             <div className="flex items-center justify-end gap-4 mt-8">
               {isSaving && <Loading />}
               <button
                 type="submit"
                 className="btn btn--primary"
-                disabled={isSaving}
+                disabled={isSaving || isUploadingMedia}
               >
                 Create
               </button>

@@ -237,6 +237,18 @@ function Auction() {
                 </fieldset>
               )}
           </fieldset>
+
+          <fieldset className="mt-8">
+            <legend className="font-semibold">Medias</legend>
+            <div className="flex gap-2 mt-2">
+              {auction.data &&
+                auction.data.medias.length > 0 &&
+                auction.data.medias.map((media) => (
+                  <img key={media.id} src={media.thumbnail} />
+                ))}
+            </div>
+          </fieldset>
+
           <div className="mt-8">
             <FormSubmitBar
               isValidating={auction.isValidating}

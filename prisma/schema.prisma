@@ -83,6 +83,7 @@ model Auction {
   statuses   AuctionStatus[]
   category   Category?          @relation(fields: [categoryId], references: [id])
   attributes AuctionAttribute[]
+  medias     AuctionMedia[]
 
   @@map(name: "auctions")
 }
@@ -111,6 +112,17 @@ model AuctionStatus {
   status    AuctionStatuses
   createdAt DateTime        @default(now()) @map(name: "created_at")
   auction   Auction         @relation(fields: [auctionId], references: [id])
+}
+
+model AuctionMedia {
+  id        String   @id @default(uuid())
+  auctionId String   @map(name: "auction_id")
+  url       String
+  thumbnail String
+  height    Int
+  width     Int
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  auction   Auction  @relation(fields: [auctionId], references: [id])
 }
 
 model Category {
