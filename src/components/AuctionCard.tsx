@@ -23,8 +23,11 @@ function AuctionCard(props: Props) {
   return (
     <div className="bg-white border rounded shadow-sm">
       {props.withImages && (
-        <div className="h-64 border-b">
-          <div className="placeholder" />
+        <div className="h-64 overflow-hidden border-b">
+          {props.medias.length === 0 && <div className="placeholder" />}
+          {props.medias.map((media) => (
+            <img key={media.id} src={media.url} />
+          ))}
         </div>
       )}
       <div className="p-4">
