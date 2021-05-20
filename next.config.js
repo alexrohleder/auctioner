@@ -28,8 +28,9 @@ module.exports = {
 // https://securityheaders.com
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline';
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://widget.cloudinary.com https://upload-widget.cloudinary.com;
   style-src 'self' 'unsafe-inline';
+  frame-src 'self' https://upload-widget.cloudinary.com;
   img-src * blob: data:;
   media-src 'none';
   connect-src *;

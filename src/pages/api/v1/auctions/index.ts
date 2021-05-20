@@ -48,6 +48,11 @@ export default api()
           data: data.attributes,
         },
       },
+      medias: {
+        createMany: {
+          data: data.medias,
+        },
+      },
     });
 
     res.json(auction);

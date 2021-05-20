@@ -50,6 +50,15 @@ const select = {
       },
     },
   },
+  medias: {
+    select: {
+      id: true,
+      url: true,
+      thumbnail: true,
+      width: true,
+      height: true,
+    },
+  },
 };
 
 export const getAuction = async (id: string) => {

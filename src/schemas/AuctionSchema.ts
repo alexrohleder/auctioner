@@ -14,6 +14,15 @@ const attributes = z.array(
   })
 );
 
+const medias = z.array(
+  z.object({
+    height: z.number().positive(),
+    width: z.number().positive(),
+    url: z.string().url(),
+    thumbnail: z.string().url(),
+  })
+);
+
 const duration = z
   .number()
   .positive()
@@ -48,4 +57,5 @@ export const AuctionInsertSchema = z.object({
   title,
   description,
   attributes,
+  medias,
 });
