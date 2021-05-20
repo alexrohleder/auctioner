@@ -13,7 +13,11 @@ function AuthOverlay() {
   const csrfToken = useCsrfToken();
   const [isSubmitting, setSubmitting] = useState(false);
 
-  const { register, handleSubmit } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: zodResolver(LoginSchema),
   });
 
@@ -34,26 +38,55 @@ function AuthOverlay() {
   };
 
   return (
-    <div className="bg-gradient-to-t from-white to-transparent fixed top-0 bottom-0 left-0 right-0 flex items-center justify-center">
-      <div className="w-96 p-4 bg-white border rounded shadow-lg">
-        <h1 className="mb-4 font-semibold">Authenticate</h1>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <fieldset disabled={isSubmitting || !csrfToken}>
-            <div className="mb-2">
-              <Input label="Email" type="text" {...register("email")} />
-            </div>
-            <div className="mb-2">
-              <Input label="Password" type="text" {...register("password")} />
-            </div>
-            <div className="mb-2">
-              <Input label="Org" type="text" {...register("organizationId")} />
-            </div>
-            <button type="submit" className="btn btn--primary mt-2">
-              Sign in with Email
-            </button>
-          </fieldset>
-        </form>
-      </div>
+    <div className="flex items-center justify-center min-h-screen py-24">
+      <form
+        className="flex flex-col w-2/3 max-w-md gap-4"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <div className="text-4xl font-semibold">Sign In</div>
+        <div className="flex flex-col gap-2">
+          <Input
+            label="Email"
+            type="text"
+            {...register("email")}
+            error={errors.email}
+            disabled={isSubmitting}
+            autoFocus
+            autoComplete="username"
+          />
+          <Input
+            label="Password"
+            type="password"
+            {...register("password")}
+            disabled={isSubmitting}
+            error={errors.password}
+            autoComplete="current-password"
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <a
+            title="Functionality not available yet"
+            className="text-blue-700 cursor-not-allowed"
+          >
+            Forgot password
+          </a>
+          <button
+            type="submit"
+            className="btn btn--primary"
+            disabled={isSubmitting}
+          >
+            Login
+          </button>
+        </div>
+        <div className="pt-4 border-t">
+          <a
+            title="Functionality not available yet"
+            className="text-blue-700 cursor-not-allowed"
+          >
+            Don't have an account? Sign up
+          </a>
+        </div>
+      </form>
     </div>
   );
 }
