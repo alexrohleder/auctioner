@@ -12,7 +12,6 @@ export default NextAuth({
           where: LoginSchema.parse({
             email: payload.email,
             password: payload.password,
-            organizationId: payload.organizationId,
           }),
         });
       },

@@ -10,7 +10,7 @@ interface SelectProps extends React.ComponentPropsWithoutRef<"select"> {
 }
 
 interface InputProps extends React.ComponentPropsWithoutRef<"input"> {
-  type: "text" | "number" | "checkbox";
+  type: "text" | "number" | "checkbox" | "password";
 }
 
 type Props = (TextAreaProps | SelectProps | InputProps) & {
