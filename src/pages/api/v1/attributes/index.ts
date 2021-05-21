@@ -1,7 +1,7 @@
 import { AttributeType, Prisma } from ".prisma/client";
 import api from "../../../../lib/api";
 import cacheRes from "../../../../lib/cache-res";
-import prisma from "../../../../lib/db";
+import { createAttribute, getAttributes } from "../../../../queries/Attribute";
 import {
   AttributeInsertSchema,
   AttributeSelectSchema,
@@ -14,23 +14,7 @@ export default api()
     cacheRes(res, "1d", "12h");
 
     res.json(
-      await prisma.attribute.findMany({
-        include: {
-          categories: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-          options: {
-            select: {
-              name: true,
-            },
-          },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
+      await getAttributes({
         where: {
           name: data.name,
           type: data.type ? AttributeType[data.type] : undefined,
@@ -45,22 +29,20 @@ export default api()
   .post(async (req, res) => {
     const data = AttributeInsertSchema.parse(req.body);
 
-    const payload: Prisma.AttributeCreateArgs = {
-      data: {
-        name: data.name,
-        slug: data.slug,
-        type: AttributeType[data.type],
-        isRequired: data.isRequired,
-      },
+    const payload: Prisma.AttributeCreateInput = {
+      name: data.name,
+      slug: data.slug,
+      type: AttributeType[data.type],
+      isRequired: data.isRequired,
     };
 
     if (data.options) {
-      payload.data.options = {
+      payload.options = {
         createMany: {
           data: data.options,
         },
       };
     }
 
-    res.json(await prisma.attribute.create(payload));
+    res.json(await createAttribute(payload));
   });

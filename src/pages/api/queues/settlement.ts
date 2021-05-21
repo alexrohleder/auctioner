@@ -3,7 +3,7 @@ import { Queue } from "quirrel/next";
 import z from "../../../lib/validation";
 import { add, isPast } from "date-fns";
 import { AuctionStatuses } from ".prisma/client";
-import { getAuction } from "../../../queries/Auction";
+import { getAuction, updateAuctionStatus } from "../../../queries/Auction";
 
 type Payload = {
   auctionId: string;
@@ -48,12 +48,7 @@ export default Queue<Payload>("api/queues/settlement", async (payload) => {
     return;
   }
 
-  await prisma.auctionStatus.create({
-    data: {
-      auctionId: id,
-      status,
-    },
-  });
+  await updateAuctionStatus(id, status);
 
   if (status === AuctionStatuses.EXPIRED) {
     // todo: notify seller asking to re-open

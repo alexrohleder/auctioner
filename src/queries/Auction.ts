@@ -133,6 +133,27 @@ export const updateAuction = async (
   ) as Auction;
 };
 
+export const updateAuctionStatus = async (
+  id: string,
+  status: AuctionStatuses
+) => {
+  await prisma.auctionStatus.create({
+    data: {
+      auctionId: id,
+      status,
+    },
+  });
+};
+
+export const bid = async (id: string, customerId: string, value: number) =>
+  prisma.bid.create({
+    data: {
+      auctionId: id,
+      customerId,
+      value,
+    },
+  });
+
 const format = (
   auction: Prisma.AuctionGetPayload<{ select: typeof select }> | null
 ) => {

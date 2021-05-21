@@ -1,9 +1,8 @@
 import { AuctionStatuses } from ".prisma/client";
 import api from "../../../../../lib/api";
-import prisma from "../../../../../lib/db";
 import { BadRequestError, HttpError } from "../../../../../lib/errors";
 import z from "../../../../../lib/validation";
-import { getAuction } from "../../../../../queries/Auction";
+import { bid, getAuction } from "../../../../../queries/Auction";
 import notifyNewBid from "../../../queues/notify-new-bid";
 import settlement from "../../../queues/settlement";
 
@@ -37,15 +36,7 @@ export default api().post(async (req, res) => {
     }
   }
 
-  res.json(
-    await prisma.bid.create({
-      data: {
-        auctionId: id,
-        customerId,
-        value,
-      },
-    })
-  );
+  res.json(await bid(id, customerId, value));
 
   if (auction.buyItNowPrice && value >= auction.buyItNowPrice) {
     settlement.enqueue({ auctionId: auction.id }, { id: auction.id });
