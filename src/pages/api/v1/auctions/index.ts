@@ -1,5 +1,6 @@
 import { getSession } from "next-auth/client";
 import api from "../../../../lib/api";
+import cacheRes from "../../../../lib/cache-res";
 import { createAuction, getAuctions } from "../../../../queries/Auction";
 import {
   AuctionInsertSchema,
@@ -11,10 +12,7 @@ export default api()
   .get(async (req, res) => {
     const { take = 10, skip, ...data } = AuctionSelectSchema.parse(req.query);
 
-    res.setHeader(
-      "Cache-Control",
-      "public, s-maxage=1200, stale-while-revalidate=600"
-    );
+    cacheRes(res, "3s", "1m");
 
     res.json(
       await getAuctions({

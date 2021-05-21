@@ -1,5 +1,6 @@
 import { getSession } from "next-auth/client";
 import api from "../../../../../lib/api";
+import cacheRes from "../../../../../lib/cache-res";
 import { HttpError } from "../../../../../lib/errors";
 import z from "../../../../../lib/validation";
 import {
@@ -13,16 +14,13 @@ export default api()
   .get(async (req, res) => {
     const id = z.string().uuid().parse(req.query.reviewId);
 
-    res.setHeader(
-      "Cache-Control",
-      "public, s-maxage=3600, stale-while-revalidate=600"
-    );
-
     const review = await getReview(id);
 
     if (!review) {
       throw new HttpError(404);
     }
+
+    cacheRes(res, "1d", "12h");
 
     res.json(review);
   })
