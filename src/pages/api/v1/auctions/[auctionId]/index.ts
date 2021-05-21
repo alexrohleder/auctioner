@@ -1,5 +1,6 @@
 import { AuctionStatuses } from ".prisma/client";
 import api from "../../../../../lib/api";
+import cacheRes from "../../../../../lib/cache-res";
 import { BadRequestError, HttpError } from "../../../../../lib/errors";
 import z from "../../../../../lib/validation";
 import { getAuction, updateAuction } from "../../../../../queries/Auction";
@@ -14,10 +15,7 @@ export default api()
       throw new HttpError(404);
     }
 
-    res.setHeader(
-      "Cache-Control",
-      "public, s-maxage=1200, stale-while-revalidate=600"
-    );
+    cacheRes(res, "3s", "1m");
 
     res.json(auction);
   })

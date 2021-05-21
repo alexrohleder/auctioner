@@ -112,7 +112,7 @@ export const createAuction = async (
       },
       select,
     })
-  );
+  ) as Auction;
 };
 
 export const updateAuction = async (
@@ -130,7 +130,7 @@ export const updateAuction = async (
       data,
       select,
     })
-  );
+  ) as Auction;
 };
 
 const format = (

@@ -1,5 +1,6 @@
 import { getSession } from "next-auth/client";
 import api from "../../../../lib/api";
+import cacheRes from "../../../../lib/cache-res";
 import { createReview, getReviews } from "../../../../queries/Review";
 import {
   InsertReviewSchema,
@@ -10,10 +11,7 @@ export default api()
   .get(async (req, res) => {
     const { take = 10, skip, ...data } = SelectReviewSchema.parse(req.query);
 
-    res.setHeader(
-      "Cache-Control",
-      "public, s-maxage=3600, stale-while-revalidate=600"
-    );
+    cacheRes(res, "1d", "12h");
 
     res.json(
       await getReviews({
