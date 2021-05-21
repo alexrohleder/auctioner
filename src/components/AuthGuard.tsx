@@ -14,7 +14,7 @@ function AuthGuard(props: Props) {
   const [session, isLoading] = useSession();
   const router = useRouter();
 
-  if (isLoading) {
+  if (!session && isLoading) {
     return (
       <div className="flex items-center justify-center w-full min-h-screen">
         <Loading label="Fetching user data..." />
