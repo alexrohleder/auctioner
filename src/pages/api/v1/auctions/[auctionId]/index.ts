@@ -15,7 +15,7 @@ export default api()
       throw new HttpError(404);
     }
 
-    cacheRes(res, "3s", "1m");
+    cacheRes(res, "3s");
 
     res.json(auction);
   })

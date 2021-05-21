@@ -18,7 +18,7 @@ export default api()
       throw new HttpError(404);
     }
 
-    cacheRes(res, "1d", "12h");
+    cacheRes(res, "1d");
 
     res.json(category);
   })

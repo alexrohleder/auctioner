@@ -20,7 +20,7 @@ export default api()
   .get(async (req, res) => {
     const { take = 10, skip, ...data } = SelectSchema.parse(req.query);
 
-    cacheRes(res, "1d", "12h");
+    cacheRes(res, "1d");
 
     res.json(
       await getCategories({
