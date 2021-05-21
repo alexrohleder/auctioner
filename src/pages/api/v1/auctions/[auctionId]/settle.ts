@@ -1,9 +1,11 @@
 import { AuctionStatuses } from ".prisma/client";
 import api from "../../../../../lib/api";
-import prisma from "../../../../../lib/db";
 import { BadRequestError, HttpError } from "../../../../../lib/errors";
 import z from "../../../../../lib/validation";
-import { getAuction } from "../../../../../queries/Auction";
+import {
+  getAuction,
+  updateAuctionStatus,
+} from "../../../../../queries/Auction";
 
 export default api().post(async (req, res) => {
   const id = z.string().uuid().parse(req.query.auctionId);
@@ -21,14 +23,7 @@ export default api().post(async (req, res) => {
     throw new BadRequestError("Cannot settle an auction without bids");
   }
 
-  res.json(
-    await prisma.auctionStatus.create({
-      data: {
-        auctionId: id,
-        status: AuctionStatuses.SOLD,
-      },
-    })
-  );
+  res.json(await updateAuctionStatus(id, AuctionStatuses.SOLD));
 
   // todo: notify bidder and transfer money
 });

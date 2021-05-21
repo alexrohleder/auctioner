@@ -1,9 +1,11 @@
 import { AuctionStatuses } from ".prisma/client";
 import api from "../../../../../lib/api";
-import prisma from "../../../../../lib/db";
 import { BadRequestError, HttpError } from "../../../../../lib/errors";
 import z from "../../../../../lib/validation";
-import { getAuction } from "../../../../../queries/Auction";
+import {
+  getAuction,
+  updateAuctionStatus,
+} from "../../../../../queries/Auction";
 
 export default api().post(async (req, res) => {
   const id = z.string().uuid().parse(req.query.auctionId);
@@ -21,12 +23,5 @@ export default api().post(async (req, res) => {
     throw new BadRequestError("Cannot re-open sold auctions");
   }
 
-  res.json(
-    await prisma.auctionStatus.create({
-      data: {
-        auctionId: auction.id,
-        status: AuctionStatuses.OPEN,
-      },
-    })
-  );
+  res.json(await updateAuctionStatus(id, AuctionStatuses.OPEN));
 });

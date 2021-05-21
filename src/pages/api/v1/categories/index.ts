@@ -1,7 +1,7 @@
 import api from "../../../../lib/api";
 import cacheRes from "../../../../lib/cache-res";
-import prisma from "../../../../lib/db";
 import z from "../../../../lib/validation";
+import { createCategory, getCategories } from "../../../../queries/Category";
 
 const SelectSchema = z.object({
   creatorId: z.string().uuid().optional(),
@@ -23,21 +23,7 @@ export default api()
     cacheRes(res, "1d", "12h");
 
     res.json(
-      await prisma.category.findMany({
-        include: {
-          attributes: {
-            select: {
-              id: true,
-              name: true,
-              type: true,
-              isRequired: true,
-              options: true,
-            },
-          },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
+      await getCategories({
         where: {
           name: data.name,
           createdAt: data.createdAt,
@@ -52,10 +38,8 @@ export default api()
     const data = InsertSchema.parse(req.body);
 
     res.json(
-      await prisma.category.create({
-        data: {
-          name: data.name,
-        },
+      await createCategory({
+        name: data.name,
       })
     );
   });
