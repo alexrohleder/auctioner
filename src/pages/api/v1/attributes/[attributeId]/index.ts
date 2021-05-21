@@ -8,6 +8,11 @@ export default api()
   .get(async (req, res) => {
     const id = z.string().uuid().parse(req.query.attributeId);
 
+    res.setHeader(
+      "Cache-Control",
+      "public, s-maxage=1200, stale-while-revalidate=600"
+    );
+
     const attribute = await prisma.attribute.findUnique({
       where: {
         id,

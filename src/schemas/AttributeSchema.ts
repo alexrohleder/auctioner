@@ -1,5 +1,6 @@
 import { AttributeType } from ".prisma/client";
 import z from "../lib/validation";
+import { PaginationSchema } from "./helpers";
 
 const name = z.string().nonempty().max(60);
 const slug = z
@@ -40,6 +41,5 @@ export const AttributeSelectSchema = z.object({
   type: type.optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
-  take: z.number().int().min(1).max(100).optional(),
-  skip: z.number().int().min(1).optional(),
+  ...PaginationSchema,
 });

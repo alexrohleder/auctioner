@@ -1,15 +1,15 @@
-import prisma from "../../../../lib/db";
+import prisma from "../../../lib/db";
 import { Queue } from "quirrel/next";
-import z from "../../../../lib/validation";
+import z from "../../../lib/validation";
 import { add, isPast } from "date-fns";
 import { AuctionStatuses } from ".prisma/client";
-import { getAuction } from "../../../../queries/Auction";
+import { getAuction } from "../../../queries/Auction";
 
 type Payload = {
   auctionId: string;
 };
 
-export default Queue<Payload>("api/v1/queues/settlement", async (payload) => {
+export default Queue<Payload>("api/queues/settlement", async (payload) => {
   const id = z.string().uuid().parse(payload.auctionId);
   const auction = await getAuction(id);
 

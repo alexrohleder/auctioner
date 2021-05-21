@@ -25,33 +25,37 @@ model Organization {
 enum UserRole {
   OWNER
   ADMIN
-  USER
+  SELLER
+  BIDDER
 }
 
 model User {
-  id             String       @id @default(uuid())
-  organizationId String
-  email          String
-  password       String
-  role           UserRole
-  createdAt      DateTime     @default(now()) @map(name: "created_at")
-  updatedAt      DateTime     @default(now()) @map(name: "updated_at")
-  organization   Organization @relation(fields: [organizationId], references: [id])
+  id              String       @id @default(uuid())
+  organizationId  String
+  email           String
+  password        String
+  role            UserRole
+  createdAt       DateTime     @default(now()) @map(name: "created_at")
+  updatedAt       DateTime     @default(now()) @map(name: "updated_at")
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  reviewsGiven    UserReview[] @relation("reviews_given")
+  reviewsReceived UserReview[] @relation("reviews_received")
 
   @@unique([organizationId, email])
   @@map(name: "users")
 }
 
-model Session {
-  id           String   @id @default(uuid())
-  userId       Int      @map(name: "user_id")
-  expires      DateTime
-  sessionToken String   @unique @map(name: "session_token")
-  accessToken  String   @unique @map(name: "access_token")
-  createdAt    DateTime @default(now()) @map(name: "created_at")
-  updatedAt    DateTime @default(now()) @map(name: "updated_at")
+model UserReview {
+  id         String   @id @default(uuid())
+  userId     String   @map(name: "user_id")
+  reviewerId String   @map(name: "reviewer_id")
+  review     String
+  createdAt  DateTime @default(now()) @map(name: "created_at")
+  updatedAt  DateTime @default(now()) @map(name: "updated_at")
+  reviewer   User     @relation("reviews_given", fields: [reviewerId], references: [id])
+  user       User     @relation("reviews_received", fields: [reviewerId], references: [id])
 
-  @@map(name: "sessions")
+  @@map("users_reviews")
 }
 
 model Auction {
@@ -104,6 +108,8 @@ model AuctionStatus {
   status    AuctionStatuses
   createdAt DateTime        @default(now()) @map(name: "created_at")
   auction   Auction         @relation(fields: [auctionId], references: [id])
+
+  @@map("auctions_statuses")
 }
 
 model AuctionMedia {
@@ -115,6 +121,8 @@ model AuctionMedia {
   width     Int
   createdAt DateTime @default(now()) @map(name: "created_at")
   auction   Auction  @relation(fields: [auctionId], references: [id])
+
+  @@map("auctions_medias")
 }
 
 model Category {
