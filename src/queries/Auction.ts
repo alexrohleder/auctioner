@@ -100,17 +100,19 @@ export const createAuction = async (
     Prisma.AuctionUncheckedCreateInput
   >
 ) => {
-  return prisma.auction.create({
-    data: {
-      ...data,
-      statuses: {
-        create: {
-          status: AuctionStatuses.OPEN,
+  return format(
+    await prisma.auction.create({
+      data: {
+        ...data,
+        statuses: {
+          create: {
+            status: AuctionStatuses.OPEN,
+          },
         },
       },
-    },
-    select,
-  });
+      select,
+    })
+  );
 };
 
 export const updateAuction = async (
@@ -120,13 +122,15 @@ export const updateAuction = async (
     Prisma.AuctionUncheckedUpdateInput
   >
 ) => {
-  return prisma.auction.update({
-    where: {
-      id,
-    },
-    data,
-    select,
-  });
+  return format(
+    await prisma.auction.update({
+      where: {
+        id,
+      },
+      data,
+      select,
+    })
+  );
 };
 
 const format = (

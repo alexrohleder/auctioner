@@ -4,8 +4,8 @@ import prisma from "../../../../../lib/db";
 import { BadRequestError, HttpError } from "../../../../../lib/errors";
 import z from "../../../../../lib/validation";
 import { getAuction } from "../../../../../queries/Auction";
-import notifyNewBid from "../../queues/notify-new-bid";
-import settlement from "../../queues/settlement";
+import notifyNewBid from "../../../queues/notify-new-bid";
+import settlement from "../../../queues/settlement";
 
 export default api().post(async (req, res) => {
   const id = z.string().uuid().parse(req.query.auctionId);

@@ -1,4 +1,5 @@
 import z from "../lib/validation";
+import { PaginationSchema } from "./helpers";
 
 const title = z.string().max(80).min(3).nonempty();
 const description = z.string().max(2048);
@@ -42,8 +43,7 @@ export const AuctionSelectSchema = z.object({
   sellerId: z.string().uuid().optional(),
   categoryId: z.string().uuid().optional(),
   title: title.optional(),
-  take: z.number().int().min(1).max(100).optional(),
-  skip: z.number().int().min(1).optional(),
+  ...PaginationSchema,
 });
 
 export const AuctionInsertSchema = z.object({

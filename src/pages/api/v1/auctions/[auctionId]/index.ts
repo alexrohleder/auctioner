@@ -14,6 +14,11 @@ export default api()
       throw new HttpError(404);
     }
 
+    res.setHeader(
+      "Cache-Control",
+      "public, s-maxage=1200, stale-while-revalidate=600"
+    );
+
     res.json(auction);
   })
   .post(async (req, res) => {

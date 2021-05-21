@@ -5,7 +5,7 @@ import {
   AuctionInsertSchema,
   AuctionSelectSchema,
 } from "../../../../schemas/AuctionSchema";
-import settlement from "../queues/settlement";
+import settlement from "../../queues/settlement";
 
 export default api()
   .get(async (req, res) => {
