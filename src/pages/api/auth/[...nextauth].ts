@@ -8,11 +8,19 @@ export default NextAuth({
   providers: [
     Providers.Credentials({
       async authorize(payload: Record<string, string>, req) {
+        const input = LoginSchema.parse({
+          email: payload.email,
+          password: payload.password,
+          from: Number(payload.from),
+          organizationId: payload.organizationId,
+        });
+
         return prisma.user.findFirst({
-          where: LoginSchema.parse({
-            email: payload.email,
-            password: payload.password,
-          }),
+          where: {
+            email: input.email,
+            password: input.password,
+            organizationId: input.organizationId,
+          },
         });
       },
     }),

@@ -1,11 +1,10 @@
 import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
-import { ReactNode } from "react";
 import AuthenticationOverlay from "./AuthOverlay";
 import Loading from "./Loading";
 
 type Props = {
-  children: ReactNode;
+  children: JSX.Element;
 };
 
 const openRoutes = ["/"];
