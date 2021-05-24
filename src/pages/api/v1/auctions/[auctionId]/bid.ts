@@ -8,7 +8,7 @@ import settlement from "../../../queues/settlement";
 
 export default api().post(async (req, res) => {
   const id = z.string().uuid().parse(req.query.auctionId);
-  const customerId = z.string().uuid().parse(req.body.customerId);
+  const bidderId = z.string().uuid().parse(req.body.bidderId);
   const value = z.number().positive().min(1).parse(req.body.value);
   const auction = await getAuction(id);
 
@@ -36,7 +36,7 @@ export default api().post(async (req, res) => {
     }
   }
 
-  res.json(await bid(id, customerId, value));
+  res.json(await bid(id, bidderId, value));
 
   if (auction.buyItNowPrice && value >= auction.buyItNowPrice) {
     settlement.enqueue({ auctionId: auction.id }, { id: auction.id });

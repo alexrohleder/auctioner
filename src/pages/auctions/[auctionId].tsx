@@ -207,7 +207,7 @@ function Auction() {
               </div>
             </fieldset>
 
-            {auction.data?.category?.attributes &&
+            {/* {auction.data?.category?.attributes &&
               auction.data.category.attributes.length && (
                 <fieldset className="mt-8">
                   <legend className="font-semibold">Category Attributes</legend>
@@ -235,7 +235,7 @@ function Auction() {
                     ))}
                   </div>
                 </fieldset>
-              )}
+              )} */}
           </fieldset>
 
           <fieldset className="mt-8">

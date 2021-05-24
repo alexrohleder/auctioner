@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import Input from "../../components/Input";
@@ -47,7 +46,9 @@ function Category() {
     if (category.data && !didReset.current) {
       reset({
         name: category.data.name,
-        attributes: category.data.attributes,
+        attributes: category.data.attributes.map((attr) => ({
+          id: attr.id,
+        })),
       });
 
       didReset.current = true;
@@ -118,13 +119,17 @@ function Category() {
         <div className="p-4 border rounded">
           <div className="font-semibold">Amount of Auctions</div>
           <div className="flex items-center justify-between h-8 text-lg">
-            {category.data ? category.data.auctions.length : DataPlaceholder}
+            {category.data?.auctions
+              ? category.data.auctions.length
+              : DataPlaceholder}
           </div>
         </div>
         <div className="p-4 border rounded">
           <div className="font-semibold">Amount of Attributes</div>
           <div className="flex items-center justify-between h-8 text-lg">
-            {category.data ? category.data.attributes.length : DataPlaceholder}
+            {category.data?.attributes
+              ? category.data.attributes.length
+              : DataPlaceholder}
           </div>
         </div>
         <div />

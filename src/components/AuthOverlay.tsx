@@ -47,7 +47,7 @@ function AuthOverlay() {
         <div className="flex flex-col gap-2">
           <input
             type="hidden"
-            {...register("type", { valueAsNumber: true })}
+            {...register("from", { valueAsNumber: true })}
             defaultValue={LoginFrom.DASHBOARD}
           />
           <Input

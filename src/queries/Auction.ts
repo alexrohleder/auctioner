@@ -1,4 +1,5 @@
 import { AuctionStatuses, Prisma } from ".prisma/client";
+import { cast } from "../lib/casts";
 import prisma from "../lib/db";
 
 const select = {
@@ -11,9 +12,16 @@ const select = {
   reservePrice: true,
   duration: true,
   createdAt: true,
+  seller: {
+    select: {
+      id: true,
+      email: true,
+      name: true,
+    },
+  },
   bids: {
     select: {
-      customerId: true,
+      bidderId: true,
       value: true,
       createdAt: true,
     },
@@ -32,6 +40,7 @@ const select = {
   },
   category: {
     select: {
+      id: true,
       name: true,
       attributes: {
         select: {
@@ -45,7 +54,12 @@ const select = {
               name: true,
             },
           },
-          values: true,
+          values: {
+            select: {
+              value: true,
+            },
+            take: 1,
+          },
         },
       },
     },
@@ -145,11 +159,11 @@ export const updateAuctionStatus = async (
   });
 };
 
-export const bid = async (id: string, customerId: string, value: number) =>
+export const bid = async (id: string, bidderId: string, value: number) =>
   prisma.bid.create({
     data: {
       auctionId: id,
-      customerId,
+      bidderId,
       value,
     },
   });
@@ -171,13 +185,33 @@ const format = (
     lastBidCreatedAt = auction.bids[0].createdAt;
   }
 
+  const { category, ...props } = auction;
+  const attributes = {};
+
+  if (category?.attributes) {
+    for (const attribute of category.attributes) {
+      let value =
+        typeof attribute.values[0]?.value !== "undefined"
+          ? attribute.values[0].value
+          : null;
+
+      if (attribute.type === "NUMBER" || attribute.type === "BOOLEAN") {
+        value = cast(value);
+      }
+
+      attributes[attribute.slug] = value;
+    }
+  }
+
   return {
-    ...auction,
+    ...props,
     lastBidAmount,
     lastBidCreatedAt,
     totalBids,
     totalBidders,
     currentStatus: auction.statuses[0]?.status,
+    category: category ? { id: category.id, name: category.name } : null,
+    attributes,
   };
 };
 
