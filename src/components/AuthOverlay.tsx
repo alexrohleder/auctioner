@@ -2,7 +2,7 @@ import { signIn } from "next-auth/client";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Input from "./Input";
 import * as z from "zod";
-import { LoginSchema } from "../schemas/AuthSchema";
+import { LoginSchema, LoginFrom } from "../schemas/AuthSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useCsrfToken from "../hooks/useCsrfToken";
 import { useState } from "react";
@@ -45,6 +45,11 @@ function AuthOverlay() {
       >
         <div className="text-4xl font-semibold">Sign In</div>
         <div className="flex flex-col gap-2">
+          <input
+            type="hidden"
+            {...register("from", { valueAsNumber: true })}
+            defaultValue={LoginFrom.DASHBOARD}
+          />
           <Input
             label="Email"
             type="text"

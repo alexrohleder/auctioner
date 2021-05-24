@@ -33,6 +33,7 @@ model User {
   id              String       @id @default(uuid())
   organizationId  String
   email           String
+  name            String
   password        String
   role            UserRole
   createdAt       DateTime     @default(now()) @map(name: "created_at")
@@ -40,6 +41,8 @@ model User {
   organization    Organization @relation(fields: [organizationId], references: [id])
   reviewsGiven    UserReview[] @relation("reviews_given")
   reviewsReceived UserReview[] @relation("reviews_received")
+  auctions        Auction[]
+  bids            Bid[]
 
   @@unique([organizationId, email])
   @@map(name: "users")
@@ -76,6 +79,7 @@ model Auction {
   updatedAt DateTime @default(now()) @map(name: "updated_at")
 
   bids       Bid[]
+  seller     User               @relation(fields: [sellerId], references: [id])
   statuses   AuctionStatus[]
   category   Category?          @relation(fields: [categoryId], references: [id])
   attributes AuctionAttribute[]
@@ -85,12 +89,13 @@ model Auction {
 }
 
 model Bid {
-  id         String   @id @default(uuid())
-  customerId String   @map(name: "customer_id")
-  auctionId  String   @map(name: "auction_id")
-  value      Float
-  createdAt  DateTime @default(now()) @map(name: "created_at")
-  auction    Auction  @relation(fields: [auctionId], references: [id])
+  id        String   @id @default(uuid())
+  bidderId  String   @map(name: "bidder_id")
+  auctionId String   @map(name: "auction_id")
+  value     Float
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  bidder    User     @relation(fields: [bidderId], references: [id])
+  auction   Auction  @relation(fields: [auctionId], references: [id])
 
   @@map(name: "bids")
 }

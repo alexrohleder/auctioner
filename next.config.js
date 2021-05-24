@@ -6,7 +6,7 @@ module.exports = {
   async headers() {
     return [
       {
-        source: "/(.*)",
+        source: "/(.*)", // todo: exclude /api and /_next
         headers: securityHeaders,
       },
     ];
